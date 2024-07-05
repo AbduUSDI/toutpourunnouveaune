@@ -20,12 +20,11 @@ $quizzes = $quiz->getAllQuizzes();
 include_once 'navbar_admin.php';
 include_once '../templates/header.php';
 ?>
-
-<div class="container">
-    <h1 class="my-4">Gestion des Quizzes</h1>
+<div class="container" style="background: linear-gradient(to right, #5DADE2, #C5DEEE);">
+    <h1 class="my-4">Gestion des Quiz</h1>
     <a href="add_quiz.php" class="btn btn-primary">Ajouter un nouveau quiz</a>
-    <table class="table table-bordered mt-4">
-        <thead>
+    <table class="table table-striped table-hover mb-4">
+        <thead class="thead-dark">
             <tr>
                 <th>ID</th>
                 <th>Titre</th>

@@ -55,7 +55,6 @@ require_once 'navbar_admin.php';
 
 <script>
     let questionIndex = 1;
-    let answerIndex = 1;
 
     document.querySelector('.add-question').addEventListener('click', function() {
         const questionTemplate = `
@@ -74,21 +73,19 @@ require_once 'navbar_admin.php';
             </div>`;
         document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', questionTemplate);
         questionIndex++;
-        answerIndex = 1;
     });
 
     document.getElementById('questionsContainer').addEventListener('click', function(e) {
         if (e.target.classList.contains('add-answer')) {
             const questionDiv = e.target.closest('.question');
-            const questionId = Array.from(document.querySelectorAll('.question')).indexOf(questionDiv);
+            const answerIndex = questionDiv.querySelectorAll('.form-group').length - 1;
             const answerTemplate = `
                 <div class="form-group">
-                    <input type="text" class="form-control" name="questions[${questionId}][answers][${answerIndex}][answer_text]" required>
+                    <input type="text" class="form-control" name="questions[${questionIndex - 1}][answers][${answerIndex}][answer_text]" required>
                     <label>Bonne réponse</label>
-                    <input type="checkbox" name="questions[${questionId}][answers][${answerIndex}][is_correct]" value="1">
+                    <input type="checkbox" name="questions[${questionIndex - 1}][answers][${answerIndex}][is_correct]" value="1">
                 </div>`;
-            questionDiv.insertAdjacentHTML('beforeend', answerTemplate);
-            answerIndex++;
+            questionDiv.querySelector('.add-answer').insertAdjacentHTML('beforebegin', answerTemplate);
         }
     });
 </script>

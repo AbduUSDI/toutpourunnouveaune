@@ -21,4 +21,30 @@ class MongoDB {
     public function getCollection($collectionName) {
         return $this->mongoClient->selectDatabase('tpunn_quizz_score')->selectCollection($collectionName);
     }
+    public function getScoresParents() {
+        try {
+            $collection = $this->mongoClient->selectDatabase('tpunn_quizz_score')->scores;
+            
+            $cursor = $collection->find(
+                [],
+                [
+                    'sort' => ['score' => -1],
+                    'limit' => 10
+                ]
+            );
+            
+            $scores = [];
+            foreach ($cursor as $document) {
+                $scores[] = [
+                    'user_id' => $document['user_id'] ?? null,
+                    'score' => $document['score'] ?? 0
+                ];
+            }
+            
+            return $scores;
+        } catch (Exception $e) {
+            error_log("Erreur lors de la récupération des scores : " . $e->getMessage());
+            return [];
+        }
+    }
 }

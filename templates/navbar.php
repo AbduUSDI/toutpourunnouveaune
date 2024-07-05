@@ -43,13 +43,13 @@
 
             <?php if (isset($_SESSION['user']) && $_SESSION['user']['role_id'] == 2): ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="employee/index.php">Mon espace docteur</a>
+                    <a class="nav-link" href="doctor/index.php">Mon espace docteur</a>
                 </li>
             <?php endif; ?>
 
             <?php if (isset($_SESSION['user']) && $_SESSION['user']['role_id'] == 3): ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="vet/index.php">Mon espace parent</a>
+                    <a class="nav-link" href="parent/index.php">Mon espace parent</a>
                 </li>
             <?php endif; ?>
         </ul>

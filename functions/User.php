@@ -26,13 +26,11 @@ class User {
         $stmt->execute();
         return $stmt->fetchColumn() > 0;
     }
-
     public function getUtilisateurParId($id) {
         $stmt = $this->conn->prepare("SELECT * FROM utilisateurs WHERE id = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-
     public function addUser($email, $password, $role_id, $username) {
         // Hacher le mot de passe
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -71,7 +69,6 @@ class User {
         }
         $stmt->execute();
     }
-
     public function deleteUser($id) {
         $stmt = $this->conn->prepare("DELETE FROM utilisateurs WHERE id = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -80,5 +77,13 @@ class User {
     public function updatePassword($userId, $hashedPassword) {
         $stmt = $this->conn->prepare("UPDATE utilisateurs SET mot_de_passe = ? WHERE id = ?");
         return $stmt->execute([$hashedPassword, $userId]);
+    }
+    function getUsernames($db, $userIds) {
+        $placeholders = implode(',', array_fill(0, count($userIds), '?'));
+        $query = "SELECT id, nom_utilisateur FROM utilisateurs WHERE id IN ($placeholders)";
+        $stmt = $db->prepare($query);
+        $stmt->execute($userIds);
+        $results = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+        return $results;
     }
 }
