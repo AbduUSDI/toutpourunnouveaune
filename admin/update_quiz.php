@@ -13,11 +13,14 @@ $db = $database->connect();
 
 $quiz = new Quiz($db);
 
+$quiz_id = $_GET['id'];
+$quizData = $quiz->getQuizById($quiz_id);
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $titre = $_POST['titre'];
     $questions = $_POST['questions'];
 
-    $quiz_id = $quiz->addQuiz($titre, $questions);
+    $quiz->updateQuiz($quiz_id, $titre, $questions);
     header('Location: manage_quizzes.php');
     exit;
 }
@@ -27,35 +30,39 @@ require_once 'navbar_admin.php';
 ?>
 
 <div class="container mt-5">
-    <h1>Créer un nouveau Quiz</h1>
-    <form id="quizForm" method="post" action="add_quiz.php">
+    <h1>Modifier le Quiz</h1>
+    <form id="quizForm" method="post" action="update_quiz.php?id=<?php echo $quiz_id; ?>">
         <div class="form-group">
             <label for="titre">Titre du Quiz</label>
-            <input type="text" class="form-control" id="titre" name="titre" required>
+            <input type="text" class="form-control" id="titre" name="titre" value="<?php echo htmlspecialchars($quizData['titre']); ?>" required>
         </div>
         <div id="questionsContainer">
-            <div class="question">
-                <div class="form-group">
-                    <label>Question</label>
-                    <input type="text" class="form-control" name="questions[0][question_text]" required>
+            <?php foreach ($quizData['questions'] as $questionIndex => $question) : ?>
+                <div class="question">
+                    <div class="form-group">
+                        <label>Question</label>
+                        <input type="text" class="form-control" name="questions[<?php echo $questionIndex; ?>][question_text]" value="<?php echo htmlspecialchars($question['question_text']); ?>" required>
+                    </div>
+                    <?php foreach ($question['answers'] as $answerIndex => $answer) : ?>
+                        <div class="form-group">
+                            <label>Réponse</label>
+                            <input type="text" class="form-control" name="questions[<?php echo $questionIndex; ?>][answers][<?php echo $answerIndex; ?>][answer_text]" value="<?php echo htmlspecialchars($answer['answer_text']); ?>" required>
+                            <label>Bonne réponse</label>
+                            <input type="checkbox" name="questions[<?php echo $questionIndex; ?>][answers][<?php echo $answerIndex; ?>][is_correct]" value="1" <?php if ($answer['is_correct']) echo 'checked'; ?>>
+                        </div>
+                    <?php endforeach; ?>
+                    <button type="button" class="btn btn-primary add-answer">Ajouter une réponse</button>
                 </div>
-                <div class="form-group">
-                    <label>Réponses</label>
-                    <input type="text" class="form-control" name="questions[0][answers][0][answer_text]" required>
-                    <label>Bonne réponse</label>
-                    <input type="checkbox" name="questions[0][answers][0][is_correct]" value="1">
-                </div>
-                <button type="button" class="btn btn-primary add-answer">Ajouter une réponse</button>
-            </div>
+            <?php endforeach; ?>
         </div>
         <button type="button" class="btn btn-primary add-question">Ajouter une question</button>
-        <button type="submit" class="btn btn-success mt-3">Créer le Quiz</button>
+        <button type="submit" class="btn btn-success mt-3">Modifier le Quiz</button>
     </form>
 </div>
 
 <script>
-    let questionIndex = 1;
-    let answerIndex = 1;
+    let questionIndex = <?php echo count($quizData['questions']); ?>;
+    let answerIndex = <?php echo count($quizData['questions'][count($quizData['questions']) - 1]['answers']); ?>;
 
     document.querySelector('.add-question').addEventListener('click', function() {
         const questionTemplate = `
@@ -88,11 +95,10 @@ require_once 'navbar_admin.php';
                     <input type="checkbox" name="questions[${questionId}][answers][${answerIndex}][is_correct]" value="1">
                 </div>`;
             questionDiv.insertAdjacentHTML('beforeend', answerTemplate);
-            answerIndex++;
-        }
-    });
+            answerIndex++;     
+}
+});
 </script>
-
 <?php
 require_once '../templates/footer.php';
 ?>
