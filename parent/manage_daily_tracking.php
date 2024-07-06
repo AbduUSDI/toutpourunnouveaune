@@ -11,7 +11,7 @@ require_once '../functions/Tracking.php';
 $database = new Database();
 $db = $database->connect();
 
-$recipe = new Tracking($db);
+$dailyTracking = new Tracking($db);
 
 // Gestion des actions CRUD
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $duree_repas = filter_input(INPUT_POST, 'duree_repas', FILTER_SANITIZE_NUMBER_INT);
                     
                     if ($utilisateur_id && $date && $heure_repas && $duree_repas) {
-                        $result = $recipe->create($utilisateur_id, $date, $heure_repas, $duree_repas , $_SESSION['user']['id']);
+                        $result = $dailyTracking->create($utilisateur_id, $date, $heure_repas, $duree_repas , $_SESSION['user']['id']);
                         $message = $result ? "Suivi quotidien créée avec succès." : "Erreur lors de la création du suivi quotidien.";
                     } else {
                         $message = "Tous les champs sont requis pour créer un suivi quotidien.";
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $duree_repas = filter_input(INPUT_POST, 'duree_repas', FILTER_SANITIZE_NUMBER_INT);
 
                     if ($id && $utilisateur_id && $date && $heure_repas && $duree_repas) {
-                        $result = $recipe->update($id, $utilisateur_id, $date, $heure_repas, $duree_repas);
+                        $result = $dailyTracking->update($id, $utilisateur_id, $date, $heure_repas, $duree_repas);
                         $message = $result ? "Suivi quotidien mise à jour avec succès." : "Erreur lors de la mise à jour du suivi quotidien.";
                     } else {
                         $message = "Tous les champs sont requis pour mettre à jour un suivi quotidien.";
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
                     
                     if ($id) {
-                        $result = $recipe->delete($id);
+                        $result = $dailyTracking->delete($id);
                         $message = $result ? "Présentation alimentaire supprimée avec succès." : "Erreur lors de la suppression de la présentation alimentaire.";
                     } else {
                         $message = "ID de présentation alimentaire invalide pour la suppression.";
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$recettes = $recipe->getTracking();
+$recettes = $dailyTracking->getTracking();
 
 include '../templates/header.php';
 include 'navbar_parent.php';

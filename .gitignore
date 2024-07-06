@@ -1,3 +1,4 @@
 # Dossier à ignorer
 vendor
 # Fichier à ignorer 
+composer.lock

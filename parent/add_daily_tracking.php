@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $notes = $_POST['notes'];
 
     // Ajouter le suivi quotidien
-    $result = $tracking->addDailyTracking($utilisateur_id, $date, $heure_repas, $duree_repas, $heure_change, $medicament, $notes);
+    $result = $tracking->create($utilisateur_id, $date, $heure_repas, $duree_repas, $heure_change, $medicament, $notes);
 
     if ($result) {
         // Succès
