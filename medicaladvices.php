@@ -1,4 +1,5 @@
 <?php 
+session_start();
 
 include 'functions/Database.php';
 include 'functions/AvisMedicaux.php';

@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 include '../templates/header.php';
-include 'navbar_doctor.php';
+include 'navbar_parent.php';
 ?>
 <style>
 
