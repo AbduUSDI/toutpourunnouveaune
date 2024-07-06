@@ -22,7 +22,7 @@ $avisMedicaux = new AvisMedicaux($db);
 $threads = $forum->getDerniersThreads(); 
 $avis = $avisMedicaux->getDerniersAvis();
 
-// Inclure la navigation admin  
+// Inclure la navigation docteur  
 include_once 'navbar_doctor.php'; 
 include_once '../templates/header.php'; 
 ?>

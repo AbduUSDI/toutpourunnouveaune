@@ -21,6 +21,9 @@
                 <a class="nav-link" href="contact.php">Nous contacter</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="medicaladvices.php">Les avis médicaux</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="forum.php">Le forum</a>
             </li>
             <?php if (isset($_SESSION['user'])): ?>
