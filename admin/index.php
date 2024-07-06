@@ -44,7 +44,21 @@ unset($score);
 include_once 'navbar_admin.php'; 
 include_once '../templates/header.php'; 
 ?>  
+<style>
 
+h1,h2,h3 {
+    text-align: center;
+}
+
+body {
+    background-image: url('../image/backgroundwebsite.jpg');
+    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+}
+h1, .mt-5 {
+    background: whitesmoke;
+    border-radius: 15px;
+}
+</style>
 <div class="container">     
     <h1 class="my-4">Dashboard Admin</h1>
       
@@ -57,8 +71,9 @@ include_once '../templates/header.php';
     </ul>
       
     <!-- Rubrique Scores des Quizz -->     
-    <h2>Tableau des Scores des Quizz</h2>     
-    <table class="table table-striped table-hover mb-4">
+    <h2>Tableau des Scores des Quizz</h2>
+    <div class="table-responsive">   
+    <table class="table table-striped table-hover mb-4" style="background: white">
         <thead class="thead-dark">
             <tr>
                 <th>Utilisateur</th>
@@ -74,7 +89,7 @@ include_once '../templates/header.php';
             <?php endforeach; ?>
         </tbody>     
     </table>
-      
+    </div>  
     <!-- Rubrique Avis Médicaux -->     
     <h2>Derniers avis médicaux des Docteurs</h2>     
     <ul class="list-group mb-4">         

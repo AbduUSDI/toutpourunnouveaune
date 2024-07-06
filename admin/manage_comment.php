@@ -38,7 +38,21 @@ $approvedComments = $commentManager->getApprovedComments();
 include '../templates/header.php';
 include 'navbar_admin.php';
 ?>
+<style>
 
+h1,h2,h3 {
+    text-align: center;
+}
+
+body {
+    background-image: url('../image/backgroundwebsite.jpg');
+    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+}
+h1, .mt-5 {
+    background: whitesmoke;
+    border-radius: 15px;
+}
+</style>
 <div class="container mt-4">
     <?php if (isset($_SESSION['success_message'])): ?>
         <div class="alert alert-success">
@@ -88,7 +102,7 @@ include 'navbar_admin.php';
                     <p class="text-muted">Commenté par <?php echo htmlspecialchars($comment['nom_utilisateur']); ?> le <?php echo $comment['date_creation']; ?></p>
                     <form action="manage_comment.php" method="POST" class="d-inline">
                         <input type="hidden" name="comment_id" value="<?php echo $comment['id']; ?>">
-                        <a href="edit_comment.php?id=<?php echo $comment['id']; ?>" class="btn btn-primary">Modifier</a>
+                        <a href="edit_comment.php?id=<?php echo $comment['id']; ?>" class="btn btn-info">Modifier</a>
                         <button type="submit" name="delete" class="btn btn-danger">Supprimer</button>
                     </form>
                 </div>

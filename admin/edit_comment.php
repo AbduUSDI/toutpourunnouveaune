@@ -36,7 +36,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 include '../templates/header.php';
 include 'navbar_admin.php';
 ?>
+<style>
 
+h1,h2,h3 {
+    text-align: center;
+}
+
+body {
+    background-image: url('../image/backgroundwebsite.jpg');
+    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+}
+h1, .mt-5 {
+    background: whitesmoke;
+    border-radius: 15px;
+}
+</style>
 <div class="container mt-4">
     <h1>Modifier le commentaire</h1>
     
@@ -55,7 +69,7 @@ include 'navbar_admin.php';
                 <label for="content">Contenu du commentaire</label>
                 <textarea class="form-control" id="content" name="content" rows="5" required><?php echo htmlspecialchars($comment['contenu']); ?></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Mettre à jour</button>
+            <button type="submit" class="btn btn-info">Mettre à jour</button>
             <a href="manage_comment.php" class="btn btn-secondary">Annuler</a>
         </form>
     <?php else: ?>

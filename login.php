@@ -43,8 +43,17 @@ include_once 'templates/navbar.php';
 ?>
 
 <style>
-body {
-    padding-top: 58px;
+
+  body {
+    background-image: url('image/backgroundwebsite.jpg');
+    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+}
+h1,h2,h3 {
+    text-align: center;
+}
+.form-group {
+    text-align: center;
+    
 }
 </style>
 
@@ -67,12 +76,12 @@ body {
                 </div>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary" name="login">Se connecter</button>
+        <button type="submit" class="btn btn-info" name="login">Se connecter</button>
     </form>
     <hr>
     <button class="btn btn-outline-danger" data-toggle="modal" data-target="#registerModal">S'inscrire</button>
     <hr>
-    <button class="btn btn-link btn-outline-secondary" data-toggle="modal" data-target="#forgotPasswordModal">Mot de passe oublié ?</button>   
+    <button class="btn btn-link btn-outline-warning" data-toggle="modal" data-target="#forgotPasswordModal" style="color: white;">Mot de passe oublié ?</button>   
 </div>
 
 <div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
@@ -157,4 +166,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 
-<?php include_once 'templates/footer.php'; ?>
+<?php include 'templates/footer.php'; ?>

@@ -14,7 +14,23 @@ $quizData = $quiz->getQuizById($quiz_id);
 require_once 'templates/header.php';
 require_once 'templates/navbar.php';
 ?>
+<style>
 
+h1,h2,h3 {
+    text-align: center;
+}
+
+body {
+    background-image: url('image/backgroundwebsite.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+}
+h1,h2,h3 {
+    text-align: center;
+}
+</style>
 <div class="container mt-5">
     <h1 class="text-center"><?php echo htmlspecialchars($quizData['titre']); ?></h1>
     
@@ -39,7 +55,7 @@ require_once 'templates/navbar.php';
                 </div>
             <?php endforeach; ?>
         </div>
-        <button type="submit" class="btn btn-primary mt-3">Valider</button>
+        <button type="submit" class="btn btn-info mt-3">Valider</button>
     </form>
 </div>
 

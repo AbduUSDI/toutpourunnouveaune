@@ -21,7 +21,21 @@ $userProfile = $profile->getProfileByUserId($userId);
 include '../templates/header.php';
 include 'navbar_doctor.php'
 ?>
+<style>
 
+h1,h2,h3 {
+    text-align: center;
+}
+
+body {
+    background-image: url('../image/backgroundwebsite.jpg');
+    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+}
+h1, .mt-5 {
+    background: whitesmoke;
+    border-radius: 15px;
+}
+</style>
 <div class="container mt-5">
     <h1>Profil de <?php echo htmlspecialchars($_SESSION['user']['nom_utilisateur']); ?></h1>
     

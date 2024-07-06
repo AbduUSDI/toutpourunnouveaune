@@ -38,7 +38,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 include '../templates/header.php';
 include 'navbar_admin.php';
 ?>
+<style>
 
+h1,h2,h3 {
+    text-align: center;
+}
+
+body {
+    background-image: url('../image/backgroundwebsite.jpg');
+    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+}
+h1, .mt-5 {
+    background: whitesmoke;
+    border-radius: 15px;
+}
+</style>
 <div class="container mt-4">
     <h1>Modifier le Guide</h1>
     <form action="edit_guide.php?id=<?php echo $guide['id']; ?>" method="POST">

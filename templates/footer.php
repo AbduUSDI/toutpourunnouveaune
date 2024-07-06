@@ -1,4 +1,4 @@
-<footer class="bg-light text-center text-lg-start mt-5">
+<footer class="bg-light text-center text-lg-start mt-5" style="background: linear-gradient(to right, #98B46D, #DAE8C5);">
         <div class="container p-4">
             <p>&copy; 2024 Tout pour un nouveau né. Tous droits réservés.</p>
         </div>

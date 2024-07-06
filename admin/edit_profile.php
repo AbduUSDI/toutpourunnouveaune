@@ -58,7 +58,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 include '../templates/header.php';
 include 'navbar_admin.php';
 ?>
+<style>
 
+h1,h2,h3 {
+    text-align: center;
+}
+
+body {
+    background-image: url('../image/backgroundwebsite.jpg');
+    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+}
+h1, .mt-5 {
+    background: whitesmoke;
+    border-radius: 15px;
+}
+</style>
 <div class="container mt-5">
     <h1>Profil de <?php echo htmlspecialchars($_SESSION['user']['nom_utilisateur']); ?></h1>
     
@@ -94,7 +108,7 @@ include 'navbar_admin.php';
             <label for="new_password">Nouveau mot de passe (laissez vide pour ne pas changer)</label>
             <input type="password" class="form-control" id="new_password" name="new_password">
         </div>
-        <button type="submit" class="btn btn-primary">Mettre à jour le profil</button>
+        <button type="submit" class="btn btn-info">Mettre à jour le profil</button>
     </form>
 </div>
 
