@@ -24,30 +24,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             switch ($action) {
                 case 'create':
                     $utilisateur_id = filter_input(INPUT_POST, 'utilisateur_id', FILTER_SANITIZE_NUMBER_INT);
-                    $date = filter_input(INPUT_POST, 'date', FILTER_SANITIZE_NUMBER_INT);
-                    $heure_repas = filter_input(INPUT_POST, 'heure_repas', FILTER_SANITIZE_NUMBER_INT);
+                    $date = filter_input(INPUT_POST, 'date', FILTER_SANITIZE_STRING);
+                    $heure_repas = filter_input(INPUT_POST, 'heure_repas', FILTER_SANITIZE_STRING);
                     $duree_repas = filter_input(INPUT_POST, 'duree_repas', FILTER_SANITIZE_NUMBER_INT);
-                    
-                    if ($utilisateur_id && $date && $heure_repas && $duree_repas) {
-                        $result = $dailyTracking->create($utilisateur_id, $date, $heure_repas, $duree_repas , $_SESSION['user']['id']);
-                        $message = $result ? "Suivi quotidien créée avec succès." : "Erreur lors de la création du suivi quotidien.";
+                    $heure_change = filter_input(INPUT_POST, 'heure_change', FILTER_SANITIZE_STRING);
+                    $medicament = filter_input(INPUT_POST, 'medicament', FILTER_SANITIZE_STRING);
+                    $notes = filter_input(INPUT_POST, 'notes', FILTER_SANITIZE_STRING);
+
+                    if ($utilisateur_id && $date && $heure_repas) {
+                        $result = $dailyTracking->create($utilisateur_id, $date, $heure_repas, $duree_repas, $heure_change, $medicament, $notes);
+                        $message = $result ? "Suivi quotidien créé avec succès." : "Erreur lors de la création du suivi quotidien.";
                     } else {
-                        $message = "Tous les champs sont requis pour créer un suivi quotidien.";
+                        $message = "Les champs utilisateur, date et heure de repas sont requis pour créer un suivi quotidien.";
                     }
                     break;
 
                 case 'update':
                     $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-                    $utilisateur_id = filter_input(INPUT_POST, 'utilisateur_id', FILTER_SANITIZE_STRING);
+                    $utilisateur_id = filter_input(INPUT_POST, 'utilisateur_id', FILTER_SANITIZE_NUMBER_INT);
                     $date = filter_input(INPUT_POST, 'date', FILTER_SANITIZE_STRING);
                     $heure_repas = filter_input(INPUT_POST, 'heure_repas', FILTER_SANITIZE_STRING);
                     $duree_repas = filter_input(INPUT_POST, 'duree_repas', FILTER_SANITIZE_NUMBER_INT);
+                    $heure_change = filter_input(INPUT_POST, 'heure_change', FILTER_SANITIZE_STRING);
+                    $medicament = filter_input(INPUT_POST, 'medicament', FILTER_SANITIZE_STRING);
+                    $notes = filter_input(INPUT_POST, 'notes', FILTER_SANITIZE_STRING);
 
-                    if ($id && $utilisateur_id && $date && $heure_repas && $duree_repas) {
-                        $result = $dailyTracking->update($id, $utilisateur_id, $date, $heure_repas, $duree_repas);
-                        $message = $result ? "Suivi quotidien mise à jour avec succès." : "Erreur lors de la mise à jour du suivi quotidien.";
+                    if ($id && $utilisateur_id && $date && $heure_repas) {
+                        $result = $dailyTracking->update($id, $utilisateur_id, $date, $heure_repas, $duree_repas, $heure_change, $medicament, $notes);
+                        $message = $result ? "Suivi quotidien mis à jour avec succès." : "Erreur lors de la mise à jour du suivi quotidien.";
                     } else {
-                        $message = "Tous les champs sont requis pour mettre à jour un suivi quotidien.";
+                        $message = "Les champs utilisateur, date et heure de repas sont requis pour mettre à jour un suivi quotidien.";
                     }
                     break;
 
@@ -56,9 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
                     if ($id) {
                         $result = $dailyTracking->delete($id);
-                        $message = $result ? "Présentation alimentaire supprimée avec succès." : "Erreur lors de la suppression de la présentation alimentaire.";
+                        $message = $result ? "Suivi quotidien supprimé avec succès." : "Erreur lors de la suppression du suivi quotidien.";
                     } else {
-                        $message = "ID de présentation alimentaire invalide pour la suppression.";
+                        $message = "ID de suivi quotidien invalide pour la suppression.";
                     }
                     break;
 
@@ -121,17 +127,32 @@ h1, .mt-5 {
                 <input type="hidden" name="action" value="create">
                 <div class="mb-3">
                     <label for="utilisateur_id" class="form-label">Utilisateur</label>
-                    <input type="text" class="form-control" id="utilisateur_id" name="utilisateur_id" required>
+                    <input type="number" class="form-control" id="utilisateur_id" name="utilisateur_id" required>
                 </div>
                 <div class="mb-3">
                     <label for="date" class="form-label">Date</label>
-                    <textarea class="form-control" id="date" name="date" rows="3" required></textarea>
+                    <input type="date" class="form-control" id="date" name="date" required>
                 </div>
                 <div class="mb-3">
-                    <label for="heure_repas" class="form-label">Heure tétée</label>
-                    <textarea class="form-control" id="heure_repas" name="heure_repas" rows="3" required></textarea>
+                    <label for="heure_repas" class="form-label">Heure de repas</label>
+                    <input type="time" class="form-control" id="heure_repas" name="heure_repas" required>
                 </div>
-                <input type="hidden" name="medecin_id" value="<?php echo $_SESSION['user']['id']; ?>">
+                <div class="mb-3">
+                    <label for="duree_repas" class="form-label">Durée du repas (minutes)</label>
+                    <input type="number" class="form-control" id="duree_repas" name="duree_repas">
+                </div>
+                <div class="mb-3">
+                    <label for="heure_change" class="form-label">Heure de changement</label>
+                    <input type="time" class="form-control" id="heure_change" name="heure_change">
+                </div>
+                <div class="mb-3">
+                    <label for="medicament" class="form-label">Médicament</label>
+                    <input type="text" class="form-control" id="medicament" name="medicament">
+                </div>
+                <div class="mb-3">
+                    <label for="notes" class="form-label">Notes</label>
+                    <textarea class="form-control" id="notes" name="notes"></textarea>
+                </div>
                 <button type="submit" class="btn btn-info">Ajouter</button>
             </form>
         </div>
@@ -146,34 +167,60 @@ h1, .mt-5 {
                     </div>
                     <div class="card-body">
                         <h5 class="card-title">Date</h5>
-                        <p class="card-text"><?= nl2br(htmlspecialchars($recette['date'])) ?></p>
-                        <h5 class="card-title">Heure tétée</h5>
-                        <p class="card-text"><?= nl2br(htmlspecialchars($recette['heure_repas'])) ?></p>
+                        <p class="card-text"><?= htmlspecialchars($recette['date']) ?></p>
+                        <h5 class="card-title">Heure de repas</h5>
+                        <p class="card-text"><?= htmlspecialchars($recette['heure_repas']) ?></p>
+                        <h5 class="card-title">Durée du repas</h5>
+                        <p class="card-text"><?= htmlspecialchars($recette['duree_repas']) ?></p>
+                        <h5 class="card-title">Heure de changement</h5>
+                        <p class="card-text"><?= htmlspecialchars($recette['heure_change']) ?></p>
+                        <h5 class="card-title">Médicament</h5>
+                        <p class="card-text"><?= htmlspecialchars($recette['medicament']) ?></p>
+                        <h5 class="card-title">Notes</h5>
+                        <p class="card-text"><?= htmlspecialchars($recette['notes']) ?></p>
                         <button class="btn btn-primary btn-modifier" type="button" data-bs-toggle="collapse" data-bs-target="#editForm<?= $recette['id'] ?>" aria-expanded="false" aria-controls="editForm<?= $recette['id'] ?>">
                             Modifier
                         </button>
-                        <form method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette présentation alimentaire ?');">
+                        <form method="POST" class="d-inline-block">
                             <input type="hidden" name="action" value="delete">
                             <input type="hidden" name="id" value="<?= $recette['id'] ?>">
                             <button type="submit" class="btn btn-danger">Supprimer</button>
                         </form>
-                        <div class="collapse mt-3" id="editForm<?= $recette['id'] ?>">
+                    </div>
+                    <div class="collapse" id="editForm<?= $recette['id'] ?>">
+                        <div class="card card-body">
                             <form method="POST">
                                 <input type="hidden" name="action" value="update">
                                 <input type="hidden" name="id" value="<?= $recette['id'] ?>">
                                 <div class="mb-3">
-                                    <label for="utilisateur_id<?= $recette['id'] ?>" class="form-label">Utilisateur</label>
-                                    <input type="text" class="form-control" id="utilisateur_id<?= $recette['id'] ?>" name="utilisateur_id" value="<?= htmlspecialchars($recette['utilisateur_id']) ?>" required>
+                                    <label for="utilisateur_id_<?= $recette['id'] ?>" class="form-label">Utilisateur</label>
+                                    <input type="number" class="form-control" id="utilisateur_id_<?= $recette['id'] ?>" name="utilisateur_id" value="<?= htmlspecialchars($recette['utilisateur_id']) ?>" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="date<?= $recette['id'] ?>" class="form-label">Date</label>
-                                    <textarea class="form-control" id="date<?= $recette['id'] ?>" name="date" rows="3" required><?= htmlspecialchars($recette['date']) ?></textarea>
+                                    <label for="date_<?= $recette['id'] ?>" class="form-label">Date</label>
+                                    <input type="date" class="form-control" id="date_<?= $recette['id'] ?>" name="date" value="<?= htmlspecialchars($recette['date']) ?>" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="heure_repas<?= $recette['id'] ?>" class="form-label">Heure tétée</label>
-                                    <textarea class="form-control" id="heure_repas<?= $recette['id'] ?>" name="heure_repas" rows="3" required><?= htmlspecialchars($recette['heure_repas']) ?></textarea>
+                                    <label for="heure_repas_<?= $recette['id'] ?>" class="form-label">Heure de repas</label>
+                                    <input type="time" class="form-control" id="heure_repas_<?= $recette['id'] ?>" name="heure_repas" value="<?= htmlspecialchars($recette['heure_repas']) ?>" required>
                                 </div>
-                                <button type="submit" class="btn btn-success">Enregistrer les modifications</button>
+                                <div class="mb-3">
+                                    <label for="duree_repas_<?= $recette['id'] ?>" class="form-label">Durée du repas (minutes)</label>
+                                    <input type="number" class="form-control" id="duree_repas_<?= $recette['id'] ?>" name="duree_repas" value="<?= htmlspecialchars($recette['duree_repas']) ?>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="heure_change_<?= $recette['id'] ?>" class="form-label">Heure de changement</label>
+                                    <input type="time" class="form-control" id="heure_change_<?= $recette['id'] ?>" name="heure_change" value="<?= htmlspecialchars($recette['heure_change']) ?>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="medicament_<?= $recette['id'] ?>" class="form-label">Médicament</label>
+                                    <input type="text" class="form-control" id="medicament_<?= $recette['id'] ?>" name="medicament" value="<?= htmlspecialchars($recette['medicament']) ?>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="notes_<?= $recette['id'] ?>" class="form-label">Notes</label>
+                                    <textarea class="form-control" id="notes_<?= $recette['id'] ?>" name="notes"><?= htmlspecialchars($recette['notes']) ?></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-info">Mettre à jour</button>
                             </form>
                         </div>
                     </div>

@@ -31,10 +31,10 @@ h1,h2,h3 {
 }
 
 body {
-    background-image: url('image/backgroundwebsite.jpg');
+    background-image: url('../image/backgroundwebsite.jpg');
     padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
 }
-h1, .mt-5 {
+h1, .mb-4 {
     background: whitesmoke;
     border-radius: 15px;
 }

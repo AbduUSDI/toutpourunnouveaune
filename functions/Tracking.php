@@ -5,16 +5,21 @@ class Tracking {
     public function __construct($db) {
         $this->db = $db;
     }
+
+    // Récupération de tous les suivis quotidiens
     public function getTracking() {
         $query = "SELECT * FROM suivi_quotidien ORDER BY date_creation";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    public function create($titre, $contenu, $groupe_age, $medecin_id) {
+
+    // Création d'un nouveau suivi quotidien
+    public function create($utilisateur_id, $date, $heure_repas, $duree_repas, $heure_change, $medicament, $notes) {
         try {
-            $stmt = $this->db->prepare("INSERT INTO suivi_quotidien (titre, contenu, groupe_age, medecin_id) VALUES (?, ?, ?, ?)");
-            $result = $stmt->execute([$titre, $contenu, $groupe_age, $medecin_id]);
+            $date_creation = date('Y-m-d H:i:s');
+            $stmt = $this->db->prepare("INSERT INTO suivi_quotidien (utilisateur_id, date, heure_repas, duree_repas, heure_change, medicament, notes, date_creation) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $result = $stmt->execute([$utilisateur_id, $date, $heure_repas, $duree_repas, $heure_change, $medicament, $notes, $date_creation]);
             return $result;
         } catch (PDOException $erreur) {
             error_log("Erreur lors de la création du suivi quotidien : " . $erreur->getMessage());
@@ -22,10 +27,11 @@ class Tracking {
         }
     }
 
-    public function update($id, $titre, $contenu, $groupe_age) {
+    // Mise à jour d'un suivi quotidien existant
+    public function update($id, $utilisateur_id, $date, $heure_repas, $duree_repas, $heure_change, $medicament, $notes) {
         try {
-            $stmt = $this->db->prepare("UPDATE suivi_quotidien SET titre = ?, contenu = ?, groupe_age = ? WHERE id = ?");
-            $result = $stmt->execute([$titre, $contenu, $groupe_age, $id]);
+            $stmt = $this->db->prepare("UPDATE suivi_quotidien SET utilisateur_id = ?, date = ?, heure_repas = ?, duree_repas = ?, heure_change = ?, medicament = ?, notes = ? WHERE id = ?");
+            $result = $stmt->execute([$utilisateur_id, $date, $heure_repas, $duree_repas, $heure_change, $medicament, $notes, $id]);
             return $result;
         } catch (PDOException $erreur) {
             error_log("Erreur lors de la mise à jour du suivi quotidien : " . $erreur->getMessage());
@@ -33,6 +39,7 @@ class Tracking {
         }
     }
 
+    // Suppression d'un suivi quotidien
     public function delete($id) {
         try {
             $stmt = $this->db->prepare("DELETE FROM suivi_quotidien WHERE id = ?");
