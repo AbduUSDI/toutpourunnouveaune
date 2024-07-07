@@ -11,7 +11,7 @@ if (!isset($_SESSION['user'])) {
     exit;
 }
 
-$database = new Database();
+$database = new Database2();
 $db = $database->connect();
 
 $user = new User($db);

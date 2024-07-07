@@ -2,7 +2,7 @@
 /**
  * Classe pour établir une connexion à la base de données
  */
-class Database {
+class Database2 {
     private $hote = 'localhost';
     private $nom_base_de_donnees = 'forum_db';
     private $identifiant = 'Abdurahman';

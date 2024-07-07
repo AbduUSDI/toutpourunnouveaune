@@ -8,7 +8,7 @@ if (!isset($_SESSION['user'])) {
 require_once 'functions/Database.php';
 require_once 'functions/Thread.php';
 
-$database = new Database();
+$database = new Database2();
 $db = $database->connect();
 
 $thread = new Thread($db);

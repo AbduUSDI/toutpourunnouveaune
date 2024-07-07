@@ -11,7 +11,7 @@ if (!isset($_SESSION['user'])) {
     exit;
 }
 
-$database = new Database();
+$database = new Database2();
 $db = $database->connect();
 
 $user = new User($db);
@@ -156,7 +156,7 @@ include_once 'templates/navbar_forum.php';
         </div>
         <div class="input-group-append">
             <label for="new_password">Nouveau mot de passe (optionnel)</label>
-            <input type="password" class="form-control" id="password" name="password" required>
+            <input type="password" class="form-control" id="password" name="password">
             <button class="btn btn-outline-secondary" type="button" id="togglePassword"><i class="fas fa-eye"></i></button>
         </div>
         <input type="submit" class="btn btn-info" value="Mettre à jour le profil">

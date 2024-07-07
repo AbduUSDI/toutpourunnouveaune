@@ -19,22 +19,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     if ($userData && password_verify($password, $userData['mot_de_passe'])) {
         echo "Mot de passe vérifié.<br>";
         $_SESSION['user'] = $userData;
-        if ($userData['role_id'] == 1) {
-            header('Location: admin/index.php');
-        } elseif ($userData['role_id'] == 2) {
-            header('Location: doctor/index.php');
-        } elseif ($userData['role_id'] == 3) {
-            header('Location: parent/index.php');
+        if ($userData['role_id'] == 1 && 2 && 3) {
+            header('Location: index.php');
         } else {
 
-            header('Location: index.php');
+            header('Location: login.php');
         }
         exit;
-
-    // Message d'erreur en cas d'erreur, de mot de passe incorrect ou email incorrect
-
-    } else {
-        $error = "Email ou mot de passe incorrect.";
     }
 }
 
@@ -43,21 +34,21 @@ include_once 'templates/navbar.php';
 ?>
 
 <style>
-
-  body {
-    background-image: url('image/backgroundwebsite.jpg');
-    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
-}
 h1,h2,h3 {
     text-align: center;
 }
-.form-group {
-    text-align: center;
-    
+
+body {
+    background-image: url('../image/backgroundwebsite.jpg');
+    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+}
+h1, .mt-5 {
+    background: whitesmoke;
+    border-radius: 15px;
 }
 </style>
 
-<div class="container">
+<div class="container mt-5">
     <h1 class="my-4">Connexion</h1>
     <?php if (isset($error)): ?>
         <div class="alert alert-danger"><?php echo $error; ?></div>
@@ -72,7 +63,7 @@ h1,h2,h3 {
             <div class="input-group">
                 <input type="password" class="form-control" id="password" name="mot_de_passe" autocomplete="current-password" required>
                 <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" id="togglePassword"><i class="fas fa-eye"></i></button>
+                    <button class="btn btn-outline-info" type="button" id="togglePassword"><i class="fas fa-eye"></i></button>
                 </div>
             </div>
         </div>
@@ -81,7 +72,7 @@ h1,h2,h3 {
     <hr>
     <button class="btn btn-outline-danger" data-toggle="modal" data-target="#registerModal">S'inscrire</button>
     <hr>
-    <button class="btn btn-link btn-outline-warning" data-toggle="modal" data-target="#forgotPasswordModal" style="color: white;">Mot de passe oublié ?</button>   
+    <button class="btn btn-outline-warning" data-toggle="modal" data-target="#forgotPasswordModal">Mot de passe oublié ?</button>   
 </div>
 
 <div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">

@@ -24,7 +24,7 @@
                 <a class="nav-link" href="contact.php">Nous contacter</a>
             </li>
             <?php if (isset($_SESSION['user'])): ?>
-                <?php if ($_SESSION['user']['role'] === 'admin'): ?>
+                <?php if ($_SESSION['user']['role_id'] == 1): ?>
                     <li class="nav-item">
                         <a class="nav-link" href="admin_dashboard.php">Admin Dashboard</a>
                     </li>

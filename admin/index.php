@@ -8,24 +8,29 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
 require_once '../MongoDB.php'; 
 require_once '../functions/Database.php'; 
 require_once '../functions/User.php'; 
-require_once '../functions/Forum.php'; 
-require_once '../functions/AvisMedicaux.php';  
+require_once '../functions/AvisMedicaux.php'; 
+require_once '../forum/functions/Database.php'; 
+require_once '../forum/functions/Thread.php';
 
 // Connexion à la base de données MySQL  
 $database = new Database(); 
 $db = $database->connect();  
 
+$database2 = new Database2();
+$db2 = $database2->connect();
+
 $mongoClient = new MongoDB(); 
 $quiz = $mongoClient; 
 $scores = $quiz->getScoresParents();  
 
-$forum = new Forum($db); 
 $usernames = new User($db); 
 $avisMedicaux = new AvisMedicaux($db);  
+$thread = new Thread($db2);
 
 // Récupérer les données  
-$threads = $forum->getDerniersThreads(); 
+
 $avis = $avisMedicaux->getDerniersAvis();  
+$threads = $thread->getThreads();
 
 // Extraire les IDs d'utilisateurs 
 $userIds = array_column($scores, 'user_id');  
@@ -70,14 +75,26 @@ h1, .mt-5 {
 <div class="container">     
     <h1 class="my-4">Dashboard Admin</h1>
       
-    <!-- Rubrique Forum -->     
-    <h2>Derniers Threads du Forum</h2>     
-    <ul class="list-group mb-4">         
-        <?php foreach ($threads as $thread): ?>             
-            <li class="list-group-item"><?php echo htmlspecialchars($thread['title']); ?> - <?php echo htmlspecialchars($thread['author']); ?> (<?php echo $thread['date_creation']; ?>)</li>         
-        <?php endforeach; ?>     
-    </ul>
-      
+    <div class="container mt-5">
+    <h1 class="my-4">Forum</h1>
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Derniers Threads</h2>
+            <?php if (empty($threads)): ?>
+        <p>Aucunes discussion n'existe.</p>
+            <ul class="list-group mb-4">
+                <?php else: ?>
+                <?php foreach ($threads as $thread): ?>
+                    <li class="list-group-item">
+                        <h5><a href="../forum/thread.php?id=<?php echo $thread['id']; ?>"><?php echo htmlspecialchars($thread['title']); ?></a></h5>
+                        <p><?php echo htmlspecialchars($thread['body']); ?></p>
+                        <small class="text-muted">Par <?php echo htmlspecialchars($thread['author']); ?> le <?php echo $thread['created_at']; ?></small>
+                    </li>
+                <?php endforeach; ?>
+            <?php endif; ?>
+            </ul>
+        </div>
+      </div>
     <!-- Rubrique Scores des Quizz -->     
     <h2>Tableau des Scores des Quizz</h2>
     <div class="table-responsive">   

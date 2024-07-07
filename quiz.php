@@ -15,21 +15,15 @@ require_once 'templates/header.php';
 require_once 'templates/navbar.php';
 ?>
 <style>
-
-h1,h2,h3 {
-    text-align: center;
-}
-
-body {
-    background-image: url('image/backgroundwebsite.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
-}
-h1,h2,h3 {
-    text-align: center;
-}
+    h1,h2,h3 { text-align: center; }
+    body {
+        background-image: url('image/backgroundwebsite.jpg');
+        padding-top: 48px;
+    }
+    h1, .mt-5 {
+        background: whitesmoke;
+        border-radius: 15px;
+    }
 </style>
 <div class="container mt-5">
     <h1 class="text-center"><?php echo htmlspecialchars($quizData['titre']); ?></h1>
