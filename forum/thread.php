@@ -55,7 +55,7 @@ body {
     background-image: url('../image/backgroundwebsite.jpg');
     padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
 }
-h1, .mt-5 {
+h1, .mt-4 {
     background: whitesmoke;
     border-radius: 15px;
 }
@@ -73,8 +73,8 @@ h1, .mt-5 {
     <ul class="list-group mb-4">
         <?php foreach ($responses as $response): ?>
             <li class="list-group-item">
-                <p><?php echo htmlspecialchars($response['body']); ?></p>
-                <small class="text-muted">Par <?php echo htmlspecialchars($response['author']); ?> le <?php echo $response['created_at']; ?></small>
+                <p><?php echo htmlspecialchars($response['body'], ENT_QUOTES, 'UTF-8'); ?></p>
+                <small class="text-muted">Par <?php echo htmlspecialchars($response['author'], ENT_QUOTES, 'UTF-8'); ?> le <?php echo htmlspecialchars($response['created_at'], ENT_QUOTES, 'UTF-8'); ?></small>
             </li>
         <?php endforeach; ?>
     </ul>

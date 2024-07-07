@@ -27,17 +27,13 @@ class Response {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function updateResponse($responseId, $body) {
-        $query = "UPDATE " . $this->table . " SET body = :body WHERE id = :id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $responseId);
-        $stmt->bindParam(':body', $body);
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
+    public function updateResponse($id, $body) {
+        $sql = "UPDATE responses SET body = :body WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':body', $body, PDO::PARAM_STR);
+        return $stmt->execute();
     }
-
     public function deleteResponse($responseId) {
         $query = "DELETE FROM " . $this->table . " WHERE id = :id";
         $stmt = $this->conn->prepare($query);
@@ -46,5 +42,16 @@ class Response {
             return true;
         }
         return false;
+    }
+    public function getResponsesByUserId($userId) {
+        $query = "SELECT r.id, r.body, r.created_at, t.title as thread_title 
+                  FROM " . $this->table . " r 
+                  JOIN threads t ON r.thread_id = t.id 
+                  WHERE r.user_id = :user_id 
+                  ORDER BY r.created_at DESC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $userId);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

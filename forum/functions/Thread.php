@@ -56,16 +56,13 @@ class Thread {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function updateThread($threadId, $title, $body) {
-        $query = "UPDATE " . $this->table . " SET title = :title, body = :body WHERE id = :id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $threadId);
-        $stmt->bindParam(':title', $title);
-        $stmt->bindParam(':body', $body);
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
+    public function updateThread($id, $title, $body) {
+        $sql = "UPDATE threads SET title = :title, body = :body WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':title', $title, PDO::PARAM_STR);
+        $stmt->bindParam(':body', $body, PDO::PARAM_STR);
+        return $stmt->execute();
     }
 
     public function deleteThread($threadId) {
@@ -76,5 +73,12 @@ class Thread {
             return true;
         }
         return false;
+    }
+    public function getThreadsByUserId($userId) {
+        $query = "SELECT * FROM " . $this->table . " WHERE user_id = :user_id ORDER BY created_at DESC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $userId);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

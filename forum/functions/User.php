@@ -51,20 +51,19 @@ class User {
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-    public function updateProfile($userId, $username, $email, $password) {
-        $query = "UPDATE " . $this->table . " SET username = :username, password = :password ,email = :email WHERE id = :id";
-        $stmt = $this->conn->prepare($query);
+    public function updateProfile($userId, $username, $email, $newPassword = null) {
+        if ($newPassword !== null) {
+            $query = "UPDATE " . $this->table . " SET username = :username, email = :email, password = :password WHERE id = :id";
+            $stmt = $this->conn->prepare($query);
+            $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+            $stmt->bindParam(':password', $hashedPassword);
+        } else {
+            $query = "UPDATE " . $this->table . " SET username = :username, email = :email WHERE id = :id";
+            $stmt = $this->conn->prepare($query);
+        }
         $stmt->bindParam(':id', $userId);
         $stmt->bindParam(':username', $username);
         $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':password', password_hash($password, PASSWORD_BCRYPT));
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
-    }
-    public function updatePassword($userId, $hashedPassword) {
-        $stmt = $this->conn->prepare("UPDATE users SET password = ? WHERE id = ?");
-        return $stmt->execute([$hashedPassword, $userId]);
+        return $stmt->execute();
     }
 }

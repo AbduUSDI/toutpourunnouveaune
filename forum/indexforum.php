@@ -51,12 +51,15 @@ h1, .mt-5 {
 }
 </style>
 
-<div class="container">
+<div class="container mt-5">
     <h1 class="my-4">Forum</h1>
     <div class="row">
         <div class="col-md-8">
             <h2>Derniers Threads</h2>
+            <?php if (empty($threads)): ?>
+        <p>Aucunes discussion n'existe.</p>
             <ul class="list-group mb-4">
+                <?php else: ?>
                 <?php foreach ($threads as $thread): ?>
                     <li class="list-group-item">
                         <h5><a href="thread.php?id=<?php echo $thread['id']; ?>"><?php echo htmlspecialchars($thread['title']); ?></a></h5>
@@ -64,10 +67,15 @@ h1, .mt-5 {
                         <small class="text-muted">Par <?php echo htmlspecialchars($thread['author']); ?> le <?php echo $thread['created_at']; ?></small>
                     </li>
                 <?php endforeach; ?>
+            <?php endif; ?>
             </ul>
         </div>
         <div class="col-md-4">
             <h2>Threads les plus actifs</h2>
+            <?php if (empty($threads)): ?>
+        <p>Aucunes discussion n'a été trouvée.</p>
+            <ul class="list-group mb-4">
+                <?php else: ?>
             <ul class="list-group mb-4">
                 <?php foreach ($activeThreads as $activeThread): ?>
                     <li class="list-group-item">
@@ -75,6 +83,7 @@ h1, .mt-5 {
                         <small class="text-muted">Vues: <?php echo $activeThread['views']; ?></small>
                     </li>
                 <?php endforeach; ?>
+            <?php endif; ?>
             </ul>
         </div>
     </div>

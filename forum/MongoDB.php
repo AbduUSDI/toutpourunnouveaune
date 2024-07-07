@@ -21,4 +21,9 @@ class MongoDB {
     public function getCollection($collectionName) {
         return $this->mongoClient->selectDatabase('tpunn_forum')->selectCollection($collectionName);
     }
+    public function deleteThread($threadId) {
+        $collection = $this->getCollection('views');
+        $result = $collection->deleteOne(['thread_id' => (string)$threadId]);
+        return $result->isAcknowledged();
+    }
 }  

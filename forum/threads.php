@@ -39,7 +39,7 @@ h1, .mt-5 {
 }
 </style>
 
-<div class="container">
+<div class="container mt-5">
     <h1 class="my-4">Forum</h1>
     <div class="row">
         <div class="col-md-8">

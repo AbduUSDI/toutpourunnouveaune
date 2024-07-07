@@ -18,7 +18,7 @@
                 <a class="nav-link" href="my_profile.php">Mon profil</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../contact.php">Nous contacter</a>
+                <a class="nav-link" href="contact.php">Nous contacter</a>
             </li>
             <?php if (isset($_SESSION['user'])): ?>
                 <?php if ($_SESSION['user']['role'] === 'admin'): ?>

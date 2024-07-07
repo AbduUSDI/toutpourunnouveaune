@@ -30,17 +30,19 @@ include_once 'templates/navbar_forum.php';
 ?>
 
 <style>
-  body {
-    background-image: url('../image/backgroundwebsite.jpg');
-    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
-  }
-  h1,h2,h3 {
-    text-align: center;
-}
+    h1,h2,h3 { text-align: center; }
+    body {
+        background-image: url('../image/backgroundwebsite.jpg');
+        padding-top: 48px;
+    }
+    h1, .mt-5 {
+        background: whitesmoke;
+        border-radius: 15px;
+    }
 </style>
 
 
-<div class="container">
+<div class="container mt-5">
     <h1 class="my-4">Connexion</h1>
     <form action="login.php" method="post">
         <?php if (isset($error)): ?>
@@ -61,7 +63,7 @@ include_once 'templates/navbar_forum.php';
         </div>
         <button type="submit" class="btn btn-primary">Se connecter</button>
     </form>
-    <p class="mt-3">Pas encore inscrit ? <a href="register.php">Inscrivez-vous ici</a>.</p>
+    <p class="mt-3">Pas encore inscrit ? <a class="btn btn-outline-info" href="register.php">Inscrivez-vous ici</a></p>
 </div>
 
 <script>
