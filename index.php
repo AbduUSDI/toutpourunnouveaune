@@ -6,7 +6,8 @@ require_once 'functions/Database.php';
 
 
 require_once 'templates/header.php';
-require_once 'templates/navbar.php'; ?>
+require_once 'templates/navbar.php'; 
+?>
 
 <style>
   body {

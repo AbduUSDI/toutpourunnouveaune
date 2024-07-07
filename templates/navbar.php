@@ -27,7 +27,7 @@
                 <a class="nav-link" href="medicaladvices.php">Les avis médicaux</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="forum.php">Le forum</a>
+                <a class="nav-link" href="forum/indexforum.php">Le forum</a>
             </li>
             <?php if (isset($_SESSION['user'])): ?>
                 <li class="nav-item">

@@ -1,0 +1,80 @@
+<?php
+class Thread {
+    private $conn;
+    private $table = 'threads';
+
+    public function __construct($db) {
+        $this->conn = $db;
+    }
+
+    public function addThread($title, $body, $user_id) {
+        $query = "INSERT INTO " . $this->table . " (title, body, user_id, created_at) VALUES (:title, :body, :user_id, NOW())";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':title', $title);
+        $stmt->bindParam(':body', $body);
+        $stmt->bindParam(':user_id', $user_id);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
+    public function getActiveThreads($mongoClient) {
+        $viewsCollection = $mongoClient->getCollection('views');
+        $threadsCollection = $mongoClient->getCollection('threads');
+        
+        $activeThreads = $viewsCollection->find([], [
+            'sort' => ['views' => -1],
+            'limit' => 5
+        ]);
+    
+        $activeThreadsArray = [];
+        foreach ($activeThreads as $activeThread) {
+            $threadId = $activeThread['thread_id'];
+            $thread = $threadsCollection->findOne(['_id' => $threadId]);
+            if ($thread) {
+                $activeThreadsArray[] = $thread;
+            }
+        }
+        return $activeThreadsArray;
+    }
+    public function getThreads() {
+        $query = "SELECT t.id, t.title, t.body, t.created_at, u.username as author FROM " . $this->table . " t JOIN users u ON t.user_id = u.id ORDER BY t.created_at DESC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getThreadById($id) {
+        $query = "SELECT threads.*, users.username AS author
+                  FROM threads
+                  JOIN users ON threads.user_id = users.id
+                  WHERE threads.id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function updateThread($threadId, $title, $body) {
+        $query = "UPDATE " . $this->table . " SET title = :title, body = :body WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $threadId);
+        $stmt->bindParam(':title', $title);
+        $stmt->bindParam(':body', $body);
+        if ($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
+
+    public function deleteThread($threadId) {
+        $query = "DELETE FROM " . $this->table . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $threadId);
+        if ($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
+}
