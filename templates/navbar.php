@@ -9,6 +9,9 @@
                 <a class="nav-link" href="index.php">Accueil</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="food_presentations.php">Conseils de nutrition</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="quizzes.php">Nos quizz</a>
             </li>
             <li class="nav-item">

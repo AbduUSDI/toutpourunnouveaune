@@ -37,7 +37,8 @@ class MongoDB {
             foreach ($cursor as $document) {
                 $scores[] = [
                     'user_id' => $document['user_id'] ?? null,
-                    'score' => $document['score'] ?? 0
+                    'score' => $document['score'] ?? 0,
+                    'total_score' => $document['total_score'] ?? 0
                 ];
             }
             

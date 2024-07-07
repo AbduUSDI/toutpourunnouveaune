@@ -25,9 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 require_once '../templates/header.php';
 require_once 'navbar_admin.php';
 ?>
-<style>
 
-h1,h2,h3 {
+<style>
+h1, h2, h3 {
     text-align: center;
 }
 
@@ -35,11 +35,13 @@ body {
     background-image: url('../image/backgroundwebsite.jpg');
     padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
 }
+
 h1, .mt-5 {
     background: whitesmoke;
     border-radius: 15px;
 }
 </style>
+
 <div class="container mt-5">
     <h1>Créer un nouveau Quiz</h1>
     <form id="quizForm" method="post" action="add_quiz.php">
@@ -53,11 +55,13 @@ h1, .mt-5 {
                     <label>Question</label>
                     <input type="text" class="form-control" name="questions[0][question_text]" required>
                 </div>
-                <div class="form-group">
-                    <label>Réponses</label>
-                    <input type="text" class="form-control" name="questions[0][answers][0][answer_text]" required>
-                    <label>Bonne réponse</label>
-                    <input type="checkbox" name="questions[0][answers][0][is_correct]" value="1">
+                <div class="answersContainer">
+                    <div class="form-group answer">
+                        <label>Réponse</label>
+                        <input type="text" class="form-control" name="questions[0][answers][0][answer_text]" required>
+                        <label>Bonne réponse</label>
+                        <input type="checkbox" name="questions[0][answers][0][is_correct]" value="1">
+                    </div>
                 </div>
                 <button type="button" class="btn btn-info add-answer">Ajouter une réponse</button>
             </div>
@@ -77,11 +81,13 @@ h1, .mt-5 {
                     <label>Question</label>
                     <input type="text" class="form-control" name="questions[${questionIndex}][question_text]" required>
                 </div>
-                <div class="form-group">
-                    <label>Réponses</label>
-                    <input type="text" class="form-control" name="questions[${questionIndex}][answers][0][answer_text]" required>
-                    <label>Bonne réponse</label>
-                    <input type="checkbox" name="questions[${questionIndex}][answers][0][is_correct]" value="1">
+                <div class="answersContainer">
+                    <div class="form-group answer">
+                        <label>Réponse</label>
+                        <input type="text" class="form-control" name="questions[${questionIndex}][answers][0][answer_text]" required>
+                        <label>Bonne réponse</label>
+                        <input type="checkbox" name="questions[${questionIndex}][answers][0][is_correct]" value="1">
+                    </div>
                 </div>
                 <button type="button" class="btn btn-info add-answer">Ajouter une réponse</button>
             </div>`;
@@ -92,14 +98,17 @@ h1, .mt-5 {
     document.getElementById('questionsContainer').addEventListener('click', function(e) {
         if (e.target.classList.contains('add-answer')) {
             const questionDiv = e.target.closest('.question');
-            const answerIndex = questionDiv.querySelectorAll('.form-group').length - 1;
+            const answersContainer = questionDiv.querySelector('.answersContainer');
+            const answerIndex = answersContainer.querySelectorAll('.answer').length;
+            const questionIndex = Array.from(document.querySelectorAll('.question')).indexOf(questionDiv);
             const answerTemplate = `
-                <div class="form-group">
-                    <input type="text" class="form-control" name="questions[${questionIndex - 1}][answers][${answerIndex}][answer_text]" required>
+                <div class="form-group answer">
+                    <label>Réponse</label>
+                    <input type="text" class="form-control" name="questions[${questionIndex}][answers][${answerIndex}][answer_text]" required>
                     <label>Bonne réponse</label>
-                    <input type="checkbox" name="questions[${questionIndex - 1}][answers][${answerIndex}][is_correct]" value="1">
+                    <input type="checkbox" name="questions[${questionIndex}][answers][${answerIndex}][is_correct]" value="1">
                 </div>`;
-            questionDiv.querySelector('.add-answer').insertAdjacentHTML('beforebegin', answerTemplate);
+            answersContainer.insertAdjacentHTML('beforeend', answerTemplate);
         }
     });
 </script>

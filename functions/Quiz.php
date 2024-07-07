@@ -48,31 +48,43 @@ class Quiz {
     }
 
     public function addQuiz($titre, $questions) {
-        $query = "INSERT INTO " . $this->table_quiz . " (titre) VALUES (:titre)";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':titre', $titre);
-        $stmt->execute();
-        $quiz_id = $this->conn->lastInsertId();
-
-        foreach ($questions as $question) {
-            $query = "INSERT INTO " . $this->table_question . " (quiz_id, question_text) VALUES (:quiz_id, :question_text)";
+        try {
+            $this->conn->beginTransaction();
+    
+            // Insert quiz
+            $query = "INSERT INTO " . $this->table_quiz . " (titre) VALUES (:titre)";
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':quiz_id', $quiz_id);
-            $stmt->bindParam(':question_text', $question['question_text']);
+            $stmt->bindParam(':titre', $titre);
             $stmt->execute();
-            $question_id = $this->conn->lastInsertId();
-
-            foreach ($question['answers'] as $answer) {
-                $query = "INSERT INTO " . $this->table_answer . " (question_id, answer_text, is_correct) VALUES (:question_id, :answer_text, :is_correct)";
+            $quiz_id = $this->conn->lastInsertId();
+    
+            // Insert questions and answers
+            foreach ($questions as $question) {
+                $query = "INSERT INTO " . $this->table_question . " (quiz_id, question_text) VALUES (:quiz_id, :question_text)";
                 $stmt = $this->conn->prepare($query);
-                $stmt->bindParam(':question_id', $question_id);
-                $stmt->bindParam(':answer_text', $answer['answer_text']);
-                $stmt->bindParam(':is_correct', $answer['is_correct'], PDO::PARAM_BOOL);
+                $stmt->bindParam(':quiz_id', $quiz_id);
+                $stmt->bindParam(':question_text', $question['question_text']);
                 $stmt->execute();
+                $question_id = $this->conn->lastInsertId();
+    
+                foreach ($question['answers'] as $answer) {
+                    $is_correct = isset($answer['is_correct']) ? 1 : 0;
+                    $query = "INSERT INTO " . $this->table_answer . " (question_id, answer_text, is_correct) VALUES (:question_id, :answer_text, :is_correct)";
+                    $stmt = $this->conn->prepare($query);
+                    $stmt->bindParam(':question_id', $question_id);
+                    $stmt->bindParam(':answer_text', $answer['answer_text']);
+                    $stmt->bindParam(':is_correct', $is_correct, PDO::PARAM_BOOL);
+                    $stmt->execute();
+                }
             }
+    
+            $this->conn->commit();
+            return $quiz_id;
+        } catch (Exception $e) {
+            $this->conn->rollBack();
+            throw $e;
         }
-    }
-
+    }    
     public function updateQuiz($id, $titre, $questions) {
         $query = "UPDATE " . $this->table_quiz . " SET titre = :titre WHERE id = :id";
         $stmt = $this->conn->prepare($query);

@@ -40,13 +40,20 @@ foreach ($scores as &$score) {
 }
 unset($score);
 
+// Trier les scores par ordre décroissant
+usort($scores, function($a, $b) {
+    return $b['total_score'] <=> $a['total_score'];
+});
+
+// Calculer le total des scores
+$totalScore = array_sum(array_column($scores, 'total_score'));
+
 // Inclure la navigation admin  
 include_once 'navbar_admin.php'; 
 include_once '../templates/header.php'; 
 ?>  
 <style>
-
-h1,h2,h3 {
+h1, h2, h3 {
     text-align: center;
 }
 
@@ -54,6 +61,7 @@ body {
     background-image: url('../image/backgroundwebsite.jpg');
     padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
 }
+
 h1, .mt-5 {
     background: whitesmoke;
     border-radius: 15px;
@@ -84,10 +92,16 @@ h1, .mt-5 {
             <?php foreach ($scores as $score): ?>             
                 <tr>
                     <td><?php echo htmlspecialchars($score['nom_utilisateur'] ?? 'Utilisateur inconnu'); ?></td>
-                    <td><?php echo $score['score']; ?></td>
+                    <td><?php echo $score['total_score']; ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>     
+        <tfoot>
+            <tr>
+                <th>Total</th>
+                <th><?php echo $totalScore; ?></th>
+            </tr>
+        </tfoot>
     </table>
     </div>  
     <!-- Rubrique Avis Médicaux -->     
@@ -104,4 +118,4 @@ h1, .mt-5 {
     </ul> 
 </div>  
 
-<?php include_once '../templates/footer.php'; ?>
+<?php include_once '../templates/footer.php'; ?> 
