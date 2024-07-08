@@ -1,19 +1,18 @@
 <?php
 session_start();
-require_once 'functions/Database.php';
-require_once 'functions/User.php';
-require_once 'functions/Thread.php';
-require_once 'functions/Response.php';
+require_once '../functions/Database.php';
+require_once '../functions/User.php';
+require_once '../functions/Forum.php';
+require_once '../functions/Response.php';
 
 if (!isset($_SESSION['user'])) {
     header('Location: login.php');
     exit;
 }
 
-$database = new Database2();
+$database = new Database();
 $db = $database->connect();
 
-$user = new User($db);
 $thread = new Thread($db);
 $response = new Response($db);
 

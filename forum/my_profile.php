@@ -1,20 +1,19 @@
 <?php
 session_start();
-require_once 'functions/Database.php';
-require_once 'functions/User.php';
-require_once 'functions/Thread.php';
-require_once 'functions/Response.php';
+require_once '../functions/Database.php';
+require_once '../functions/User.php';
+require_once '../functions/Forum.php';
+require_once '../functions/Response.php';
 require_once 'MongoDB.php';
 
 if (!isset($_SESSION['user'])) {
     header('Location: login.php');
     exit;
 }
-
-$database = new Database2();
+$database = new Database();
 $db = $database->connect();
 
-$user = new User($db);
+$user = new User2($db);
 $thread = new Thread($db);
 $response = new Response($db);
 $mongoClient = new MongoDB();
@@ -131,7 +130,7 @@ include_once 'templates/navbar_forum.php';
 </style>
 
 <div class="container mt-5">
-    <h1>Profil de <?php echo htmlspecialchars($currentUser['username']); ?></h1>
+    <h1>Profil de <?php echo htmlspecialchars($currentUser['nom_utilisateur']); ?></h1>
     
     <?php
     if (isset($_SESSION['message'])) {
@@ -148,7 +147,7 @@ include_once 'templates/navbar_forum.php';
         <input type="hidden" name="action" value="update_profile">
         <div class="form-group">
             <label for="username">Nom d'utilisateur</label>
-            <input type="text" class="form-control" id="username" name="username" value="<?php echo htmlspecialchars($currentUser['username']); ?>" required>
+            <input type="text" class="form-control" id="username" name="username" value="<?php echo htmlspecialchars($currentUser['nom_utilisateur']); ?>" required>
         </div>
         <div class="form-group">
             <label for="email">Email</label>
@@ -156,7 +155,7 @@ include_once 'templates/navbar_forum.php';
         </div>
         <div class="input-group-append">
             <label for="new_password">Nouveau mot de passe (optionnel)</label>
-            <input type="password" class="form-control" id="password" name="password">
+            <input type="password" class="form-control" id="password" name="new_password">
             <button class="btn btn-outline-secondary" type="button" id="togglePassword"><i class="fas fa-eye"></i></button>
         </div>
         <input type="submit" class="btn btn-info" value="Mettre à jour le profil">

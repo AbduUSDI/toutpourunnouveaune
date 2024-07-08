@@ -5,10 +5,10 @@ if (!isset($_SESSION['user'])) {
     exit;
 }
 
-require_once 'functions/Database.php';
-require_once 'functions/Thread.php';
+require_once '../functions/Database.php';
+require_once '../functions/Forum.php';
 
-$database = new Database2();
+$database = new Database();
 $db = $database->connect();
 
 $thread = new Thread($db);

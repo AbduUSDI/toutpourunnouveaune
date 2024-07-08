@@ -14,12 +14,12 @@ require_once '../functions/AvisMedicaux.php';
 $database = new Database(); 
 $db = $database->connect(); 
 
-$forum = new Forum($db); 
+$forum = new Thread($db); 
 
 $avisMedicaux = new AvisMedicaux($db);
 
 // Récupérer les données  
-$threads = $forum->getDerniersThreads(); 
+$threads = $forum->getThreads(); 
 $avis = $avisMedicaux->getDerniersAvis();
 
 // Inclure la navigation docteur  
@@ -36,7 +36,7 @@ body {
     background-image: url('../image/backgroundwebsite.jpg');
     padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
 }
-h1, .mt-5 {
+h1, .mt-5, .mb-4 {
     background: whitesmoke;
     border-radius: 15px;
 }
@@ -46,11 +46,13 @@ h1, .mt-5 {
       
     <!-- Rubrique Forum -->     
     <h2>Derniers Threads du Forum</h2>     
-    <ul class="list-group mb-4">         
+    <div class="list-group mb-4">         
         <?php foreach ($threads as $thread): ?>             
-            <li class="list-group-item"><?php echo htmlspecialchars($thread['title']); ?> - <?php echo htmlspecialchars($thread['author']); ?> (<?php echo $thread['date_creation']; ?>)</li>         
+            <h5 class="list-group-item"><?php echo htmlspecialchars($thread['title']); ?></h5> 
+            <p class="list-group-item"><?php echo htmlspecialchars($thread['author']); ?> (<?php echo $thread['created_at']; ?>)</p>
+            <p class="list-group-item"><?php echo htmlspecialchars($thread['body']); ?></p>
         <?php endforeach; ?>     
-    </ul>
+        </div>
       
     <!-- Rubrique Avis Médicaux -->     
     <h2>Derniers avis médicaux des Docteurs</h2>     

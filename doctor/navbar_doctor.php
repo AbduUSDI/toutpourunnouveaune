@@ -9,7 +9,7 @@
                 <a class="nav-link" href="index.php">Accueil</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../forum.php">Forum</a>
+                <a class="nav-link" href="../forum/indexforum.php">Forum</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="manage_food_presentations.php">Gérer les conseils de nutrition</a>

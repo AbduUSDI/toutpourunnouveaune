@@ -1,9 +1,9 @@
 <?php
 session_start();
-require_once 'functions/Database.php';
-require_once 'functions/User.php';
-require_once 'functions/Thread.php';
-require_once 'functions/Response.php';
+require_once '../functions/Database.php';
+require_once '../functions/User.php';
+require_once '../functions/Forum.php';
+require_once '../functions/Response.php';
 require_once 'MongoDB.php';
 
 if (!isset($_SESSION['user'])) {
@@ -11,10 +11,10 @@ if (!isset($_SESSION['user'])) {
     exit;
 }
 
-$database = new Database2();
+$database = new Database();
 $db = $database->connect();
 
-$user = new User($db);
+$user = new User2($db);
 $thread = new Thread($db);
 $response = new Response($db);
 $mongoClient = new MongoDB();

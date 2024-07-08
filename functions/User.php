@@ -87,3 +87,72 @@ class User {
         return $results;
     }
 }
+
+class User2 {
+    private $conn;
+    private $table = 'utilisateurs';
+
+    public function __construct($db) {
+        $this->conn = $db;
+    }
+
+    public function register($username, $email, $password, $role) {
+        $query = "INSERT INTO " . $this->table . " (nom_utilisateur, email, mot_de_passe, role) VALUES (:nom_utilisateur, :email, :mot_de_passe, :role)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':nom_utilisateur', $username);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':mot_de_passe', password_hash($password, PASSWORD_BCRYPT));
+        $stmt->bindParam(':role', $role);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
+
+    public function login($email, $password) {
+        $query = "SELECT * FROM " . $this->table . " WHERE email = :email";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user && password_verify($password, $user['mot_de_passe'])) {
+            return $user;
+        }
+        return false;
+    }
+
+    public function getUsernames($db, $userIds) {
+        $usernames = [];
+        $in  = str_repeat('?,', count($userIds) - 1) . '?';
+        $stmt = $db->prepare("SELECT id, nom_utilisateur FROM utilisateurs WHERE id IN ($in)");
+        $stmt->execute($userIds);
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $usernames[$row['id']] = $row['nom_utilisateur'];
+        }
+        return $usernames;
+    }
+    public function getUserById($id) {
+        $query = "SELECT * FROM " . $this->table . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    public function updateProfile($userId, $username, $email, $newPassword = null) {
+        if ($newPassword !== null) {
+            $query = "UPDATE " . $this->table . " SET nom_utilisateur = :nom_utilisateur, email = :email, mot_de_passe = :mot_de_passe WHERE id = :id";
+            $stmt = $this->conn->prepare($query);
+            $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+            $stmt->bindParam(':mot_de_passe', $hashedPassword);
+        } else {
+            $query = "UPDATE " . $this->table . " SET nom_utilisateur = :nom_utilisateur, email = :email WHERE id = :id";
+            $stmt = $this->conn->prepare($query);
+        }
+        $stmt->bindParam(':id', $userId);
+        $stmt->bindParam(':nom_utilisateur', $username);
+        $stmt->bindParam(':email', $email);
+        return $stmt->execute();
+    }
+}

@@ -20,7 +20,7 @@ class Response {
     }
 
     public function getResponsesByThreadId($threadId) {
-        $query = "SELECT r.id, r.body, r.created_at, u.username as author FROM " . $this->table . " r JOIN users u ON r.user_id = u.id WHERE r.thread_id = :thread_id ORDER BY r.created_at ASC";
+        $query = "SELECT r.id, r.body, r.created_at, u.nom_utilisateur as author FROM " . $this->table . " r JOIN utilisateurs u ON r.user_id = u.id WHERE r.thread_id = :thread_id ORDER BY r.created_at ASC";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':thread_id', $threadId);
         $stmt->execute();
