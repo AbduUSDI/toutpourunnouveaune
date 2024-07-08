@@ -63,7 +63,7 @@ h1, .mt-5 {
     border-radius: 15px;
 }
 </style>
-<div class="container">
+<div class="container mt-5">
     <h1 class="my-4">Modifier Utilisateur</h1>
     <form action="edit_user.php?id=<?php echo $user['id']; ?>" method="POST">
         <div class="form-group">

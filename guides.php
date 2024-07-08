@@ -33,7 +33,7 @@ h1, .mt-5 {
 }
 </style>
 
-<div class="container mt-4">
+<div class="container mt-5">
     <h1 class="text-center">Tout nos guides disponibles</h1>
     <?php foreach ($guides as $guide): ?>
         <div class="card mb-4">

@@ -94,6 +94,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                     break;
 
+                    case 'send_friend_request':
+                        $friend_username = filter_input(INPUT_POST, 'friend_username', FILTER_SANITIZE_STRING);
+                        if ($friend_username) {
+                            // Récupérer l'ID de l'utilisateur à partir du nom d'utilisateur
+                            $receiver = $user->getUserByUsername($friend_username);
+                            if ($receiver) {
+                                $result = $user->sendFriendRequest($_SESSION['user']['id'], $receiver['id']);
+                                $message = $result ? "Demande d'ami envoyée avec succès." : "Erreur lors de l'envoi de la demande d'ami.";
+                            } else {
+                                $message = "Utilisateur non trouvé.";
+                            }
+                        } else {
+                            $message = "Nom d'utilisateur requis pour envoyer une demande d'ami.";
+                        }
+                        break;
+    
+                    case 'respond_friend_request':
+                        $request_id = filter_input(INPUT_POST, 'request_id', FILTER_SANITIZE_NUMBER_INT);
+                        $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_STRING);
+                        if ($request_id && in_array($status, ['accepted', 'declined'])) {
+                            $result = $user->respondFriendRequest($request_id, $status);
+                            $message = $result ? "Demande d'ami mise à jour avec succès." : "Erreur lors de la mise à jour de la demande d'ami.";
+                        } else {
+                            $message = "ID de la demande et statut requis pour répondre à une demande d'ami.";
+                        }
+                        break;
+
+                    case 'remove_friend':
+                        $request_id = filter_input(INPUT_POST, 'request_id', FILTER_SANITIZE_NUMBER_INT);
+                        if ($request_id) {
+                            $result = $user->removeFriend($request_id);
+                            $message = $result ? "Ami supprimé avec succès." : "Erreur lors de la suppression de l'ami.";
+                        } else {
+                            $message = "ID de la demande d'ami invalide pour la suppression.";
+                        }
+                        break;
+
                 default:
                     $message = "Action non reconnue.";
             }
@@ -110,6 +147,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+$friendRequests = $user->getFriendRequests($_SESSION['user']['id']);
+$friends = $user->getFriends($_SESSION['user']['id']);
 $userThreads = $thread->getThreadsByUserId($_SESSION['user']['id']);
 $userResponses = $response->getResponsesByUserId($_SESSION['user']['id']);
 
@@ -161,7 +200,63 @@ include_once 'templates/navbar_forum.php';
         <input type="submit" class="btn btn-info" value="Mettre à jour le profil">
     </form>
 </div>
+<div class="container mt-5">
+    <h2>Mes amis</h2>
+    <?php if (empty($friends)): ?>
+        <p>Vous n'avez pas encore d'amis.</p>
+    <?php else: ?>
+        <ul class="list-group">
+            <?php foreach ($friends as $friend): ?>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <?php echo htmlspecialchars($friend['nom_utilisateur']); ?>
+                    <form action="my_profile.php" method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet ami ?');">
+                        <input type="hidden" name="action" value="remove_friend">
+                        <input type="hidden" name="request_id" value="<?php echo $friend['request_id']; ?>">
+                        <button type="submit" class="btn btn-sm btn-danger">Supprimer de mes amis</button>
+                    </form>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+</div>
+<div class="container mt-5">
+    <h2>Envoyer une demande d'ami</h2>
+    <form action="my_profile.php" method="POST">
+        <input type="hidden" name="action" value="send_friend_request">
+        <div class="form-group">
+            <label for="friend_username">Nom d'utilisateur</label>
+            <input type="text" class="form-control" id="friend_username" name="friend_username" required>
+        </div>
+        <button type="submit" class="btn btn-info mt-2">Envoyer la demande</button>
+    </form>
+</div>
+<div class="container mt-5">
+    <h2>Demandes d'amis en attente</h2>
+    <?php if (empty($friendRequests)): ?>
+        <p>Vous n'avez pas de demandes d'amis en attente.</p>
+    <?php else: ?>
+        <ul class="list-group">
+            <?php foreach ($friendRequests as $request): ?>
+                <li class="list-group-item">
+                    <span>Demande d'ami de l'utilisateur ID <?php echo $request['sender_id']; ?></span>
+                    <form action="my_profile.php" method="POST" class="d-inline">
+                        <input type="hidden" name="action" value="respond_friend_request">
+                        <input type="hidden" name="request_id" value="<?php echo $request['id']; ?>">
+                        <input type="hidden" name="status" value="accepted">
+                            <button type="submit" class="btn btn-success">Accepter</button>
+                    </form>
+                    <form action="my_profile.php" method="POST" class="d-inline">
+                        <input type="hidden" name="action" value="respond_friend_request">
+                        <input type="hidden" name="request_id" value="<?php echo $request['id']; ?>">
+                        <input type="hidden" name="status" value="declined">
+                            <button type="submit" class="btn btn-danger">Refuser</button>
+                    </form>
+                </li>
+                <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
 
+</div>
 <div class="container mt-5">
     <h2>Mes threads</h2>
     <?php if (empty($userThreads)): ?>
@@ -181,7 +276,7 @@ include_once 'templates/navbar_forum.php';
         <td><?php echo htmlspecialchars($thread['title']); ?></td>
         <td><?php echo $thread['created_at']; ?></td>
         <td>
-            <button class="btn btn-primary btn-modifier" type="button" data-bs-toggle="collapse" data-bs-target="#editThreadForm<?php echo $thread['id']; ?>" aria-expanded="false" aria-controls="editThreadForm<?php echo $thread['id']; ?>">
+            <button class="btn btn-warning btn-modifier" type="button" data-bs-toggle="collapse" data-bs-target="#editThreadForm<?php echo $thread['id']; ?>" aria-expanded="false" aria-controls="editThreadForm<?php echo $thread['id']; ?>">
                 Modifier
             </button>
             <form method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce thread ?');">
@@ -236,7 +331,7 @@ include_once 'templates/navbar_forum.php';
                         <td><?php echo htmlspecialchars(substr($response['body'], 0, 50)) . '...'; ?></td>
                         <td><?php echo $response['created_at']; ?></td>
                         <td>
-                            <button class="btn btn-primary btn-modifier" type="button" data-bs-toggle="collapse" data-bs-target="#editResponseForm<?php echo $response['id']; ?>" aria-expanded="false" aria-controls="editResponseForm<?php echo $response['id']; ?>">
+                            <button class="btn btn-warning btn-modifier" type="button" data-bs-toggle="collapse" data-bs-target="#editResponseForm<?php echo $response['id']; ?>" aria-expanded="false" aria-controls="editResponseForm<?php echo $response['id']; ?>">
                                 Modifier
                             </button>
                         <form method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?');">

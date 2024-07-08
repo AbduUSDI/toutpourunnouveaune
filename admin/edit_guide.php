@@ -53,7 +53,7 @@ h1, .mt-5 {
     border-radius: 15px;
 }
 </style>
-<div class="container mt-4">
+<div class="container mt-5">
     <h1>Modifier le Guide</h1>
     <form action="edit_guide.php?id=<?php echo $guide['id']; ?>" method="POST">
         <div class="form-group">

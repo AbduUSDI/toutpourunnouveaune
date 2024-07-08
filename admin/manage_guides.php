@@ -53,7 +53,7 @@ h1, .mt-5 {
     border-radius: 15px;
 }
 </style>
-<div class="container mt-4">
+<div class="container mt-5">
     <h1>Gestion des Guides pour Bébé</h1>
     
     <!-- Formulaire pour créer un nouveau guide -->

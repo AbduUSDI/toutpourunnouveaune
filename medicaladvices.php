@@ -12,9 +12,9 @@ $avisMedicaux = new AvisMedicaux($db);
 
 $avis = $avisMedicaux->getAll();
 
-// Inclure la navigation admin  
+// Inclure la navigation admin 
+include_once 'templates/header.php';
 include_once 'templates/navbar.php'; 
-include_once 'templates/header.php'; 
 ?>
 <style>
 
@@ -49,3 +49,5 @@ h1, .mt-5 {
         <?php endforeach; ?>     
     </ul> 
 </div> 
+
+<?php include 'templates/footer.php';

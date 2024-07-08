@@ -19,10 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     if ($userData && password_verify($password, $userData['mot_de_passe'])) {
         echo "Mot de passe vérifié.<br>";
         $_SESSION['user'] = $userData;
-        if ($userData['role_id'] == 1 && 2 && 3) {
+        if ($userData['role_id'] == 1 || $userData['role_id'] == 2 || $userData['role_id'] == 3) {
             header('Location: index.php');
         } else {
-
             header('Location: login.php');
         }
         exit;
@@ -39,7 +38,7 @@ h1,h2,h3 {
 }
 
 body {
-    background-image: url('../image/backgroundwebsite.jpg');
+    background-image: url('image/backgroundwebsite.jpg');
     padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
 }
 h1, .mt-5 {

@@ -155,4 +155,53 @@ class User2 {
         $stmt->bindParam(':email', $email);
         return $stmt->execute();
     }
+    public function sendFriendRequest($sender_id, $receiver_id) {
+        $query = "INSERT INTO friend_requests (sender_id, receiver_id) VALUES (:sender_id, :receiver_id)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':sender_id', $sender_id);
+        $stmt->bindParam(':receiver_id', $receiver_id);
+        return $stmt->execute();
+    }
+
+    public function respondFriendRequest($request_id, $status) {
+        $query = "UPDATE friend_requests SET status = :status WHERE id = :request_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':status', $status);
+        $stmt->bindParam(':request_id', $request_id);
+        return $stmt->execute();
+    }
+
+    public function getFriendRequests($user_id) {
+        $query = "SELECT * FROM friend_requests WHERE receiver_id = :user_id AND status = 'pending'";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getFriends($user_id) {
+        $query = "SELECT u.id, u.nom_utilisateur, fr.id as request_id
+                  FROM friend_requests fr
+                  JOIN utilisateurs u ON (fr.sender_id = u.id OR fr.receiver_id = u.id)
+                  WHERE (fr.sender_id = :user_id OR fr.receiver_id = :user_id)
+                  AND fr.status = 'accepted'
+                  AND u.id != :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function getUserByUsername($username) {
+        $query = "SELECT * FROM utilisateurs WHERE nom_utilisateur = :username";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':username', $username);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    public function removeFriend($request_id) {
+        $query = "DELETE FROM friend_requests WHERE id = :request_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':request_id', $request_id);
+        return $stmt->execute();
+    }
 }

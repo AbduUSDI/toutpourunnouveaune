@@ -9,15 +9,11 @@ require_once '../MongoDB.php';
 require_once '../functions/Database.php'; 
 require_once '../functions/User.php'; 
 require_once '../functions/AvisMedicaux.php'; 
-require_once '../forum/functions/Database.php'; 
-require_once '../forum/functions/Thread.php';
+require_once '../functions/Forum.php';
 
 // Connexion à la base de données MySQL  
 $database = new Database(); 
 $db = $database->connect();  
-
-$database2 = new Database2();
-$db2 = $database2->connect();
 
 $mongoClient = new MongoDB(); 
 $quiz = $mongoClient; 
@@ -25,7 +21,7 @@ $scores = $quiz->getScoresParents();
 
 $usernames = new User($db); 
 $avisMedicaux = new AvisMedicaux($db);  
-$thread = new Thread($db2);
+$thread = new Thread($db);
 
 // Récupérer les données  
 
