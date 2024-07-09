@@ -21,7 +21,21 @@ $userProfile = $profile->getProfileByUserId($userId);
 include '../templates/header.php';
 include 'navbar_admin.php'
 ?>
+<style>
 
+h1,h2,h3 {
+    text-align: center;
+}
+
+body {
+    background-image: url('../image/background.jpg');
+    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+}
+h1, .mt-5 {
+    background: whitesmoke;
+    border-radius: 15px;
+}
+</style>
 <div class="container mt-5">
     <h1>Profil de <?php echo htmlspecialchars($_SESSION['user']['nom_utilisateur']); ?></h1>
     
@@ -52,7 +66,7 @@ include 'navbar_admin.php'
             }
             ?>
             
-            <a href="edit_profile.php" class="btn btn-primary">Modifier le profil</a>
+            <a href="edit_profile.php" class="btn btn-info">Modifier le profil</a>
         </div>
     </div>
 </div>

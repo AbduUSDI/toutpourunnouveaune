@@ -24,14 +24,26 @@ $users = $user->getAllUtilisateurs();
 include '../templates/header.php';
 include 'navbar_admin.php';
 ?>
+<style>
 
-<!-- Conteneur pour afficher le tableau des utilisateurs -->
+h1,h2,h3 {
+    text-align: center;
+}
 
-<div class="container">
+body {
+    background-image: url('../image/background.jpg');
+    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+}
+h1, .mt-5 {
+    background: whitesmoke;
+    border-radius: 15px;
+}
+</style>
+<div class="container mt-5">
     <h1 class="my-4">Gérer les utilisateurs</h1>
     <div class="table-responsive">
-        <a href="add_user.php" class="btn btn-success mb-4">Ajouter un utilisateur</a>
-        <table class="table table-bordered table-striped table-hover">
+        <a href="add_user.php" class="btn btn-info mb-4">Ajouter un utilisateur</a>
+        <table class="table table-bordered table-striped table-hover" style="background: white">
             <thead class="thead-dark">
                 <tr>
                     <th>Email</th>

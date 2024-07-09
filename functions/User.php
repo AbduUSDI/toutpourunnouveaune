@@ -26,13 +26,11 @@ class User {
         $stmt->execute();
         return $stmt->fetchColumn() > 0;
     }
-
     public function getUtilisateurParId($id) {
         $stmt = $this->conn->prepare("SELECT * FROM utilisateurs WHERE id = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-
     public function addUser($email, $password, $role_id, $username) {
         // Hacher le mot de passe
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -71,7 +69,6 @@ class User {
         }
         $stmt->execute();
     }
-
     public function deleteUser($id) {
         $stmt = $this->conn->prepare("DELETE FROM utilisateurs WHERE id = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -80,5 +77,131 @@ class User {
     public function updatePassword($userId, $hashedPassword) {
         $stmt = $this->conn->prepare("UPDATE utilisateurs SET mot_de_passe = ? WHERE id = ?");
         return $stmt->execute([$hashedPassword, $userId]);
+    }
+    function getUsernames($db, $userIds) {
+        $placeholders = implode(',', array_fill(0, count($userIds), '?'));
+        $query = "SELECT id, nom_utilisateur FROM utilisateurs WHERE id IN ($placeholders)";
+        $stmt = $db->prepare($query);
+        $stmt->execute($userIds);
+        $results = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+        return $results;
+    }
+}
+
+class User2 {
+    private $conn;
+    private $table = 'utilisateurs';
+
+    public function __construct($db) {
+        $this->conn = $db;
+    }
+
+    public function register($username, $email, $password, $role) {
+        $query = "INSERT INTO " . $this->table . " (nom_utilisateur, email, mot_de_passe, role) VALUES (:nom_utilisateur, :email, :mot_de_passe, :role)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':nom_utilisateur', $username);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':mot_de_passe', password_hash($password, PASSWORD_BCRYPT));
+        $stmt->bindParam(':role', $role);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
+
+    public function login($email, $password) {
+        $query = "SELECT * FROM " . $this->table . " WHERE email = :email";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user && password_verify($password, $user['mot_de_passe'])) {
+            return $user;
+        }
+        return false;
+    }
+
+    public function getUsernames($db, $userIds) {
+        $usernames = [];
+        $in  = str_repeat('?,', count($userIds) - 1) . '?';
+        $stmt = $db->prepare("SELECT id, nom_utilisateur FROM utilisateurs WHERE id IN ($in)");
+        $stmt->execute($userIds);
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $usernames[$row['id']] = $row['nom_utilisateur'];
+        }
+        return $usernames;
+    }
+    public function getUserById($id) {
+        $query = "SELECT * FROM " . $this->table . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    public function updateProfile($userId, $username, $email, $newPassword = null) {
+        if ($newPassword !== null) {
+            $query = "UPDATE " . $this->table . " SET nom_utilisateur = :nom_utilisateur, email = :email, mot_de_passe = :mot_de_passe WHERE id = :id";
+            $stmt = $this->conn->prepare($query);
+            $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+            $stmt->bindParam(':mot_de_passe', $hashedPassword);
+        } else {
+            $query = "UPDATE " . $this->table . " SET nom_utilisateur = :nom_utilisateur, email = :email WHERE id = :id";
+            $stmt = $this->conn->prepare($query);
+        }
+        $stmt->bindParam(':id', $userId);
+        $stmt->bindParam(':nom_utilisateur', $username);
+        $stmt->bindParam(':email', $email);
+        return $stmt->execute();
+    }
+    public function sendFriendRequest($sender_id, $receiver_id) {
+        $query = "INSERT INTO friend_requests (sender_id, receiver_id) VALUES (:sender_id, :receiver_id)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':sender_id', $sender_id);
+        $stmt->bindParam(':receiver_id', $receiver_id);
+        return $stmt->execute();
+    }
+
+    public function respondFriendRequest($request_id, $status) {
+        $query = "UPDATE friend_requests SET status = :status WHERE id = :request_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':status', $status);
+        $stmt->bindParam(':request_id', $request_id);
+        return $stmt->execute();
+    }
+
+    public function getFriendRequests($user_id) {
+        $query = "SELECT * FROM friend_requests WHERE receiver_id = :user_id AND status = 'pending'";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getFriends($user_id) {
+        $query = "SELECT u.id, u.nom_utilisateur, fr.id as request_id
+                  FROM friend_requests fr
+                  JOIN utilisateurs u ON (fr.sender_id = u.id OR fr.receiver_id = u.id)
+                  WHERE (fr.sender_id = :user_id OR fr.receiver_id = :user_id)
+                  AND fr.status = 'accepted'
+                  AND u.id != :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function getUserByUsername($username) {
+        $query = "SELECT * FROM utilisateurs WHERE nom_utilisateur = :username";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':username', $username);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    public function removeFriend($request_id) {
+        $query = "DELETE FROM friend_requests WHERE id = :request_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':request_id', $request_id);
+        return $stmt->execute();
     }
 }

@@ -28,7 +28,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 require_once '../templates/header.php';
 require_once 'navbar_admin.php';
 ?>
+<style>
 
+h1,h2,h3 {
+    text-align: center;
+}
+
+body {
+    background-image: url('../image/background.jpg');
+    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+}
+h1, .mt-5 {
+    background: whitesmoke;
+    border-radius: 15px;
+}
+</style>
 <div class="container mt-5">
     <h1>Modifier le Quiz</h1>
     <form id="quizForm" method="post" action="update_quiz.php?id=<?php echo $quiz_id; ?>">
@@ -51,7 +65,7 @@ require_once 'navbar_admin.php';
                             <input type="checkbox" name="questions[<?php echo $questionIndex; ?>][answers][<?php echo $answerIndex; ?>][is_correct]" value="1" <?php if ($answer['is_correct']) echo 'checked'; ?>>
                         </div>
                     <?php endforeach; ?>
-                    <button type="button" class="btn btn-primary add-answer">Ajouter une réponse</button>
+                    <button type="button" class="btn btn-info add-answer">Ajouter une réponse</button>
                 </div>
             <?php endforeach; ?>
         </div>
@@ -77,7 +91,7 @@ require_once 'navbar_admin.php';
                     <label>Bonne réponse</label>
                     <input type="checkbox" name="questions[${questionIndex}][answers][0][is_correct]" value="1">
                 </div>
-                <button type="button" class="btn btn-primary add-answer">Ajouter une réponse</button>
+                <button type="button" class="btn btn-info add-answer">Ajouter une réponse</button>
             </div>`;
         document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', questionTemplate);
         questionIndex++;

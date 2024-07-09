@@ -5,7 +5,7 @@ class Comment {
     public function __construct($db) {
         $this->conn = $db;
     }
-
+    // c = comments Table  ;   u = utilisateurs   ;
     public function getApprovedCommentsByGuideId($guide_id) {
         $query = "SELECT c.*, u.nom_utilisateur FROM commentaires c JOIN utilisateurs u ON c.user_id = u.id WHERE c.guide_id = :guide_id AND c.approuve = 1 ORDER BY c.date_creation DESC";
         $stmt = $this->conn->prepare($query);

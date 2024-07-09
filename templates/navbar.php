@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" style="background: linear-gradient(to right, #98B46D, #DAE8C5);">
     <a class="navbar-brand" href="index.php">Tout pour un nouveau né</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -7,6 +7,9 @@
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
                 <a class="nav-link" href="index.php">Accueil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="food_presentations.php">Conseils de nutrition</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="quizzes.php">Nos quizz</a>
@@ -21,7 +24,10 @@
                 <a class="nav-link" href="contact.php">Nous contacter</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="forum.php">Le forum</a>
+                <a class="nav-link" href="medicaladvices.php">Les avis médicaux</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="forum/indexforum.php">Le forum</a>
             </li>
             <?php if (isset($_SESSION['user'])): ?>
                 <li class="nav-item">
@@ -43,13 +49,13 @@
 
             <?php if (isset($_SESSION['user']) && $_SESSION['user']['role_id'] == 2): ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="employee/index.php">Mon espace docteur</a>
+                    <a class="nav-link" href="doctor/index.php">Mon espace docteur</a>
                 </li>
             <?php endif; ?>
 
             <?php if (isset($_SESSION['user']) && $_SESSION['user']['role_id'] == 3): ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="vet/index.php">Mon espace parent</a>
+                    <a class="nav-link" href="parent/index.php">Mon espace parent</a>
                 </li>
             <?php endif; ?>
         </ul>

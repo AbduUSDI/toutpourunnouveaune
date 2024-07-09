@@ -34,8 +34,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 include '../templates/header.php';
 include 'navbar_admin.php';
 ?>
+<style>
 
-<!-- Conteneur pour afficher le formulaire (POST) pour ajouter un utilisateur -->
+h1,h2,h3 {
+    text-align: center;
+}
+
+body {
+    background-image: url('../image/background.jpg');
+    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+}
+h1, .mt-5 {
+    background: whitesmoke;
+    border-radius: 15px;
+}
+</style>
 <div class="container">
     <h1 class="my-4">Ajouter un Utilisateur</h1>
     <form action="add_user.php" method="POST">

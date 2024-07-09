@@ -20,12 +20,28 @@ $quizzes = $quiz->getAllQuizzes();
 include_once 'navbar_admin.php';
 include_once '../templates/header.php';
 ?>
+<style>
 
-<div class="container">
-    <h1 class="my-4">Gestion des Quizzes</h1>
-    <a href="add_quiz.php" class="btn btn-primary">Ajouter un nouveau quiz</a>
-    <table class="table table-bordered mt-4">
-        <thead>
+h1,h2,h3 {
+    text-align: center;
+}
+
+body {
+    background-image: url('../image/background.jpg');
+    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+}
+h1, .mt-5 {
+    background: whitesmoke;
+    border-radius: 15px;
+}
+</style>
+
+<div class="container mt-5">
+    <h1 class="my-4">Gestion des Quiz</h1>
+    <a href="add_quiz.php" class="btn btn-info">Ajouter un nouveau quiz</a>
+    <div class="table-responsive">
+    <table class="table table-striped table-hover mb-4" style="background: white">
+        <thead class="thead-dark">
             <tr>
                 <th>ID</th>
                 <th>Titre</th>
@@ -47,6 +63,7 @@ include_once '../templates/header.php';
             <?php endforeach; ?>
         </tbody>
     </table>
+    </div>
 </div>
 
 <?php include_once '../templates/footer.php'; ?>

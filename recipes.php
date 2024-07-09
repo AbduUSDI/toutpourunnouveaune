@@ -22,12 +22,16 @@ h1,h2,h3 {
 }
 
 body {
+    background-image: url('image/background.jpg');
     padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
 }
-
+h1, .mm-4 {
+    background: whitesmoke;
+    border-radius: 15px;
+}
 </style>
 <div class="container mt-4">
-    <h1 class="mb-4">Nos Recettes</h1>
+    <h1 class="mb-4">Nos recettes</h1>
 
     <div class="row">
         <?php foreach ($recettes as $recette): ?>
