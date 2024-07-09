@@ -89,10 +89,10 @@ h1,h2,h3 {
 }
 
 body {
-    background-image: url('../image/backgroundwebsite.jpg');
+    background-image: url('../image/background.jpg');
     padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
 }
-h1, .mt-5 {
+h1, .mt-4 {
     background: whitesmoke;
     border-radius: 15px;
 }
@@ -112,10 +112,10 @@ h1, .mt-5 {
     ?>
 
     <div class="card mb-4">
-        <div class="card-header">
+        <div class="card-header text-center bg-info">
             Ajouter une nouvelle recette
         </div>
-        <div class="card-body">
+        <div class="card-body text-center">
             <form method="POST">
                 <input type="hidden" name="action" value="create">
                 <div class="mb-3">
@@ -140,15 +140,15 @@ h1, .mt-5 {
         <?php foreach ($recettes as $recette): ?>
             <div class="col-md-6 mb-4">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header text-center bg-info">
                         <?= htmlspecialchars($recette['titre']) ?>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h5 class="card-title">Ingrédients</h5>
                         <p class="card-text"><?= nl2br(htmlspecialchars($recette['ingredients'])) ?></p>
                         <h5 class="card-title">Instructions</h5>
                         <p class="card-text"><?= nl2br(htmlspecialchars($recette['instructions'])) ?></p>
-                        <button class="btn btn-primary btn-modifier" type="button" data-bs-toggle="collapse" data-bs-target="#editForm<?= $recette['id'] ?>" aria-expanded="false" aria-controls="editForm<?= $recette['id'] ?>">
+                        <button class="btn btn-warning btn-modifier" type="button" data-bs-toggle="collapse" data-bs-target="#editForm<?= $recette['id'] ?>" aria-expanded="false" aria-controls="editForm<?= $recette['id'] ?>">
                             Modifier
                         </button>
                         <form method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette recette ?');">

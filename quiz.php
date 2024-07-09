@@ -17,7 +17,7 @@ require_once 'templates/navbar.php';
 <style>
     h1,h2,h3 { text-align: center; }
     body {
-        background-image: url('image/backgroundwebsite.jpg');
+        background-image: url('image/background.jpg');
         padding-top: 48px;
     }
     h1, .mt-5 {

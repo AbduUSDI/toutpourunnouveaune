@@ -27,7 +27,7 @@ h1,h2,h3 {
 }
 
 body {
-    background-image: url('../image/backgroundwebsite.jpg');
+    background-image: url('../image/background.jpg');
     padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
 }
 h1, .mt-5 {
@@ -36,7 +36,7 @@ h1, .mt-5 {
 }
 </style>
 
-<div class="container">
+<div class="container mt-5">
     <h1 class="my-4">Gestion des Quiz</h1>
     <a href="add_quiz.php" class="btn btn-info">Ajouter un nouveau quiz</a>
     <div class="table-responsive">

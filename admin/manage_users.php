@@ -31,7 +31,7 @@ h1,h2,h3 {
 }
 
 body {
-    background-image: url('../image/backgroundwebsite.jpg');
+    background-image: url('../image/background.jpg');
     padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
 }
 h1, .mt-5 {
@@ -39,7 +39,7 @@ h1, .mt-5 {
     border-radius: 15px;
 }
 </style>
-<div class="container">
+<div class="container mt-5">
     <h1 class="my-4">Gérer les utilisateurs</h1>
     <div class="table-responsive">
         <a href="add_user.php" class="btn btn-info mb-4">Ajouter un utilisateur</a>

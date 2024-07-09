@@ -24,20 +24,12 @@
                 <a class="nav-link" href="contact.php">Nous contacter</a>
             </li>
             <?php if (isset($_SESSION['user'])): ?>
-                <?php if ($_SESSION['user']['role_id'] == 1): ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin_dashboard.php">Admin Dashboard</a>
-                    </li>
-                <?php endif; ?>
                 <li class="nav-item">
                     <a class="nav-link" href="logout.php">Déconnexion</a>
                 </li>
             <?php else: ?>
                 <li class="nav-item">
                     <a class="nav-link" href="login.php">Connexion</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="register.php">Inscription</a>
                 </li>
             <?php endif; ?>
         </ul>

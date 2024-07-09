@@ -45,7 +45,7 @@ h1,h2,h3 {
 }
 
 body {
-    background-image: url('../image/backgroundwebsite.jpg');
+    background-image: url('../image/background.jpg');
     padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
 }
 h1, .mt-5 {
@@ -93,7 +93,7 @@ h1, .mt-5 {
                 <td><?php echo htmlspecialchars($guide['contenu']); ?></td>
                 <td><?php echo $guide['date_creation']; ?></td>
                 <td>
-                    <a href="edit_guide.php?id=<?php echo $guide['id']; ?>" class="btn btn-sm btn-info">Modifier</a>
+                    <a href="edit_guide.php?id=<?php echo $guide['id']; ?>" class="btn btn-sm btn-warning">Modifier</a>
                     <form action="manage_guides.php" method="POST" style="display:inline;">
                         <input type="hidden" name="action" value="delete">
                         <input type="hidden" name="id" value="<?php echo $guide['id']; ?>">

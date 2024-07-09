@@ -13,11 +13,11 @@ include '../functions/Forum.php';
 $database = new Database(); 
 $db = $database->connect(); 
 
-$forum = new Forum($db); 
+$forum = new Thread($db); 
 
 $tracking = new Tracking($db);
 
-$threads = $forum->getDerniersThreads();
+$threads = $forum->getThreads();
 
 $dailyTracking = $tracking->getTracking();
 
@@ -31,24 +31,31 @@ h1,h2,h3 {
 }
 
 body {
-    background-image: url('../image/backgroundwebsite.jpg');
+    background-image: url('../image/background.jpg');
     padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
 }
 h1, .mb-4 {
     background: whitesmoke;
     border-radius: 15px;
 }
+.mt-4 {
+        max-height: 500px;
+        overflow-y: auto;
+    }
 </style>
-<div class="container">     
+<div class="container mb-4">     
     <h1 class="my-4">Espace parent</h1>
       
     <!-- Rubrique Forum -->     
     <h2>Derniers Threads du Forum</h2>     
-    <ul class="list-group mb-4">         
+    <div class="list-group mt-4">         
         <?php foreach ($threads as $thread): ?>             
-            <li class="list-group-item"><?php echo htmlspecialchars($thread['title']); ?> - <?php echo htmlspecialchars($thread['author']); ?> (<?php echo $thread['date_creation']; ?>)</li>         
+            <div class="mb-4"><h5 class="list-group-item"><?php echo htmlspecialchars($thread['title']); ?></h5> 
+            <p class="list-group-item"><?php echo htmlspecialchars($thread['author']); ?> (<?php echo $thread['created_at']; ?>)</p>
+            <p class="list-group-item"><?php echo htmlspecialchars($thread['body']); ?></p></div>
+            <a class="btn btn-outline-info" href="../forum/thread.php?id=<?php echo $thread['id']; ?>">Voir la discussion</a>
         <?php endforeach; ?>     
-    </ul>
+        </div>
 
     <h2>Rapport quotidien pour bébé</h2>
     <div class="table-responsive">
