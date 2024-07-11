@@ -9,7 +9,6 @@ $database = new Database();
 $db = $database->connect(); 
 
 $avisMedicaux = new AvisMedicaux($db);
-
 $avis = $avisMedicaux->getAll();
 
 // Inclure la navigation admin 
@@ -17,7 +16,6 @@ include_once 'templates/header.php';
 include_once 'templates/navbar.php'; 
 ?>
 <style>
-
 h1,h2,h3 {
     text-align: center;
 }
@@ -39,15 +37,19 @@ h1, .mt-5 {
     <!-- Rubrique Avis Médicaux -->     
     <h2>Derniers avis médicaux des Docteurs</h2>     
     <ul class="list-group mb-4">         
-        <?php foreach ($avis as $avi): ?>             
+        <?php foreach ($avis as $avi): ?>
+            <?php 
+            // Obtenir le nom du médecin pour chaque avis
+            $medecin = $avisMedicaux->getParId($avi['medecin_id']); 
+            ?>
             <li class="list-group-item">
                 <h5><?php echo htmlspecialchars($avi['titre']); ?></h5>
-                <p>Médecin: <?php echo htmlspecialchars($avi['medecin_id']); ?></p>
+                <p>Médecin: <?php echo htmlspecialchars($medecin['nom_utilisateur']); ?></p>
                 <p><?php echo htmlspecialchars($avi['contenu']); ?></p>
                 <small class="text-muted">Date: <?php echo $avi['date_creation']; ?></small>
-            </li>         
+            </li>       
         <?php endforeach; ?>     
     </ul> 
 </div> 
 
-<?php include 'templates/footer.php';
+<?php include 'templates/footer.php'; ?>
