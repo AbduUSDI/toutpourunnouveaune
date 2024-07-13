@@ -13,6 +13,16 @@ class AvisMedicaux {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function getParId($id) {
+        $query = "SELECT u.nom_utilisateur 
+                  FROM utilisateurs u 
+                  JOIN conseils_medicaux c ON c.id = u.id 
+                  WHERE c.id = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
     public function getAll() {
         $stmt = $this->db->query('SELECT * FROM conseils_medicaux');
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

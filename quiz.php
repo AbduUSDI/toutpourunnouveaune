@@ -15,14 +15,44 @@ require_once 'templates/header.php';
 require_once 'templates/navbar.php';
 ?>
 <style>
-    h1,h2,h3 { text-align: center; }
     body {
         background-image: url('image/background.jpg');
+        background-size: cover;
         padding-top: 48px;
+        font-family: 'Arial', sans-serif;
+        color: #333;
     }
-    h1, .mt-5 {
-        background: whitesmoke;
+    .container {
+        background: rgba(255, 255, 255, 0.9);
         border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        color: #007bff;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-check-input {
+        margin-right: 10px;
+    }
+    .form-check-label {
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+    .btn-info {
+        background-color: #007bff;
+        border-color: #007bff;
+        padding: 10px 20px;
+        font-size: 1.2em;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .btn-info:hover {
+        background-color: #0056b3;
+        border-color: #004085;
     }
 </style>
 <div class="container mt-5">
