@@ -31,7 +31,11 @@ h1, .mt-4 {
 }
 </style>
 <div class="container mt-4">
+    <br>
+    <hr>
     <h1 class="mb-4">Nos recettes</h1>
+    <hr>
+    <br>
 
     <div class="row">
         <?php foreach ($recettes as $recette): ?>
