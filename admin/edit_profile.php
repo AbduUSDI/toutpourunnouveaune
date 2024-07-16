@@ -33,58 +33,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Traitement de la photo de profil
     $photo_profil = $userProfile['photo_profil']; // Valeur par défaut en cas d'absence de nouvelle photo
+    $image = $_FILES['photo_profil'];
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $prenom = $_POST['prenom'];
-        $nom = $_POST['nom'];
-        $date_naissance = $_POST['date_naissance'];
-        $biographie = $_POST['biographie'];
-    
-        // Traitement du mot de passe
-        $newPassword = $_POST['new_password'];
-        if (!empty($newPassword)) {
-            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-            $user->updatePassword($userId, $hashedPassword);
-        }
-    
-        // Traitement de la photo de profil
-        $photo_profil = $userProfile['photo_profil']; // Valeur par défaut en cas d'absence de nouvelle photo
-    
-        if (isset($_FILES['photo_profil']) && $_FILES['photo_profil']['error'] == UPLOAD_ERR_OK) {
-            $targetDir = "uploads/";
-    
-            // Créer le répertoire s'il n'existe pas
-            if (!is_dir($targetDir)) {
-                mkdir($targetDir, 0777, true);
-            }
-    
-            $photoName = time() . '_' . basename($_FILES["photo_profil"]["name"]);
-            $targetFile = $targetDir . $photoName;
-    
-            $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
-    
-            $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
-            if (in_array($fileType, $allowedTypes) && $_FILES['photo_profil']['size'] < 5000000) {
-                if (move_uploaded_file($_FILES["photo_profil"]["tmp_name"], $targetFile)) {
-                    $photo_profil = $targetFile; // Met à jour le chemin de la photo de profil
-                } else {
-                    $error = "Erreur lors du téléchargement de la photo de profil.";
-                }
+    if ($image['error'] == UPLOAD_ERR_OK) {
+        $targetDir = "../uploads/";
+        $imageName = time() . '_' . basename($image["name"]);
+        $targetFile = $targetDir . $imageName;
+
+        $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+        $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
+        if (in_array($fileType, $allowedTypes) && $image['size'] < 5000000) {
+            if (move_uploaded_file($image["tmp_name"], $targetFile)) {
+                $photo_profil = $targetFile; // Met à jour le chemin de la photo de profil
             } else {
-                $error = "Le fichier doit être une image (jpg, jpeg, png, gif) et ne doit pas dépasser 5MB.";
+                $error = "Erreur lors du téléchargement de la photo de profil.";
             }
-        } else if ($_FILES['photo_profil']['error'] != UPLOAD_ERR_NO_FILE) {
-            $error = "Erreur de téléchargement de la photo de profil.";
+        } else {
+            $error = "Le fichier doit être une image (jpg, jpeg, png, gif) et ne doit pas dépasser 5MB.";
         }
-    
-        if (!isset($error)) {
-            // Mise à jour du profil
-            $profile->updateProfile($userId, $prenom, $nom, $date_naissance, $biographie, $photo_profil);
-    
-            // Redirection pour éviter la soumission multiple du formulaire
-            header('Location: view_profile.php?updated=1');
-            exit;
+    } else if ($image['error'] != UPLOAD_ERR_NO_FILE) {
+        $error = "Erreur de téléchargement de la photo de profil.";
+    }
+
+    if (!isset($error)) {
+        if ($userProfile) {
+            // Mise à jour du profil existant
+            $updated = $profile->updateProfile($userId, $prenom, $nom, $date_naissance, $biographie, $photo_profil);
+            if ($updated) {
+                echo "Profil mis à jour avec succès";
+            } else {
+                echo "Erreur lors de la mise à jour du profil";
+            }
+        } else {
+            // Création d'un nouveau profil
+            $created = $profile->createProfile($userId, $prenom, $nom, $date_naissance, $biographie, $photo_profil);
+            if ($created) {
+                echo "Profil créé avec succès";
+            } else {
+                echo "Erreur lors de la création du profil";
+            }
         }
+
+        // Redirection pour éviter la soumission multiple du formulaire
+        header('Location: view_profile.php?updated=1');
+        exit;
     }
 }
 
@@ -92,7 +84,6 @@ include '../templates/header.php';
 include 'navbar_admin.php';
 ?>
 <style>
-
 h1,h2,h3 {
     text-align: center;
 }

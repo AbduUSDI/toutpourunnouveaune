@@ -50,9 +50,9 @@ h1, .mb-4 {
     <h2>Derniers Threads du Forum</h2>     
     <div class="list-group mt-4">         
         <?php foreach ($threads as $thread): ?>             
-            <div class="mb-4"><h5 class="list-group-item"><?php echo htmlspecialchars($thread['title']); ?></h5> 
-            <p class="list-group-item"><?php echo htmlspecialchars($thread['author']); ?> (<?php echo $thread['created_at']; ?>)</p>
-            <p class="list-group-item"><?php echo htmlspecialchars($thread['body']); ?></p></div>
+            <div class="mb-4"><h5 class="list-group-item"><strong>Titre : </strong><?php echo htmlspecialchars($thread['title']); ?></h5> 
+            <p class="list-group-item"><strong>Créé par : </strong><?php echo htmlspecialchars($thread['author']); ?> (<?php echo $thread['created_at']; ?>)</p>
+            <p class="list-group-item"><strong>Contenu : </strong><?php echo htmlspecialchars($thread['body']); ?></p></div>
             <a class="btn btn-outline-info" href="../forum/thread.php?id=<?php echo $thread['id']; ?>">Voir la discussion</a>
         <?php endforeach; ?>     
         </div>
@@ -62,7 +62,6 @@ h1, .mb-4 {
         <table class="table table-bordered table-striped table-hover" style="background: white">
             <thead class="thead-dark">
                 <tr>
-                    <th>Utilisateur</th>
                     <th>Date du jour</th>
                     <th>Heure tétée</th>
                     <th>Durée tétée</th>
@@ -75,7 +74,6 @@ h1, .mb-4 {
             <tbody>
         <?php foreach ($dailyTracking as $track): ?>
             <tr>
-                <td><?php echo htmlspecialchars($track['utilisateur_id']); ?></td>
                 <td><?php echo htmlspecialchars($track['date']); ?></td>
                 <td><?php echo htmlspecialchars($track['heure_repas']); ?></td>
                 <td><?php echo htmlspecialchars($track['duree_repas']); ?></td>

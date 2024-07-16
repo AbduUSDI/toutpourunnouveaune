@@ -109,30 +109,6 @@ class User2 {
         }
         return false;
     }
-
-    public function login($email, $password) {
-        $query = "SELECT * FROM " . $this->table . " WHERE email = :email";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':email', $email);
-        $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($user && password_verify($password, $user['mot_de_passe'])) {
-            return $user;
-        }
-        return false;
-    }
-
-    public function getUsernames($db, $userIds) {
-        $usernames = [];
-        $in  = str_repeat('?,', count($userIds) - 1) . '?';
-        $stmt = $db->prepare("SELECT id, nom_utilisateur FROM utilisateurs WHERE id IN ($in)");
-        $stmt->execute($userIds);
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $usernames[$row['id']] = $row['nom_utilisateur'];
-        }
-        return $usernames;
-    }
     public function getUserById($id) {
         $query = "SELECT * FROM " . $this->table . " WHERE id = :id";
         $stmt = $this->conn->prepare($query);

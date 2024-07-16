@@ -19,10 +19,9 @@ $userId = $_SESSION['user']['id'];
 $userProfile = $profile->getProfileByUserId($userId);
 
 include '../templates/header.php';
-include 'navbar_admin.php'
+include 'navbar_admin.php';
 ?>
 <style>
-
 h1,h2,h3 {
     text-align: center;
 }
@@ -42,7 +41,7 @@ h1, .mt-5 {
     <div class="card">
         <div class="card-body">
             <?php if (!empty($userProfile['photo_profil'])): ?>
-                <img src="<?php echo htmlspecialchars($userProfile['photo_profil']); ?>" alt="Photo de profil" class="img-thumbnail mb-3" style="max-width: 200px;">
+                <img src="../uploads/<?php echo htmlspecialchars($userProfile['photo_profil']); ?>" alt="Photo de profil" class="img-thumbnail mb-3" style="max-width: 200px;">
             <?php endif; ?>
             
             <h5 class="card-title"><?php echo htmlspecialchars($userProfile['prenom'] . ' ' . $userProfile['nom']); ?></h5>
