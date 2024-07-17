@@ -64,14 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 echo "Erreur lors de la mise à jour du profil";
             }
-        } else {
-            // Création d'un nouveau profil
-            $created = $profile->createProfile($userId, $prenom, $nom, $date_naissance, $biographie, $photo_profil);
-            if ($created) {
-                echo "Profil créé avec succès";
-            } else {
-                echo "Erreur lors de la création du profil";
-            }
         }
 
         // Redirection pour éviter la soumission multiple du formulaire
