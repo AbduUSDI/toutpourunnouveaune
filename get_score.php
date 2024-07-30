@@ -21,7 +21,11 @@ h1, .mt-5 {
 }
 </style>
 <div class="container mt-5">
+    <br>
+    <hr>
     <h1 class="text-center">Votre score : <?php echo htmlspecialchars($score); ?></h1>
+    <hr>
+    <br>
     <a href="quizzes.php" class="btn btn-info mt-3">Retour aux quiz</a>
 </div>
 

@@ -69,8 +69,11 @@ h1, .mt-5 {
 }
 </style>
     <div class="container mt-5">
+        <br>
+        <hr>
         <h1 class="text-center">Nous contacter</h1>
-
+        <hr>
+        <br>
         <?php
         if (isset($_SESSION['message'])) {
             echo '<div class="alert alert-' . $_SESSION['message_type'] . ' alert-dismissible fade show" role="alert">
@@ -99,7 +102,8 @@ h1, .mt-5 {
                 <label for="message" class="form-label">Message</label>
                 <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Envoyer</button>
+            <button type="submit" class="btn btn-info">Envoyer</button>
+            <hr>
         </form>
     </div>
 

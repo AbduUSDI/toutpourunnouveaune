@@ -30,10 +30,13 @@ h1, .mt-4 {
 }
 </style>
 <div class="container mt-4">
+    <br><hr>
     <h1 class="mb-4">Nos conseils de nutrition</h1>
+    <hr><br>
     <p>Ces conseils sont ici pour vous aider à mieux gérer votre régime alimentaire pendant, avant ou après votre grossesse.</p>
-
-    <h2>Conseils de nutrition</h2>     
+    <br><hr>
+    <h2>Conseils de nutrition</h2>
+    <hr><br>     
     <ul class="list-group mb-4">         
         <?php foreach ($presentations as $advice): ?>             
             <li class="list-group-item">

@@ -48,7 +48,11 @@ h1, .mt-5 {
 </style>
 
 <div class="container mt-5">
+    <br>
+    <hr>
     <h1 class="my-4">Connexion</h1>
+    <hr>
+    <br>
     <?php if (isset($error)): ?>
         <div class="alert alert-danger"><?php echo $error; ?></div>
     <?php endif; ?>
@@ -71,7 +75,8 @@ h1, .mt-5 {
     <hr>
     <button class="btn btn-outline-danger" data-toggle="modal" data-target="#registerModal">S'inscrire</button>
     <hr>
-    <button class="btn btn-outline-warning" data-toggle="modal" data-target="#forgotPasswordModal">Mot de passe oublié ?</button>   
+    <button class="btn btn-outline-warning" data-toggle="modal" data-target="#forgotPasswordModal">Mot de passe oublié ?</button>
+    <hr>  
 </div>
 
 <div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">

@@ -18,7 +18,6 @@ $profile = new Profile($db);
 $userId = $_SESSION['user']['id'];
 $userProfile = $profile->getProfileByUserId($userId);
 
-// Traitement du formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $prenom = $_POST['prenom'];
     $nom = $_POST['nom'];
@@ -33,39 +32,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Traitement de la photo de profil
-    if (isset($_FILES['photo_profil']) && $_FILES['photo_profil']['error'] == 0) {
-        $allowed = ['jpg', 'jpeg', 'png', 'gif'];
-        $filename = $_FILES['photo_profil']['name'];
-        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-        if (in_array($ext, $allowed)) {
-            $newName = uniqid() . '.' . $ext;
-            $uploadPath = 'uploads/' . $newName;
-            move_uploaded_file($_FILES['photo_profil']['tmp_name'], $uploadPath);
-            $photo_profil = $uploadPath;
+    $photo_profil = $userProfile['photo_profil']; // Valeur par défaut en cas d'absence de nouvelle photo
+    $image = $_FILES['photo_profil'];
+
+    if ($image['error'] == UPLOAD_ERR_OK) {
+        $targetDir = "../uploads/";
+        $imageName = time() . '_' . basename($image["name"]);
+        $targetFile = $targetDir . $imageName;
+
+        $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+        $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
+        if (in_array($fileType, $allowedTypes) && $image['size'] < 5000000) {
+            if (move_uploaded_file($image["tmp_name"], $targetFile)) {
+                $photo_profil = $targetFile; // Met à jour le chemin de la photo de profil
+            } else {
+                $error = "Erreur lors du téléchargement de la photo de profil.";
+            }
+        } else {
+            $error = "Le fichier doit être une image (jpg, jpeg, png, gif) et ne doit pas dépasser 5MB.";
         }
-    } else {
-        $photo_profil = $userProfile['photo_profil'];
+    } else if ($image['error'] != UPLOAD_ERR_NO_FILE) {
+        $error = "Erreur de téléchargement de la photo de profil.";
     }
 
-    // Mise à jour du profil
-    $profile->updateProfile($userId, $prenom, $nom, $date_naissance, $biographie, $photo_profil);
+    if (!isset($error)) {
+        if ($userProfile) {
+            // Mise à jour du profil existant
+            $updated = $profile->updateProfile($userId, $prenom, $nom, $date_naissance, $biographie, $photo_profil);
+            if ($updated) {
+                echo "Profil mis à jour avec succès";
+            } else {
+                echo "Erreur lors de la mise à jour du profil";
+            }
+        }
 
-    // Redirection pour éviter la soumission multiple du formulaire
-    header('Location: view_profile.php?updated=1');
-    exit;
+        // Redirection pour éviter la soumission multiple du formulaire
+        header('Location: view_profile.php?updated=1');
+        exit;
+    }
 }
 
 include '../templates/header.php';
 include 'navbar_doctor.php';
 ?>
 <style>
-
 h1,h2,h3 {
     text-align: center;
 }
 
 body {
-    background-image: url('../image/background.jpg');
+    background-image: url('../image/backgroundwebsite.jpg');
     padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
 }
 h1, .mt-5 {
@@ -108,7 +124,7 @@ h1, .mt-5 {
             <label for="new_password">Nouveau mot de passe (laissez vide pour ne pas changer)</label>
             <input type="password" class="form-control" id="new_password" name="new_password">
         </div>
-        <button type="submit" class="btn btn-primary">Mettre à jour le profil</button>
+        <button type="submit" class="btn btn-info">Mettre à jour le profil</button>
     </form>
 </div>
 

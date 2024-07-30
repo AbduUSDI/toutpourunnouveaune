@@ -37,7 +37,7 @@ h1, .mt-5 {
     <ul class="list-group mt-4">
         <?php foreach ($quizzes as $quiz): ?>
             <li class="list-group-item">
-                <a href="quiz.php?id=<?php echo $quiz['id']; ?>"><?php echo htmlspecialchars($quiz['titre']); ?></a>
+                <a class="btn btn-outline-info" href="quiz.php?id=<?php echo $quiz['id']; ?>"><?php echo htmlspecialchars($quiz['titre']); ?></a>
             </li>
         <?php endforeach; ?>
     </ul>

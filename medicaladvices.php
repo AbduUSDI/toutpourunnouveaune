@@ -30,12 +30,20 @@ h1, .mt-5 {
 }
 </style>
 
-<div class="container mt-5">     
+<div class="container mt-5">
+    <br>
+    <hr>    
     <h1 class="my-4">Consulter les avis médicaux</h1>
+    <hr>
+    <br>
     <p>Ces avis médicaux sont ici pour vous aider à mieux comprendre les petites choses nouvelles sur votre petit. N'ayez crainte vous pourrez poser vos question sur le forum, pour identifier un avis mettez dans l'objet les 5 chiffres au début du titre de chaque avis médicaux.</p>
 
-    <!-- Rubrique Avis Médicaux -->     
-    <h2>Derniers avis médicaux des Docteurs</h2>     
+    <!-- Rubrique Avis Médicaux -->
+    <br>
+    <hr>
+    <h2>Derniers avis médicaux des Docteurs</h2>
+    <hr>
+    <br>
     <ul class="list-group mb-4">         
         <?php foreach ($avis as $avi): ?>
             <?php 

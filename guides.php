@@ -34,7 +34,11 @@ h1, .mt-5 {
 </style>
 
 <div class="container mt-5">
+    <br>
+    <hr>
     <h1 class="text-center">Tout nos guides disponibles</h1>
+    <hr>
+    <br>
     <?php foreach ($guides as $guide): ?>
         <div class="card mb-4">
             <div class="card-body">
@@ -45,7 +49,11 @@ h1, .mt-5 {
         </div>
 
         <!-- Affichage des commentaires approuvés -->
+        <br>
+        <hr>
         <h3>Commentaires</h3>
+        <hr>
+        <br>
         <?php
         $comments = $commentManager->getApprovedCommentsByGuideId($guide['id']);
         foreach ($comments as $comment):
@@ -66,7 +74,7 @@ h1, .mt-5 {
                     <label for="comment">Ajouter un commentaire</label>
                     <textarea class="form-control" id="comment" name="contenu" rows="3" required></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">Soumettre le commentaire</button>
+                <button type="submit" class="btn btn-info">Soumettre le commentaire</button>
             </form>
         <?php else: ?>
             <p>Connectez-vous pour laisser un commentaire.</p>
