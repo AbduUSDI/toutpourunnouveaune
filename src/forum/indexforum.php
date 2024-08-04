@@ -58,7 +58,7 @@ h1, .mt-5 {
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="../index.php">Retour sur tout-pour-un-nouveau-ne</a>
+                <a class="nav-link" href="../public/index.php">Retour sur tout-pour-un-nouveau-ne</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="indexforum.php">Accueil</a>

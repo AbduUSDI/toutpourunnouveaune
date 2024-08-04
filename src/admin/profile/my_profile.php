@@ -194,8 +194,8 @@ $friends = $user->getFriends($userId);
 $userThreads = $thread->getThreadsByUserId($userId);
 $userResponses = $response->getResponsesByUserId($userId);
 
-include '../templates/header.php';
-include '../templates/navbar_forum.php';
+include '../../views/templates/header.php';
+include '../../views/templates/navbar_admin.php';
 ?>
 
 <style>
@@ -512,4 +512,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 
-<?php include '../templates/footer.php'; ?>
+<?php include '../../views/templates/footer.php'; ?>

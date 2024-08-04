@@ -116,7 +116,7 @@ class User2 {
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-    public function updateProfile($userId, $username, $email, $newPassword = null) {
+    public function updateUserProfile($userId, $username, $email, $newPassword = null) {
         if ($newPassword !== null) {
             $query = "UPDATE " . $this->table . " SET nom_utilisateur = :nom_utilisateur, email = :email, mot_de_passe = :mot_de_passe WHERE id = :id";
             $stmt = $this->conn->prepare($query);

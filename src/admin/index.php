@@ -91,7 +91,7 @@ h1, .mt-5 {
                 <a class="nav-link" href="recipes/manage_recipes.php">Gérer les Recettes</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="profile/view_profile.php">Mon profil</a>
+                <a class="nav-link" href="profile/my_profile.php">Mon profil</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="comments/manage_comment.php">Gérer commentaires</a>
