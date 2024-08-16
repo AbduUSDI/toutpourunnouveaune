@@ -180,4 +180,28 @@ class User2 {
         $stmt->bindParam(':request_id', $request_id);
         return $stmt->execute();
     }
+    public function setResetToken($userId, $token) {
+        $query = "UPDATE utilisateurs SET reset_token = :token WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':token', $token);
+        $stmt->bindParam(':id', $userId);
+        return $stmt->execute();
+    }
+
+    public function getUserByResetToken($token) {
+        $query = "SELECT * FROM utilisateurs WHERE reset_token = :token";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':token', $token);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function updatePassword($userId, $newPassword) {
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        $query = "UPDATE utilisateurs SET mot_de_passe = :password, reset_token = NULL WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':password', $hashedPassword);
+        $stmt->bindParam(':id', $userId);
+        return $stmt->execute();
+    }
 }

@@ -14,10 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
 
     $userData = $user->getUtilisateurParEmail($email);
 
-    // Ici c'est pour controler la vérification et rediriger vers la bonne page en fonction du role_id de la base de données
-
     if ($userData && password_verify($password, $userData['mot_de_passe'])) {
-        echo "Mot de passe vérifié.<br>";
         $_SESSION['user'] = $userData;
         if ($userData['role_id'] == 1 || $userData['role_id'] == 2 || $userData['role_id'] == 3) {
             header('Location: index.php');
@@ -25,11 +22,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
             header('Location: login.php');
         }
         exit;
+    } else {
+        $error = "Email ou mot de passe incorrect.";
     }
 }
 
 include_once '../views/templates/header.php';
 include_once '../views/templates/navbar.php';
+
+if (isset($_SESSION['reset_message'])) {
+    echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageElement = document.getElementById('resetPasswordMessage');
+            messageElement.textContent = '" . $_SESSION['reset_message'] . "';
+            messageElement.className = 'alert alert-success';
+            messageElement.style.display = 'block';
+        });
+    </script>";
+    unset($_SESSION['reset_message']);
+}
 ?>
 
 <style>
@@ -39,7 +50,7 @@ h1,h2,h3 {
 
 body {
     background-image: url('../../assets/image/background.jpg');
-    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+    padding-top: 48px;
 }
 h1, .mt-5 {
     background: whitesmoke;
@@ -48,6 +59,7 @@ h1, .mt-5 {
 </style>
 
 <div class="container mt-5">
+    <div id="resetPasswordMessage" class="alert" style="display: none;"></div>
     <br>
     <hr>
     <h1 class="my-4">Connexion</h1>
@@ -142,7 +154,7 @@ h1, .mt-5 {
 document.addEventListener('DOMContentLoaded', function() {
     const togglePassword = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('password');
-
+    
     togglePassword.addEventListener('click', function() {
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordInput.setAttribute('type', type);
@@ -157,8 +169,41 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+
+    document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    fetch('forgot_password.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        const messageElement = document.getElementById('resetPasswordMessage');
+        if (data.success) {
+            messageElement.textContent = "Un email de réinitialisation a été envoyé à votre adresse.";
+            messageElement.className = "alert alert-success";
+            $('#forgotPasswordModal').modal('hide');
+        } else {
+            messageElement.textContent = data.message;
+            messageElement.className = "alert alert-danger";
+        }
+        messageElement.style.display = "block";
+
+        // Faire défiler jusqu'au message
+        messageElement.scrollIntoView({ behavior: 'smooth' });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        const messageElement = document.getElementById('resetPasswordMessage');
+        messageElement.textContent = 'Une erreur s'est produite. Veuillez réessayer.';
+        messageElement.className = "alert alert-danger";
+        messageElement.style.display = "block";
+    });
+});
 </script>
-
 <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-
 <?php include '../views/templates/footer.php'; ?>
