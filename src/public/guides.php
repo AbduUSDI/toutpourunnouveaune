@@ -5,11 +5,18 @@ require_once '../models/UserModel.php';
 require_once '../models/GuideModel.php';
 require_once '../models/CommentModel.php';
 
+// Connexion à la base de données
 $database = new Database();
 $db = $database->connect();
 
+// Gestionnaires pour les guides et les commentaires
 $guideManager = new Guide($db);
 $commentManager = new Comment($db);
+
+// Génération du token CSRF pour le formulaire
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 // Récupérer tous les guides ou un guide spécifique si un ID est fourni
 $guides = isset($_GET['id']) ? [$guideManager->getGuideById($_GET['id'])] : $guideManager->getAllGuides();
@@ -18,7 +25,6 @@ include '../views/templates/header.php';
 include '../views/templates/navbar.php';
 ?>
 <style>
-
 h1,h2,h3 {
     text-align: center;
 }
@@ -36,7 +42,7 @@ h1, .mt-5 {
 <div class="container mt-5">
     <br>
     <hr>
-    <h1 class="text-center">Tout nos guides disponibles</h1>
+    <h1 class="text-center">Tous nos guides disponibles</h1>
     <hr>
     <br>
     <?php foreach ($guides as $guide): ?>
@@ -44,7 +50,7 @@ h1, .mt-5 {
             <div class="card-body">
                 <h2 class="card-title"><?php echo htmlspecialchars($guide['titre']); ?></h2>
                 <p class="card-text"><?php echo nl2br(htmlspecialchars($guide['contenu'])); ?></p>
-                <p class="text-muted">Publié par <?php echo htmlspecialchars($guide['auteur_nom']); ?> le <?php echo $guide['date_creation']; ?></p>
+                <p class="text-muted">Publié par <?php echo htmlspecialchars($guide['auteur_nom']); ?> le <?php echo htmlspecialchars($guide['date_creation']); ?></p>
             </div>
         </div>
 
@@ -56,20 +62,27 @@ h1, .mt-5 {
         <br>
         <?php
         $comments = $commentManager->getApprovedCommentsByGuideId($guide['id']);
-        foreach ($comments as $comment):
+        if ($comments):
+            foreach ($comments as $comment):
         ?>
             <div class="card mb-2">
                 <div class="card-body">
                     <p class="card-text"><?php echo nl2br(htmlspecialchars($comment['contenu'])); ?></p>
-                    <p class="text-muted">Commenté par <?php echo htmlspecialchars($comment['nom_utilisateur']); ?> le <?php echo $comment['date_creation']; ?></p>
+                    <p class="text-muted">Commenté par <?php echo htmlspecialchars($comment['nom_utilisateur']); ?> le <?php echo htmlspecialchars($comment['date_creation']); ?></p>
                 </div>
             </div>
-        <?php endforeach; ?>
+        <?php
+            endforeach;
+        else:
+            echo "<p>Soyez le premier à commenter ce guide.</p>";
+        endif;
+        ?>
 
         <!-- Formulaire pour ajouter un commentaire -->
         <?php if (isset($_SESSION['user'])): ?>
             <form action="add_comment.php" method="POST" class="mb-4">
-                <input type="hidden" name="guide_id" value="<?php echo $guide['id']; ?>">
+                <input type="hidden" name="guide_id" value="<?php echo htmlspecialchars($guide['id']); ?>">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                 <div class="form-group">
                     <label for="comment">Ajouter un commentaire</label>
                     <textarea class="form-control" id="comment" name="contenu" rows="3" required></textarea>

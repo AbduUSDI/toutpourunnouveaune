@@ -38,12 +38,19 @@ class Thread {
         }
         return $activeThreadsArray;
     }
-    public function getThreads() {
-        $query = "SELECT t.id, t.title, t.body, t.created_at, u.nom_utilisateur as author FROM " . $this->table . " t JOIN utilisateurs u ON t.user_id = u.id ORDER BY t.created_at DESC";
+    public function getThreads($limit = 10) {
+        $query = "SELECT t.id, t.title, t.body, t.created_at, u.nom_utilisateur as author 
+                  FROM " . $this->table . " t 
+                  JOIN utilisateurs u ON t.user_id = u.id 
+                  ORDER BY t.created_at DESC 
+                  LIMIT :limit";
+        
         $stmt = $this->conn->prepare($query);
+        $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
 
     public function getThreadById($id) {
         $query = "SELECT threads.*, utilisateurs.nom_utilisateur AS author

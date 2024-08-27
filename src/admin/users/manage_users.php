@@ -1,6 +1,5 @@
 <?php
-
-// Vérification de l'identification de l'utiliateur, il doit être role 1 donc admin, sinon page login.php
+// Vérification de l'identification de l'utilisateur, il doit être role 1 donc admin, sinon page login.php
 
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
@@ -8,7 +7,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
     exit;
 }
 
-require_once '../../../config//Database.php';
+require_once '../../../config/Database.php';
 require_once '../../models/UserModel.php';
 
 // Connexion à la base de données
@@ -17,9 +16,12 @@ $database = new Database();
 $db = $database->connect();
 $user = new User($db);
 
-// Utilisation d'une méthode pour afficher tout les utilisateurs
+// Utilisation d'une méthode pour afficher tous les utilisateurs
 
 $users = $user->getAllUtilisateurs();
+
+// Générer un jeton CSRF
+$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
 include_once '../../views/templates/header.php';
 include_once '../../views/templates/navbar_admin.php';
@@ -57,11 +59,12 @@ h1, .mt-5 {
                         <td><?php echo htmlspecialchars($user['email']); ?></td>
                         <td><?php echo htmlspecialchars($user['role_id'] == 1 ? 'Admin' : ($user['role_id'] == 2 ? 'Docteur' : 'Parent')); ?></td>
                         <td>
-
-                            <!-- Boutons pour modifer ou supprimer un utilisateur, redirection vers de nouvelles pages -->
-
-                            <a href="edit_user.php?id=<?php echo $user['id']; ?>" class="btn btn-warning btn-sm">Modifier</a>
-                            <a href="delete_user.php?id=<?php echo $user['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">Supprimer</a>
+                            <a href="edit_user.php?id=<?php echo htmlspecialchars($user['id']); ?>" class="btn btn-warning btn-sm">Modifier</a>
+                            <form action="delete_user.php" method="POST" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+                                <input type="hidden" name="id" value="<?php echo htmlspecialchars($user['id']); ?>">
+                                <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                            </form>
                         </td>
                     </tr>
                 <?php endforeach; ?>

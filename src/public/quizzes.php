@@ -9,8 +9,8 @@ $db = $database->connect();
 $quiz = new Quiz($db);
 $quizzes = $quiz->getAllQuizzes();
 
-require_once '../views/templates/header.php';
-require_once '../views/templates/navbar.php';
+include '../views/templates/header.php';
+include '../views/templates/navbar.php';
 ?>
 <style>
 
@@ -28,21 +28,19 @@ h1, .mt-5 {
 }
 </style>
 <div class="container mt-5">
-<br>
-    <hr>
-    <h1 class="mb-4">Tout nos Quiz disponible</h1>
-    <hr>
-    <br>
-    <p>Afin d'améliorer vos chances d'être un meilleur parent, voici nos quiz qui sont régulièrement mis à jour pour vous aider afin de vous préparer à l'éducation de votre futur enfant</p>
+    <h1 class="mb-4">Tous nos Quiz disponibles</h1>
+    <p>Afin d'améliorer vos chances d'être un meilleur parent, voici nos quiz qui sont régulièrement mis à jour pour vous aider afin de vous préparer à l'éducation de votre futur enfant.</p>
     <ul class="list-group mt-4">
-        <?php foreach ($quizzes as $quiz): ?>
-            <li class="list-group-item">
-                <a class="btn btn-outline-info" href="quiz.php?id=<?php echo $quiz['id']; ?>"><?php echo htmlspecialchars($quiz['titre']); ?></a>
-            </li>
-        <?php endforeach; ?>
+        <?php if (empty($quizzes)): ?>
+            <p>Aucun quiz disponible pour le moment.</p>
+        <?php else: ?>
+            <?php foreach ($quizzes as $quiz): ?>
+                <li class="list-group-item">
+                    <a class="btn btn-outline-info" href="quiz.php?id=<?php echo $quiz['id']; ?>"><?php echo htmlspecialchars($quiz['titre']); ?></a>
+                </li>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </ul>
 </div>
 
-<?php
-require_once '../views/templates/footer.php';
-?>
+<?php include '../views/templates/footer.php'; ?>

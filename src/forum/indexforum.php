@@ -5,24 +5,28 @@ require_once '../models/UserModel.php';
 require_once '../models/ForumModel.php';
 require_once '../../config/MongoDB.php';
 
+// Vérification de la connexion de l'utilisateur
 if (!isset($_SESSION['user'])) {
     header('Location: login.php');
     exit;
 }
 
+// Connexion à la base de données
 $database = new Database();
 $db = $database->connect();
 
 $user = new User2($db);
 $thread = new Thread($db);
+
+// Connexion à MongoDB pour les vues des threads
 $mongoClient = new MongoDBForum();
-
-$threads = $thread->getThreads();
-
-// Récupération des vues depuis MongoDB
 $viewsCollection = $mongoClient->getCollection('views');
+
+// Récupération des threads les plus récents et les plus vus
+$threads = $thread->getThreads();
 $activeThreads = $viewsCollection->find([], ['sort' => ['views' => -1], 'limit' => 5])->toArray();
 
+// Construction de la liste des titres des threads les plus vus
 $threadTitles = [];
 foreach ($activeThreads as $activeThread) {
     $threadId = $activeThread['thread_id'];
@@ -36,14 +40,15 @@ include_once 'templates/header.php';
 ?>
 
 <style>
-h1,h2,h3 {
+h1, h2, h3 {
     text-align: center;
 }
 
 body {
     background-image: url('../../assets/image/backgroundwebsite.jpg');
-    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+    padding-top: 48px; /* Padding pour compenser le décalage causé par la navbar fixed-top */
 }
+
 h1, .mt-5 {
     background: whitesmoke;
     border-radius: 15px;
@@ -88,41 +93,39 @@ h1, .mt-5 {
     </div>
 </nav>
 
-
 <div class="container mt-5">
     <h1 class="my-4">Forum</h1>
     <div class="row">
         <div class="col-md-8">
             <h2>Derniers Threads</h2>
             <?php if (empty($threads)): ?>
-        <p>Aucunes discussion n'existe.</p>
-            <ul class="list-group mb-4">
-                <?php else: ?>
-                <?php foreach ($threads as $thread): ?>
-                    <li class="list-group-item">
-                        <h5><a href="threads/thread.php?id=<?php echo $thread['id']; ?>"><?php echo htmlspecialchars($thread['title']); ?></a></h5>
-                        <p><?php echo htmlspecialchars($thread['body']); ?></p>
-                        <small class="text-muted">Par <?php echo htmlspecialchars($thread['author']); ?> le <?php echo $thread['created_at']; ?></small>
-                    </li>
-                <?php endforeach; ?>
+                <p>Aucune discussion n'existe pour le moment.</p>
+            <?php else: ?>
+                <ul class="list-group mb-4">
+                    <?php foreach ($threads as $thread): ?>
+                        <li class="list-group-item">
+                            <h5><a href="threads/thread.php?id=<?php echo htmlspecialchars($thread['id']); ?>"><?php echo htmlspecialchars($thread['title']); ?></a></h5>
+                            <p><?php echo nl2br(htmlspecialchars($thread['body'])); ?></p>
+                            <small class="text-muted">Par <?php echo htmlspecialchars($thread['author']); ?> le <?php echo htmlspecialchars($thread['created_at']); ?></small>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
             <?php endif; ?>
-            </ul>
         </div>
         <div class="col-md-4">
             <h2>Threads les plus actifs</h2>
-            <?php if (empty($threads)): ?>
-        <p>Aucunes discussion n'a été trouvée.</p>
-            <ul class="list-group mb-4">
-                <?php else: ?>
-            <ul class="list-group mb-4">
-                <?php foreach ($activeThreads as $activeThread): ?>
-                    <li class="list-group-item">
-                        <h5><a href="threads/thread.php?id=<?php echo $activeThread['thread_id']; ?>"><?php echo htmlspecialchars($threadTitles[$activeThread['thread_id']] ?? 'Titre inconnu'); ?></a></h5>
-                        <small class="text-muted">Vues: <?php echo $activeThread['views']; ?></small>
-                    </li>
-                <?php endforeach; ?>
+            <?php if (empty($activeThreads)): ?>
+                <p>Aucun thread actif n'a été trouvé.</p>
+            <?php else: ?>
+                <ul class="list-group mb-4">
+                    <?php foreach ($activeThreads as $activeThread): ?>
+                        <li class="list-group-item">
+                            <h5><a href="threads/thread.php?id=<?php echo htmlspecialchars($activeThread['thread_id']); ?>"><?php echo htmlspecialchars($threadTitles[$activeThread['thread_id']] ?? 'Titre inconnu'); ?></a></h5>
+                            <small class="text-muted">Vues : <?php echo htmlspecialchars($activeThread['views']); ?></small>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
             <?php endif; ?>
-            </ul>
         </div>
     </div>
 </div>

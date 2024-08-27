@@ -79,6 +79,9 @@ class User {
         return $stmt->execute([$hashedPassword, $userId]);
     }
     function getUsernames($db, $userIds) {
+        if (empty($userIds)) {
+            return [];
+        }
         $placeholders = implode(',', array_fill(0, count($userIds), '?'));
         $query = "SELECT id, nom_utilisateur FROM utilisateurs WHERE id IN ($placeholders)";
         $stmt = $db->prepare($query);
@@ -86,6 +89,7 @@ class User {
         $results = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         return $results;
     }
+    
 }
 
 class User2 {

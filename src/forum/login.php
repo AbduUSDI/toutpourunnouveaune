@@ -9,23 +9,24 @@ $db = $database->connect();
 $user = new User($db);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
-    $email = $_POST['email'];
-    $password = $_POST['mot_de_passe'];
+    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    $password = filter_input(INPUT_POST, 'mot_de_passe', FILTER_SANITIZE_STRING);
 
     $userData = $user->getUtilisateurParEmail($email);
 
-    // Ici c'est pour controler la vérification et rediriger vers la bonne page en fonction du role_id de la base de données
-
+    // Vérification du mot de passe et redirection selon le rôle de l'utilisateur
     if ($userData && password_verify($password, $userData['mot_de_passe'])) {
-        echo "Mot de passe vérifié.<br>";
         $_SESSION['user'] = $userData;
-        if ($userData['role_id'] == 1 && 2 && 3) {
+        if (in_array($userData['role_id'], [1, 2, 3])) {
+            // Redirige tous les rôles reconnus vers le forum
             header('Location: indexforum.php');
         } else {
-
-            header('Location: login.php');
+            // En cas de rôle non reconnu, rediriger vers la page de connexion avec un message d'erreur
+            $error = "Rôle utilisateur non reconnu.";
         }
         exit;
+    } else {
+        $error = "Email ou mot de passe incorrect.";
     }
 }
 
@@ -34,14 +35,15 @@ include_once 'templates/navbar_forum.php';
 ?>
 
 <style>
-h1,h2,h3 {
+h1, h2, h3 {
     text-align: center;
 }
 
 body {
     background-image: url('../../assets/image/backgroundwebsite.jpg');
-    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+    padding-top: 48px; /* Padding pour compenser le décalage causé par la navbar fixed-top */
 }
+
 h1, .mt-5 {
     background: whitesmoke;
     border-radius: 15px;
@@ -75,6 +77,7 @@ h1, .mt-5 {
     <button class="btn btn-outline-warning" data-toggle="modal" data-target="#forgotPasswordModal">Mot de passe oublié ?</button>   
 </div>
 
+<!-- Modal pour mot de passe oublié -->
 <div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -97,6 +100,7 @@ h1, .mt-5 {
     </div>
 </div>
 
+<!-- Modal pour inscription -->
 <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -144,13 +148,8 @@ document.addEventListener('DOMContentLoaded', function() {
         passwordInput.setAttribute('type', type);
 
         const eyeIcon = this.querySelector('i');
-        if (type === 'password') {
-            eyeIcon.classList.remove('fa-eye');
-            eyeIcon.classList.add('fa-eye-slash');
-        } else {
-            eyeIcon.classList.remove('fa-eye-slash');
-            eyeIcon.classList.add('fa-eye');
-        }
+        eyeIcon.classList.toggle('fa-eye');
+        eyeIcon.classList.toggle('fa-eye-slash');
     });
 });
 </script>

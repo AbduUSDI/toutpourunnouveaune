@@ -1,6 +1,5 @@
 <?php
-
-// Vérification de l'identification de l'utiliateur, il doit être role 1 donc admin, sinon page login.php
+// Vérification de l'identification de l'utilisateur, il doit être role 1 donc admin, sinon page login.php
 
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
@@ -8,20 +7,19 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
     exit;
 }
 
-require_once '../../../config//Database.php';
+require_once '../../../config/Database.php';
 require_once '../../models/UserModel.php';
 
 // Vérifier si l'ID de l'utilisateur à supprimer est présent dans la requête
-
-if (!isset($_GET['id']) || empty($_GET['id'])) {
+$userId = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+if (!$userId) {
     header('Location: manage_users.php');
     exit();
 }
 
-// Vérifie si l'ID de l'utilisateur à supprimer est présent dans la requête et valide
-
-$userId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-if ($userId === false) {
+// Vérifier le jeton CSRF
+if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+    $_SESSION['error_message'] = "Erreur de sécurité : jeton CSRF invalide.";
     header('Location: manage_users.php');
     exit();
 }
@@ -30,7 +28,6 @@ if ($userId === false) {
 $db = (new Database())->connect();
 
 // Instance User ici pour utiliser toutes le méthodes en rapport avec les utilisateurs
-
 $user = new User($db);
 
 try {
@@ -43,7 +40,7 @@ try {
     exit();
 } catch (PDOException $e) {
     // Rediriger vers la page des utilisateurs avec un message d'erreur
-    $_SESSION['error'] = "Erreur lors de la suppression de l'utilisateur : " . $e->getMessage();
+    $_SESSION['error_message'] = "Erreur lors de la suppression de l'utilisateur : " . $e->getMessage();
     header('Location: manage_users.php');
     exit();
 }

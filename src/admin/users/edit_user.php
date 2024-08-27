@@ -1,12 +1,11 @@
 <?php
-
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
     header('Location: ../login.php');
     exit;
 }
 
-require_once '../../../config//Database.php';
+require_once '../../../config/Database.php';
 require_once '../../models/UserModel.php';
 
 if (!isset($_GET['id'])) {
@@ -14,36 +13,48 @@ if (!isset($_GET['id'])) {
     exit;
 }
 
-$user_id = $_GET['id'];
+$user_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+if (!$user_id) {
+    header('Location: manage_users.php');
+    exit;
+}
 
 $database = new Database();
 $db = $database->connect();
 
-
-
 $userManager = new User($db);
-
 $user = $userManager->getUtilisateurParId($user_id);
-
-
 
 if (!$user) {
     header('Location: manage_users.php');
     exit;
 }
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $role_id = $_POST['role_id'];
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $_SESSION['error_message'] = "Erreur de sécurité : jeton CSRF invalide.";
+        header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $user_id);
+        exit;
+    }
+
+    $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    $role_id = filter_input(INPUT_POST, 'role_id', FILTER_VALIDATE_INT);
     $password = !empty($_POST['password']) ? $_POST['password'] : null;
 
-    $userManager->updateUser($user_id, $email, $role_id, $username, $password);
+    if ($username && $email && $role_id) {
+        $userManager->updateUser($user_id, $email, $role_id, $username, $password);
+        $_SESSION['message'] = "Utilisateur mis à jour avec succès.";
+    } else {
+        $_SESSION['error_message'] = "Tous les champs sont requis.";
+    }
 
     header('Location: manage_users.php');
     exit;
 }
+
+// Générer un jeton CSRF
+$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
 include_once '../../views/templates/header.php';
 include_once '../../views/templates/navbar_admin.php';
@@ -65,7 +76,8 @@ h1, .mt-5 {
 </style>
 <div class="container mt-5">
     <h1 class="my-4">Modifier Utilisateur</h1>
-    <form action="edit_user.php?id=<?php echo $user['id']; ?>" method="POST">
+    <form action="edit_user.php?id=<?php echo htmlspecialchars($user['id']); ?>" method="POST">
+        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="form-group">
             <label for="username">Nom d'utilisateur</label>
             <input type="text" class="form-control" id="username" name="username" value="<?php echo htmlspecialchars($user['nom_utilisateur']); ?>" required>
@@ -75,18 +87,16 @@ h1, .mt-5 {
             <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
         </div>
         <div class="form-group">
-    <label for="password">Mot de passe (laisser vide pour ne pas changer)</label>
-    <div class="input-group">
-        <input type="password" class="form-control" id="password" name="password">
-        <div class="input-group-append">
-
-
-            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                <i class="fa fa-eye" aria-hidden="true"></i>
-            </button>
+            <label for="password">Mot de passe (laisser vide pour ne pas changer)</label>
+            <div class="input-group">
+                <input type="password" class="form-control" id="password" name="password">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                        <i class="fa fa-eye" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
         <div class="form-group">
             <label for="role_id">Rôle</label>
             <select class="form-control" id="role_id" name="role_id" required>
@@ -99,26 +109,16 @@ h1, .mt-5 {
     </form>
 </div>
 <script>
-
-   // Exécute le script une fois que le DOM est entièrement chargé
-
+// Script pour afficher/masquer le mot de passe
 document.addEventListener('DOMContentLoaded', function() {
-
-    // Obtenir les éléments par leur ID
     const togglePassword = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('password');
 
-    // Ajouter un écouteur d'événements pour le clic sur l'icône
-
     togglePassword.addEventListener('click', function() {
-        // Modifie le type de l'input entre 'password' et 'text' quand on clic sur l'icône
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordInput.setAttribute('type', type);
 
-        // Chargement de l'icône FontAwesome à l'intérieur de l'élément cliqué grâce à une balise nommée "i"
         const eyeIcon = this.querySelector('i');
-        
-        // Modifications des classes FontAwesome pour l'icône de l'œil (barré/non barré)
         if (type === 'password') {
             eyeIcon.classList.remove('fa-eye');
             eyeIcon.classList.add('fa-eye-slash');
@@ -128,6 +128,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-
 </script>
 <?php include '../../views/templates/footer.php'; ?>

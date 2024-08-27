@@ -17,7 +17,7 @@ $db = $database->connect();
 $user = new User2($db);
 $thread = new Thread($db);
 $response = new Response($db);
-$mongoClient = new MongoDB();
+$mongoClient = new MongoDBForum();
 
 $threadId = $_GET['id'];
 $currentThread = $thread->getThreadById($threadId);

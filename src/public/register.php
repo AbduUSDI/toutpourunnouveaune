@@ -7,10 +7,11 @@ $db = $database->connect();
 $user = new User($db);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['nom_utilisateur'];
-    $email = $_POST['email'];
-    $password = $_POST['mot_de_passe'];
-    $role = $_POST['role_id'];
+
+    $username = filter_input(INPUT_POST, 'nom_utilisateur', FILTER_SANITIZE_STRING);
+    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    $password = filter_input(INPUT_POST, 'mot_de_passe', FILTER_SANITIZE_STRING);
+    $role = filter_input(INPUT_POST, 'role_id', FILTER_SANITIZE_NUMBER_INT);
 
     if ($user->getEmail($email)) {
         $error = "L'email est déjà utilisé.";

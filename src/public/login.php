@@ -4,19 +4,29 @@ session_start();
 require_once '../../config/Database.php';
 require_once '../models/UserModel.php';
 
+// Génération du token CSRF pour la protection contre les attaques CSRF
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 $database = new Database();
 $db = $database->connect();
 $user = new User($db);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
-    $email = $_POST['email'];
-    $password = $_POST['mot_de_passe'];
+    // Validation du token CSRF
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die('Action non autorisée.');
+    }
+
+    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    $password = filter_input(INPUT_POST, 'mot_de_passe', FILTER_SANITIZE_STRING);
 
     $userData = $user->getUtilisateurParEmail($email);
 
     if ($userData && password_verify($password, $userData['mot_de_passe'])) {
         $_SESSION['user'] = $userData;
-        if ($userData['role_id'] == 1 || $userData['role_id'] == 2 || $userData['role_id'] == 3) {
+        if (in_array($userData['role_id'], [1, 2, 3])) {
             header('Location: index.php');
         } else {
             header('Location: login.php');
@@ -66,9 +76,10 @@ h1, .mt-5 {
     <hr>
     <br>
     <?php if (isset($error)): ?>
-        <div class="alert alert-danger"><?php echo $error; ?></div>
+        <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
     <?php endif; ?>
     <form action="login.php" method="POST">
+        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="form-group">
             <label for="email">Email</label>
             <input type="email" class="form-control" id="email" name="email" autocomplete="email" required>
@@ -102,6 +113,7 @@ h1, .mt-5 {
             </div>
             <div class="modal-body">
                 <form id="forgotPasswordForm" method="post" action="forgot_password.php">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                     <div class="form-group">
                         <label for="forgotEmail">Email</label>
                         <input type="email" class="form-control" id="forgotEmail" name="forgotEmail" required>
@@ -124,6 +136,7 @@ h1, .mt-5 {
             </div>
             <div class="modal-body">
                 <form id="registerForm" method="post" action="register.php">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                     <div class="form-group">
                         <label for="nom_utilisateur">Nom d'utilisateur</label>
                         <input type="text" class="form-control" id="nom_utilisateur" name="nom_utilisateur" required>
@@ -168,40 +181,38 @@ document.addEventListener('DOMContentLoaded', function() {
             eyeIcon.classList.add('fa-eye');
         }
     });
-});
-
 
     document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    const formData = new FormData(this);
+        const formData = new FormData(this);
 
-    fetch('forgot_password.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        const messageElement = document.getElementById('resetPasswordMessage');
-        if (data.success) {
-            messageElement.textContent = "Un email de réinitialisation a été envoyé à votre adresse.";
-            messageElement.className = "alert alert-success";
-            $('#forgotPasswordModal').modal('hide');
-        } else {
-            messageElement.textContent = data.message;
+        fetch('forgot_password.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            const messageElement = document.getElementById('resetPasswordMessage');
+            if (data.success) {
+                messageElement.textContent = "Un email de réinitialisation a été envoyé à votre adresse.";
+                messageElement.className = "alert alert-success";
+                $('#forgotPasswordModal').modal('hide');
+            } else {
+                messageElement.textContent = data.message;
+                messageElement.className = "alert alert-danger";
+            }
+            messageElement.style.display = "block";
+
+            messageElement.scrollIntoView({ behavior: 'smooth' });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const messageElement = document.getElementById('resetPasswordMessage');
+            messageElement.textContent = 'Une erreur s\'est produite. Veuillez réessayer.';
             messageElement.className = "alert alert-danger";
-        }
-        messageElement.style.display = "block";
-
-        // Faire défiler jusqu'au message
-        messageElement.scrollIntoView({ behavior: 'smooth' });
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        const messageElement = document.getElementById('resetPasswordMessage');
-        messageElement.textContent = 'Une erreur s'est produite. Veuillez réessayer.';
-        messageElement.className = "alert alert-danger";
-        messageElement.style.display = "block";
+            messageElement.style.display = "block";
+        });
     });
 });
 </script>

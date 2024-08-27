@@ -13,65 +13,71 @@ $db = $database->connect();
 
 $recipe = new Recipe($db);
 
+function setSessionMessage($message, $type = 'success') {
+    $_SESSION['message'] = $message;
+    $_SESSION['message_type'] = $type;
+}
+
+function displaySessionMessage() {
+    if (isset($_SESSION['message'])) {
+        echo '<div class="alert alert-' . $_SESSION['message_type'] . ' alert-dismissible fade show" role="alert">
+                ' . htmlspecialchars($_SESSION['message']) . '
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>';
+        unset($_SESSION['message']);
+        unset($_SESSION['message_type']);
+    }
+}
+
 // Gestion des actions CRUD
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
         $result = false;
-        $message = '';
         $action = filter_input(INPUT_POST, 'action', FILTER_SANITIZE_STRING);
 
         try {
+            $titre = filter_input(INPUT_POST, 'titre', FILTER_SANITIZE_STRING);
+            $ingredients = filter_input(INPUT_POST, 'ingredients', FILTER_SANITIZE_STRING);
+            $instructions = filter_input(INPUT_POST, 'instructions', FILTER_SANITIZE_STRING);
+
             switch ($action) {
                 case 'create':
-                    $titre = filter_input(INPUT_POST, 'titre', FILTER_SANITIZE_STRING);
-                    $ingredients = filter_input(INPUT_POST, 'ingredients', FILTER_SANITIZE_STRING);
-                    $instructions = filter_input(INPUT_POST, 'instructions', FILTER_SANITIZE_STRING);
-                    
                     if ($titre && $ingredients && $instructions) {
                         $result = $recipe->create($titre, $ingredients, $instructions, $_SESSION['user']['id']);
-                        $message = $result ? "Recette créée avec succès." : "Erreur lors de la création de la recette.";
+                        setSessionMessage("Recette créée avec succès.");
                     } else {
-                        $message = "Tous les champs sont requis pour créer une recette.";
+                        setSessionMessage("Tous les champs sont requis pour créer une recette.", 'danger');
                     }
                     break;
 
                 case 'update':
                     $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-                    $titre = filter_input(INPUT_POST, 'titre', FILTER_SANITIZE_STRING);
-                    $ingredients = filter_input(INPUT_POST, 'ingredients', FILTER_SANITIZE_STRING);
-                    $instructions = filter_input(INPUT_POST, 'instructions', FILTER_SANITIZE_STRING);
-                    
                     if ($id && $titre && $ingredients && $instructions) {
                         $result = $recipe->update($id, $titre, $ingredients, $instructions);
-                        $message = $result ? "Recette mise à jour avec succès." : "Erreur lors de la mise à jour de la recette.";
+                        setSessionMessage("Recette mise à jour avec succès.");
                     } else {
-                        $message = "Tous les champs sont requis pour mettre à jour une recette.";
+                        setSessionMessage("Tous les champs sont requis pour mettre à jour une recette.", 'danger');
                     }
                     break;
 
                 case 'delete':
                     $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-                    
                     if ($id) {
                         $result = $recipe->delete($id);
-                        $message = $result ? "Recette supprimée avec succès." : "Erreur lors de la suppression de la recette.";
+                        setSessionMessage("Recette supprimée avec succès.");
                     } else {
-                        $message = "ID de recette invalide pour la suppression.";
+                        setSessionMessage("ID de recette invalide pour la suppression.", 'danger');
                     }
                     break;
 
                 default:
-                    $message = "Action non reconnue.";
+                    setSessionMessage("Action non reconnue.", 'danger');
             }
         } catch (Exception $e) {
-            $message = "Une erreur est survenue : " . $e->getMessage();
+            setSessionMessage("Une erreur est survenue : " . $e->getMessage(), 'danger');
             error_log($e->getMessage());
         }
 
-        // Stocker le message dans la session pour l'afficher après la redirection
-        $_SESSION['message'] = $message;
-        $_SESSION['message_type'] = $result ? 'success' : 'danger';
-        
         header('Location: ' . $_SERVER['PHP_SELF']);
         exit;
     }
@@ -83,14 +89,13 @@ include '../../views/templates/header.php';
 include '../../views/templates/navbar_doctor.php';
 ?>
 <style>
-
 h1,h2,h3 {
     text-align: center;
 }
 
 body {
     background-image: url('../../../assets/image/background.jpg');
-    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+    padding-top: 48px;
 }
 h1, .mt-5 {
     background: whitesmoke;
@@ -100,16 +105,7 @@ h1, .mt-5 {
 <div class="container mt-4">
     <h1 class="mb-4">Gestion des Recettes</h1>
 
-    <?php
-    if (isset($_SESSION['message'])) {
-        echo '<div class="alert alert-' . $_SESSION['message_type'] . ' alert-dismissible fade show" role="alert">
-                ' . htmlspecialchars($_SESSION['message']) . '
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>';
-        unset($_SESSION['message']);
-        unset($_SESSION['message_type']);
-    }
-    ?>
+    <?php displaySessionMessage(); ?>
 
     <div class="card mb-4">
         <div class="card-header">
@@ -130,7 +126,6 @@ h1, .mt-5 {
                     <label for="instructions" class="form-label">Instructions</label>
                     <textarea class="form-control" id="instructions" name="instructions" rows="3" required></textarea>
                 </div>
-                <input type="hidden" name="auteur_id" value="<?php echo $_SESSION['user']['id']; ?>">
                 <button type="submit" class="btn btn-info">Ajouter</button>
             </form>
         </div>

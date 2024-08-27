@@ -8,13 +8,14 @@ $db = $database->connect();
 
 $quiz = new Quiz($db);
 
-$quiz_id = $_GET['id'];
+$quiz_id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 $quizData = $quiz->getQuizById($quiz_id);
 
-require_once '../views/templates/header.php';
-require_once '../views/templates/navbar.php';
-?>
+$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
+include '../views/templates/header.php';
+include '../views/templates/navbar.php';
+?>
 <style>
     body {
         background-image: url('../../assets/image/background.jpg');
@@ -106,14 +107,10 @@ require_once '../views/templates/navbar.php';
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 </style>
-
 <div class="container mt-5">
-    <br>
-    <hr>
     <h1 class="text-center"><?php echo htmlspecialchars($quizData['titre']); ?></h1>
-    <hr>
-    <br>
     <form id="quizForm" action="submit_quiz.php" method="post">
+        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <input type="hidden" name="quiz_id" value="<?php echo $quiz_id; ?>">
         <div id="questionsContainer">
             <?php foreach ($quizData['questions'] as $questionIndex => $question) : ?>
@@ -137,4 +134,4 @@ require_once '../views/templates/navbar.php';
     </form>
 </div>
 
-<?php require_once '../views/templates/footer.php'; ?>
+<?php include '../views/templates/footer.php'; ?>

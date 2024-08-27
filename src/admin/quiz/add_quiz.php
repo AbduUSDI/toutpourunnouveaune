@@ -13,38 +13,50 @@ $db = $database->connect();
 
 $quiz = new Quiz($db);
 
+// Protection CSRF
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $titre = $_POST['titre'];
-    $questions = $_POST['questions'];
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $_SESSION['error_message'] = "Erreur de sécurité : jeton CSRF invalide.";
+        header('Location: add_quiz.php');
+        exit;
+    }
 
-    $quiz_id = $quiz->addQuiz($titre, $questions);
-    header('Location: manage_quizzes.php');
-    exit;
+    $titre = filter_input(INPUT_POST, 'titre', FILTER_SANITIZE_STRING);
+    $questions = $_POST['questions']; // Validation personnalisée nécessaire pour les tableaux complexes
+
+    if ($titre && $questions) {
+        $quiz->addQuiz($titre, $questions);
+        header('Location: manage_quizzes.php');
+        exit;
+    }
 }
+
+$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
 include_once '../../views/templates/header.php';
 include_once '../../views/templates/navbar_admin.php';
 ?>
 
 <style>
-h1, h2, h3 {
-    text-align: center;
-}
+    h1, h2, h3 {
+        text-align: center;
+    }
 
-body {
-    background-image: url('../../../assets/image/background.jpg');
-    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
-}
+    body {
+        background-image: url('../../../assets/image/background.jpg');
+        padding-top: 48px;
+    }
 
-h1, .mt-5 {
-    background: whitesmoke;
-    border-radius: 15px;
-}
+    h1, .mt-5 {
+        background: whitesmoke;
+        border-radius: 15px;
+    }
 </style>
 
 <div class="container mt-5">
     <h1>Créer un nouveau Quiz</h1>
     <form id="quizForm" method="post" action="add_quiz.php">
+        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="form-group">
             <label for="titre">Titre du Quiz</label>
             <input type="text" class="form-control" id="titre" name="titre" required>

@@ -15,74 +15,49 @@ $dailyTracking = new Tracking($db);
 
 // Gestion des actions CRUD
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['action'])) {
-        $result = false;
-        $message = '';
-        $action = filter_input(INPUT_POST, 'action', FILTER_SANITIZE_STRING);
+    $result = false;
+    $message = '';
+    $action = filter_input(INPUT_POST, 'action', FILTER_SANITIZE_STRING);
 
-        try {
+    try {
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+        $utilisateur_id = filter_input(INPUT_POST, 'utilisateur_id', FILTER_SANITIZE_NUMBER_INT);
+        $date = filter_input(INPUT_POST, 'date', FILTER_SANITIZE_STRING);
+        $heure_repas = filter_input(INPUT_POST, 'heure_repas', FILTER_SANITIZE_STRING);
+        $duree_repas = filter_input(INPUT_POST, 'duree_repas', FILTER_SANITIZE_NUMBER_INT);
+        $heure_change = filter_input(INPUT_POST, 'heure_change', FILTER_SANITIZE_STRING);
+        $medicament = filter_input(INPUT_POST, 'medicament', FILTER_SANITIZE_STRING);
+        $notes = filter_input(INPUT_POST, 'notes', FILTER_SANITIZE_STRING);
+
+        if (!$utilisateur_id || !$date || !$heure_repas) {
+            $message = "Les champs utilisateur, date et heure de repas sont requis.";
+        } else {
             switch ($action) {
                 case 'create':
-                    $utilisateur_id = filter_input(INPUT_POST, 'utilisateur_id', FILTER_SANITIZE_NUMBER_INT);
-                    $date = filter_input(INPUT_POST, 'date', FILTER_SANITIZE_STRING);
-                    $heure_repas = filter_input(INPUT_POST, 'heure_repas', FILTER_SANITIZE_STRING);
-                    $duree_repas = filter_input(INPUT_POST, 'duree_repas', FILTER_SANITIZE_NUMBER_INT);
-                    $heure_change = filter_input(INPUT_POST, 'heure_change', FILTER_SANITIZE_STRING);
-                    $medicament = filter_input(INPUT_POST, 'medicament', FILTER_SANITIZE_STRING);
-                    $notes = filter_input(INPUT_POST, 'notes', FILTER_SANITIZE_STRING);
-
-                    if ($utilisateur_id && $date && $heure_repas) {
-                        $result = $dailyTracking->create($utilisateur_id, $date, $heure_repas, $duree_repas, $heure_change, $medicament, $notes);
-                        $message = $result ? "Suivi quotidien créé avec succès." : "Erreur lors de la création du suivi quotidien.";
-                    } else {
-                        $message = "Les champs utilisateur, date et heure de repas sont requis pour créer un suivi quotidien.";
-                    }
+                    $result = $dailyTracking->create($utilisateur_id, $date, $heure_repas, $duree_repas, $heure_change, $medicament, $notes);
+                    $message = $result ? "Suivi quotidien créé avec succès." : "Erreur lors de la création du suivi quotidien.";
                     break;
-
                 case 'update':
-                    $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-                    $utilisateur_id = filter_input(INPUT_POST, 'utilisateur_id', FILTER_SANITIZE_NUMBER_INT);
-                    $date = filter_input(INPUT_POST, 'date', FILTER_SANITIZE_STRING);
-                    $heure_repas = filter_input(INPUT_POST, 'heure_repas', FILTER_SANITIZE_STRING);
-                    $duree_repas = filter_input(INPUT_POST, 'duree_repas', FILTER_SANITIZE_NUMBER_INT);
-                    $heure_change = filter_input(INPUT_POST, 'heure_change', FILTER_SANITIZE_STRING);
-                    $medicament = filter_input(INPUT_POST, 'medicament', FILTER_SANITIZE_STRING);
-                    $notes = filter_input(INPUT_POST, 'notes', FILTER_SANITIZE_STRING);
-
-                    if ($id && $utilisateur_id && $date && $heure_repas) {
-                        $result = $dailyTracking->update($id, $utilisateur_id, $date, $heure_repas, $duree_repas, $heure_change, $medicament, $notes);
-                        $message = $result ? "Suivi quotidien mis à jour avec succès." : "Erreur lors de la mise à jour du suivi quotidien.";
-                    } else {
-                        $message = "Les champs utilisateur, date et heure de repas sont requis pour mettre à jour un suivi quotidien.";
-                    }
+                    $result = $dailyTracking->update($id, $utilisateur_id, $date, $heure_repas, $duree_repas, $heure_change, $medicament, $notes);
+                    $message = $result ? "Suivi quotidien mis à jour avec succès." : "Erreur lors de la mise à jour du suivi quotidien.";
                     break;
-
                 case 'delete':
-                    $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-                    
-                    if ($id) {
-                        $result = $dailyTracking->delete($id);
-                        $message = $result ? "Suivi quotidien supprimé avec succès." : "Erreur lors de la suppression du suivi quotidien.";
-                    } else {
-                        $message = "ID de suivi quotidien invalide pour la suppression.";
-                    }
+                    $result = $dailyTracking->delete($id);
+                    $message = $result ? "Suivi quotidien supprimé avec succès." : "Erreur lors de la suppression du suivi quotidien.";
                     break;
-
                 default:
                     $message = "Action non reconnue.";
             }
-        } catch (Exception $e) {
-            $message = "Une erreur est survenue : " . $e->getMessage();
-            error_log($e->getMessage());
         }
-
-        // Stocker le message dans la session pour l'afficher après la redirection
-        $_SESSION['message'] = $message;
-        $_SESSION['message_type'] = $result ? 'success' : 'danger';
-        
-        header('Location: ' . $_SERVER['PHP_SELF']);
-        exit;
+    } catch (Exception $e) {
+        $message = "Une erreur est survenue : " . $e->getMessage();
+        error_log($e->getMessage());
     }
+
+    $_SESSION['message'] = $message;
+    $_SESSION['message_type'] = $result ? 'success' : 'danger';
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit;
 }
 
 $recettes = $dailyTracking->getTracking();

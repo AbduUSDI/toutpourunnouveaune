@@ -13,12 +13,19 @@ $db = $database->connect();
 
 $recipe = new Recipe($db);
 
-// Gestion des actions CRUD
+// Protection CSRF
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['action'])) {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $_SESSION['error_message'] = "Erreur de sécurité : jeton CSRF invalide.";
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit;
+    }
+
+    $action = filter_input(INPUT_POST, 'action', FILTER_SANITIZE_STRING);
+
+    if ($action) {
         $result = false;
         $message = '';
-        $action = filter_input(INPUT_POST, 'action', FILTER_SANITIZE_STRING);
 
         try {
             switch ($action) {
@@ -68,7 +75,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             error_log($e->getMessage());
         }
 
-        // Stocker le message dans la session pour l'afficher après la redirection
         $_SESSION['message'] = $message;
         $_SESSION['message_type'] = $result ? 'success' : 'danger';
         
@@ -77,21 +83,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// Générer un jeton CSRF pour cette session
+$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
 $recettes = $recipe->getAll();
 
 include '../../views/templates/header.php';
 include '../../views/templates/navbar_admin.php';
 ?>
 <style>
-
-h1,h2,h3 {
+h1, h2, h3 {
     text-align: center;
 }
 
 body {
     background-image: url('../../../assets/image/background.jpg');
-    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
+    padding-top: 48px;
 }
+
 h1, .mt-4 {
     background: whitesmoke;
     border-radius: 15px;
@@ -102,7 +111,7 @@ h1, .mt-4 {
 
     <?php
     if (isset($_SESSION['message'])) {
-        echo '<div class="alert alert-' . $_SESSION['message_type'] . ' alert-dismissible fade show" role="alert">
+        echo '<div class="alert alert-' . htmlspecialchars($_SESSION['message_type']) . ' alert-dismissible fade show" role="alert">
                 ' . htmlspecialchars($_SESSION['message']) . '
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>';
@@ -118,6 +127,7 @@ h1, .mt-4 {
         <div class="card-body text-center">
             <form method="POST">
                 <input type="hidden" name="action" value="create">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                 <div class="mb-3">
                     <label for="titre" class="form-label">Titre</label>
                     <input type="text" class="form-control" id="titre" name="titre" required>
@@ -130,7 +140,6 @@ h1, .mt-4 {
                     <label for="instructions" class="form-label">Instructions</label>
                     <textarea class="form-control" id="instructions" name="instructions" rows="3" required></textarea>
                 </div>
-                <input type="hidden" name="auteur_id" value="<?php echo $_SESSION['user']['id']; ?>">
                 <button type="submit" class="btn btn-info">Ajouter</button>
             </form>
         </div>
@@ -148,29 +157,31 @@ h1, .mt-4 {
                         <p class="card-text"><?= nl2br(htmlspecialchars($recette['ingredients'])) ?></p>
                         <h5 class="card-title">Instructions</h5>
                         <p class="card-text"><?= nl2br(htmlspecialchars($recette['instructions'])) ?></p>
-                        <button class="btn btn-warning btn-modifier" type="button" data-bs-toggle="collapse" data-bs-target="#editForm<?= $recette['id'] ?>" aria-expanded="false" aria-controls="editForm<?= $recette['id'] ?>">
+                        <button class="btn btn-warning btn-modifier" type="button" data-bs-toggle="collapse" data-bs-target="#editForm<?= htmlspecialchars($recette['id']) ?>" aria-expanded="false" aria-controls="editForm<?= htmlspecialchars($recette['id']) ?>">
                             Modifier
                         </button>
                         <form method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette recette ?');">
                             <input type="hidden" name="action" value="delete">
-                            <input type="hidden" name="id" value="<?= $recette['id'] ?>">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+                            <input type="hidden" name="id" value="<?= htmlspecialchars($recette['id']) ?>">
                             <button type="submit" class="btn btn-danger">Supprimer</button>
                         </form>
-                        <div class="collapse mt-3" id="editForm<?= $recette['id'] ?>">
+                        <div class="collapse mt-3" id="editForm<?= htmlspecialchars($recette['id']) ?>">
                             <form method="POST">
                                 <input type="hidden" name="action" value="update">
-                                <input type="hidden" name="id" value="<?= $recette['id'] ?>">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+                                <input type="hidden" name="id" value="<?= htmlspecialchars($recette['id']) ?>">
                                 <div class="mb-3">
-                                    <label for="titre<?= $recette['id'] ?>" class="form-label">Titre</label>
-                                    <input type="text" class="form-control" id="titre<?= $recette['id'] ?>" name="titre" value="<?= htmlspecialchars($recette['titre']) ?>" required>
+                                    <label for="titre<?= htmlspecialchars($recette['id']) ?>" class="form-label">Titre</label>
+                                    <input type="text" class="form-control" id="titre<?= htmlspecialchars($recette['id']) ?>" name="titre" value="<?= htmlspecialchars($recette['titre']) ?>" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="ingredients<?= $recette['id'] ?>" class="form-label">Ingrédients</label>
-                                    <textarea class="form-control" id="ingredients<?= $recette['id'] ?>" name="ingredients" rows="3" required><?= htmlspecialchars($recette['ingredients']) ?></textarea>
+                                    <label for="ingredients<?= htmlspecialchars($recette['id']) ?>" class="form-label">Ingrédients</label>
+                                    <textarea class="form-control" id="ingredients<?= htmlspecialchars($recette['id']) ?>" name="ingredients" rows="3" required><?= htmlspecialchars($recette['ingredients']) ?></textarea>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="instructions<?= $recette['id'] ?>" class="form-label">Instructions</label>
-                                    <textarea class="form-control" id="instructions<?= $recette['id'] ?>" name="instructions" rows="3" required><?= htmlspecialchars($recette['instructions']) ?></textarea>
+                                    <label for="instructions<?= htmlspecialchars($recette['id']) ?>" class="form-label">Instructions</label>
+                                    <textarea class="form-control" id="instructions<?= htmlspecialchars($recette['id']) ?>" name="instructions" rows="3" required><?= htmlspecialchars($recette['instructions']) ?></textarea>
                                 </div>
                                 <button type="submit" class="btn btn-success">Enregistrer les modifications</button>
                             </form>

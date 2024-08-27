@@ -140,14 +140,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $nom = filter_input(INPUT_POST, 'nom', FILTER_SANITIZE_STRING);
                             $date_naissance = filter_input(INPUT_POST, 'date_naissance', FILTER_SANITIZE_STRING);
                             $biographie = filter_input(INPUT_POST, 'biographie', FILTER_SANITIZE_STRING);
-                            $photo_profil = $userProfile['photo_profil']; // Garder l'ancienne photo par défaut
+                            $photo_profil = $userProfile['photo_profil'];
                             
                             if (isset($_FILES['photo_profil']) && $_FILES['photo_profil']['error'] == UPLOAD_ERR_OK) {
                                 $image = $_FILES['photo_profil'];
                                 $allowed = array("jpg" => "image/jpg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png");
                                 $filetype = $image['type'];
                                 
-                                // Vérifier le type MIME du fichier
                                 if (in_array($filetype, $allowed)) {
                                     $imageName = time() . '_' . $image['name'];
                                     if (move_uploaded_file($image['tmp_name'], '../../../assets/uploads/' . $imageName)) {
@@ -375,7 +374,7 @@ include '../templates/navbar_forum.php';
             </tbody>
         </table>
     <?php endif; ?>
-    <a href="add_thread.php" class="btn btn-info">Créer un nouveau thread</a>
+    <a href="../threads/add_thread.php" class="btn btn-info">Créer un nouveau thread</a>
 </div>
 
 <div class="container mt-5">
