@@ -12,18 +12,17 @@ Bienvenue sur le dépôt du projet "Tout pour un nouveau-né". Ce site web est c
 
 ## Installation
 
-1. **Clonez le dépôt** : `git clone https://github.com/AbduUSDI/toutpourunnouveaune`.
-3. **Configurez XAMPP** après l'avoir installé sur le site officiel.
-4. Après avoir configuré XAMPP, vous avez besoin de créer la variable d'environnement dans vos réglages Windows
-5. Une fois fait, il faut aller sur l'application XAMPP Control Panel et l'executer en tant qu'administrateur pour éviter tout conflit, le logiciel affichera alors plusieurs logiciels à ouvrir, ouvrez Apache (le serveur) ensuite ouvrez MySQL(la base de données). Cliquez ensuite sur "Admin" sur la ligne MySQL.
-6. La page http://localhost/phpmyadmin/ s'ouvrira sur votre navigateur par défaut ensuite cliquez sur "Importer".
-7. Importez la base de données MySQL en utilisant le fichier zoo_arcadia.sql qui contient tout le code SQL pour créer la BDD complète contenant ses tables et ses valeurs.
-8. Vérifiez que la base de donnée contient bien les tables du projet.
+1. **Configurez XAMPP** après l'avoir installé sur le site officiel.
+2. Après avoir configuré XAMPP, vous avez besoin de créer la variable d'environnement dans vos réglages Windows
+3. Une fois fait, il faut aller sur l'application XAMPP Control Panel et l'executer en tant qu'administrateur pour éviter tout conflit, le logiciel affichera alors plusieurs logiciels à ouvrir, ouvrez Apache (le serveur) ensuite ouvrez MySQL(la base de données). Cliquez ensuite sur "Admin" sur la ligne MySQL.
+4. La page http://localhost/phpmyadmin/ s'ouvrira sur votre navigateur par défaut ensuite cliquez sur "Importer".
+5. Importez la base de données MySQL en utilisant le fichier zoo_arcadia.sql qui contient tout le code SQL pour créer la BDD complète contenant ses tables et ses valeurs.
+6. Vérifiez que la base de donnée contient bien les tables du projet.
 (8 bis. Télécharger le code source du projet en .zip et décompresser le tout dans un dossier nommé "zoo_arcadia" qui devra être dans votre répertoire "htdocs" qui se trouve dans le dossier "xampp" (tout dépend de où vous l'avez positionner pendant votre installation, si par défaut : le dossier se trouve dans "utilisateur" dans le Disque local).) 
-9. Ouvrez un invité de commandes : aller à la racine du projet et installer les dépendances comme :  Créer le fichier composer.json en faisant : `composer init`  puis ensuite télécharger les dépendances :     `composer require mongodb/mongodb` ; `composer require phpmailer/phpmailer`
-10. Une fois les dépendances installées il faut aller sur le dossier "ext" de PHP, l'adresse exacte est par défaut : `"C:\xampp\php\ext"` transférer le fichier `"php_mongodb.dll"` que vous pouvez télécharger grâce à ce lien : [https://pecl.php.net/](https://pecl.php.net/package/mongodb/1.18.1/windows). Télécharger le bon fichier selon votre version php. Après avoir déplacer le fichier correspondant dans le répertoire "ext" de "php", aller sur le fichier `"php.ini"` et chercher la ligne "extension" en utilisant la barre de recherche (raccourci CTRL+F) ajouter la ligne `"extension=php_mongodb.dll"`.
-11. N'oublier pas de créer une base de données et une collection MongoDB dans MongoDB Compass ou Atlas, une fois fait si vous êtes sur le port par défaut vous devrez avoir comme URI, databaseName et collections (clicks) :  `$uri = '"mongodb://localhost:27017"` ; `"$databaseName = 'zoo_arcadia_click_counts';"` 
-12. Vous pouvez maintenant lancez l'application via votre serveur local en utilisant l'url : http://localhost/toutpourunnouveaune/index.php sur votre navigateur par défaut.
+7. Ouvrez un invité de commandes : aller à la racine du projet et installer les dépendances comme :  Créer le fichier composer.json en faisant : `composer init`  puis ensuite télécharger les dépendances :     `composer require mongodb/mongodb` ; `composer require phpmailer/phpmailer`
+8. Une fois les dépendances installées il faut aller sur le dossier "ext" de PHP, l'adresse exacte est par défaut : `"C:\xampp\php\ext"` transférer le fichier `"php_mongodb.dll"` que vous pouvez télécharger grâce à ce lien : [https://pecl.php.net/](https://pecl.php.net/package/mongodb/1.18.1/windows). Télécharger le bon fichier selon votre version php. Après avoir déplacer le fichier correspondant dans le répertoire "ext" de "php", aller sur le fichier `"php.ini"` et chercher la ligne "extension" en utilisant la barre de recherche (raccourci CTRL+F) ajouter la ligne `"extension=php_mongodb.dll"`.
+9. N'oublier pas de créer une base de données et une collection MongoDB dans MongoDB Compass ou Atlas, une fois fait si vous êtes sur le port par défaut vous devrez avoir comme URI, databaseName et collections (clicks) :  `$uri = '"mongodb://localhost:27017"` ; `"$databaseName = 'zoo_arcadia_click_counts';"` 
+10. Vous pouvez maintenant lancez l'application via votre serveur local en utilisant l'url : http://localhost/toutpourunnouveaune/index.php sur votre navigateur par défaut.
 
 ### Prérequis
 
@@ -37,7 +36,7 @@ Bienvenue sur le dépôt du projet "Tout pour un nouveau-né". Ce site web est c
 
 1. **Clonez le dépôt** :
     ```bash
-    git clone https://github.com/votre-utilisateur/tout-pour-un-nouveau-ne.git
+    git clone https://github.com/votre-utilisateur/toutpourunnouveaune.git
     cd tout-pour-un-nouveau-ne
     ```
 
@@ -51,7 +50,7 @@ Bienvenue sur le dépôt du projet "Tout pour un nouveau-né". Ce site web est c
    - Renommez le fichier `config/Database.php.example` en `Database.php` et mettez à jour les informations de connexion MySQL.
 
 4. **Configuration de MongoDB** :
-   - Configurez MongoDB en modifiant le fichier `config/MongoDB.php`.
+   - Configurez MongoDB en modifiant le fichier `config/MongoDB.php` en ajoutant vos URI en fonction de vos préférences.
 
 5. **Importez les fichiers SQL** :
    - Importez le fichiers SQL disponible `toupourunnouveaune.sql` pour configurer les tables nécessaires.
@@ -60,7 +59,7 @@ Bienvenue sur le dépôt du projet "Tout pour un nouveau-né". Ce site web est c
    - Configurez votre serveur web (Apache, Nginx, etc.) pour pointer vers le répertoire du projet.
 
 7. **Lancez l'application** :
-   - Accédez à votre site web via votre navigateur en naviguant vers `http://localhost/votre-projet`.
+   - Accédez à votre site web via votre navigateur en naviguant vers `http://localhost/toutpourunnouveaune/index.php`.
 
 ## Utilisation
 
