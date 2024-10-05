@@ -1,17 +1,18 @@
 <?php
 session_start();
-require_once '../../config/Database.php';
-require_once '../models/CommentModel.php';
+
+require '../../vendor/autoload.php';
 
 if (!isset($_SESSION['user'])) {
-    header('Location: login.php');
+    header('Location: /Portfolio/toutpourunnouveaune/login');
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $database = new Database();
+    $database = new \Database\DatabaseConnection();
     $db = $database->connect();
-    $commentManager = new Comment($db);
+    $comment = new \Models\Comment($db);
+    $commentManager = new \Controllers\CommentController($comment);
 
     $guide_id = $_POST['guide_id'];
     $contenu = $_POST['contenu'];
@@ -19,6 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $commentManager->addComment($guide_id, $user_id, $contenu);
 
-    header('Location: guides.php?id=' . $guide_id);
+    header('Location: /Portfolio/toutpourunnouveaune/guides?id=' . $guide_id);
     exit;
 }

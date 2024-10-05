@@ -1,25 +1,27 @@
 <?php
-require_once '../../config/Database.php';
-require_once '../models/UserModel.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require '../../vendor/autoload.php'; // Assurez-vous que PHPMailer est installé via Composer
+require '../../vendor/autoload.php';
 
-$database = new Database();
+$database = new \Database\DatabaseConnection();
+$user = new \Models\User($db);
+$userTwo = new \Models\UserTwo($db);
+
 $db = $database->connect();
-$user = new User2($db);
-$user2 = new User($db);
+$userController = new \Controllers\UserController($db, $user);
+$userControllerTwo = new \Controllers\UserTwoController($userTwo);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['forgotEmail'];
-    $userData = $user2->getUtilisateurParEmail($email);
+    $userData = $userController->getUtilisateurParEmail($email);
 
     if ($userData) {
         $token = bin2hex(random_bytes(32));
-        $user->setResetToken($userData['id'], $token);
+        $userControllerTwo->setResetToken($userData['id'], $token);
 
-        $resetLink = "http://localhost/toutpourunnouveaune/src/public/reset_password.php?token=" . $token;
+        $resetLink = "http://localhost/Portfolio/toutpourunnouveaune/src/public/reset_password.php?token=" . $token;
 
         $mail = new PHPMailer(true);
         try {

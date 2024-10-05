@@ -1,25 +1,24 @@
 <?php
 session_start();
-require_once '../../config/Database.php';
-require_once '../models/QuizModel.php';
-require_once '../../config/MongoDB.php';
+require_once '../../vendor/autoload.php';
 
 // Vérification CSRF
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
     die('Action non autorisée.');
 }
 
-$database = new Database();
-$db = $database->connect();
+$db = (new Database\DatabaseConnection())->connect();
 
-$quiz = new Quiz($db);
-$mongoClient = new MongoDB();
+$quiz = new \Models\Quiz($db);
+$quizController = new \Controllers\QuizController($quiz);
+
+$mongoClient = new \Database\MongoDBConnection();
 $collection = $mongoClient->getCollection('scores');
 
 $quiz_id = filter_input(INPUT_POST, 'quiz_id', FILTER_SANITIZE_NUMBER_INT);
 $user_answers = $_POST['answers'] ?? [];
 
-$score = $quiz->calculateScore($quiz_id, $user_answers);
+$score = $quizController->calculateScore($quiz_id, $user_answers);
 
 $user_id = $_SESSION['user']['id'];
 
@@ -70,5 +69,5 @@ try {
     die('Erreur lors de la soumission du quiz. Veuillez réessayer.');
 }
 
-header('Location: get_score.php?score=' . $score);
+header('Location: /Portfolio/toutpourunnouveaune/get_score?score=' . $score);
 exit;

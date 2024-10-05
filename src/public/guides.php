@@ -1,17 +1,19 @@
 <?php
 session_start();
-require_once '../../config/Database.php';
-require_once '../models/UserModel.php';
-require_once '../models/GuideModel.php';
-require_once '../models/CommentModel.php';
+
+require '../../vendor/autoload.php';
 
 // Connexion à la base de données
-$database = new Database();
+$database = new \Database\DatabaseConnection();
 $db = $database->connect();
 
+// Initialisation des Models pour les inclure dans les contrôleurs
+$guide = new \Models\Guide($db);
+$comment = new \Models\Comment($db);
+
 // Gestionnaires pour les guides et les commentaires
-$guideManager = new Guide($db);
-$commentManager = new Comment($db);
+$guideController = new \Controllers\GuideController($guide);
+$commentController = new \Controllers\CommentController($comment);
 
 // Génération du token CSRF pour le formulaire
 if (empty($_SESSION['csrf_token'])) {
@@ -19,25 +21,13 @@ if (empty($_SESSION['csrf_token'])) {
 }
 
 // Récupérer tous les guides ou un guide spécifique si un ID est fourni
-$guides = isset($_GET['id']) ? [$guideManager->getGuideById($_GET['id'])] : $guideManager->getAllGuides();
+$guides = isset($_GET['id']) ? [$guideController->getGuideById($_GET['id'])] : $guideController->getAllGuides();
 
 include '../views/templates/header.php';
 include '../views/templates/navbar.php';
-?>
-<style>
-h1,h2,h3 {
-    text-align: center;
-}
 
-body {
-    background-image: url('../../assets/image/background.jpg');
-    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
-}
-h1, .mt-5 {
-    background: whitesmoke;
-    border-radius: 15px;
-}
-</style>
+?>
+
 
 <div class="container mt-5">
     <br>
@@ -61,7 +51,7 @@ h1, .mt-5 {
         <hr>
         <br>
         <?php
-        $comments = $commentManager->getApprovedCommentsByGuideId($guide['id']);
+        $comments = $commentController->getApprovedCommentsByGuideId($guide['id']);
         if ($comments):
             foreach ($comments as $comment):
         ?>
@@ -80,7 +70,7 @@ h1, .mt-5 {
 
         <!-- Formulaire pour ajouter un commentaire -->
         <?php if (isset($_SESSION['user'])): ?>
-            <form action="add_comment.php" method="POST" class="mb-4">
+            <form action="/Portfolio/toutpourunnouveaune/add_comment" method="POST" class="mb-4">
                 <input type="hidden" name="guide_id" value="<?php echo htmlspecialchars($guide['id']); ?>">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                 <div class="form-group">

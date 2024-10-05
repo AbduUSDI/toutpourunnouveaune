@@ -1,34 +1,19 @@
 <?php 
-
+require '../../vendor/autoload.php';
 session_start();
 
-include_once '../../config/Database.php';
-include_once '../models/FoodPresentationModel.php';
-
-$database = new Database();
+$database = new \Database\DatabaseConnection();
 $db = $database->connect();
 
-$presentation = new FoodPresentation($db);
+$foodPresentation = new \Models\FoodPresentation($db);
+$presentation = new \Controllers\FoodPresentationController($foodPresentation);
 
-$presentations = $presentation->getAll();
+$presentations = $presentation->getAllPresentations();
 
 include '../views/templates/header.php';
 include '../views/templates/navbar.php';
 ?>
-<style>
-h1,h2,h3 {
-    text-align: center;
-}
 
-body {
-    background-image: url('../../assets/image/background.jpg');
-    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
-}
-h1, .mt-4 {
-    background: whitesmoke;
-    border-radius: 15px;
-}
-</style>
 <div class="container mt-4">
     <br><hr>
     <h1 class="mb-4">Nos conseils de nutrition</h1>

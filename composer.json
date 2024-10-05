@@ -15,6 +15,13 @@
         "phpmailer/phpmailer": "^6.5",
         "vlucas/phpdotenv": "^5.3",
         "mongodb/mongodb": "^1.19"
+    },
+    "autoload": {
+        "psr-4": {
+            "Database\\": "src/Database/",
+            "Controllers\\": "src/Controllers/",
+            "Models\\": "src/Models/",
+            "Config\\":"Config/"
+        }
     }
-
 }

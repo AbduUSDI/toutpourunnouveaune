@@ -1,0 +1,107 @@
+h1,h2,h3 {
+    text-align: center;
+}
+
+body {
+    background-image: url("/Portfolio/toutpourunnouveaune/assets/image/background.jpg");
+    padding-top: 48px;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    padding-top: 8%;
+}
+h1, .mt-5, .mt-4 {
+    background: whitesmoke;
+    border-radius: 15px;
+}
+.section img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+    height: auto;
+    border-radius: 35px;
+}
+.section {
+    background: whitesmoke;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+.section h2 {
+    text-align: center;
+}
+.container {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.form-group {
+    margin-bottom: 20px;
+}
+.form-check {
+    margin-bottom: 15px;
+    position: relative;
+    padding-left: 35px;
+    cursor: pointer;
+    font-size: 18px;
+    user-select: none;
+}
+.form-check-input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 15px;
+    width: 15px;
+    background-color: #000000;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+.form-check:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+.form-check input:checked ~ .checkmark {
+    background-color: #2196F3;
+    transform: scale(1.1);
+}
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+.form-check input:checked ~ .checkmark:after {
+    display: block;
+}
+.form-check .checkmark:after {
+    top: 9px;
+    left: 9px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
+}
+.btn-info {
+    background-color: #007bff;
+    border-color: #007bff;
+    padding: 12px 24px;
+    font-size: 1.2em;
+    transition: all 0.3s ease;
+    border-radius: 30px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.btn-info:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+}
+.btn-info:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}

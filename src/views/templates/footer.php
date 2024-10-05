@@ -1,5 +1,5 @@
 <footer class="bg-light text-center text-lg-start mt-4" style="background: linear-gradient(to right, #98B46D, #DAE8C5);">
-        <div class="container p-4">
+        <div class="containerr p-4">
             <p>&copy; 2024 Tout pour un nouveau né. Tous droits réservés.</p>
         </div>
     </footer>
@@ -15,6 +15,6 @@
     <!-- Inclusion de AXIOS -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-    <script src="../../assets/js/scripts.js"></script>
+    <script src="/Portfolio/toutpourunnouveaune/assets/js/scripts.js"></script>
 </body>
 </html>

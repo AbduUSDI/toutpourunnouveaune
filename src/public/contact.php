@@ -66,20 +66,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 include '../views/templates/header.php';
 include '../views/templates/navbar.php';
 ?>
-
-<style>
-h1, h2, h3 {
-    text-align: center;
-}
-body {
-    background-image: url('../../assets/image/background.jpg');
-    padding-top: 48px;
-}
-h1, .mt-5 {
-    background: whitesmoke;
-    border-radius: 15px;
-}
-</style>
 <div class="container mt-5">
     <br>
     <hr>

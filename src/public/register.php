@@ -1,10 +1,10 @@
 <?php
-require_once '../../config/Database.php';
-require_once '../models/UserModel.php';
+require_once '../../vendor/autoload.php';
 
-$database = new Database();
-$db = $database->connect();
-$user = new User($db);
+$db = (new Database\DatabaseConnection())->connect();
+
+$user = new \Models\User($db);
+$userController = new \Controllers\UserController($db, $user);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -19,11 +19,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = $user->addUser($email, $password, $role, $username);
         if ($result) {
             $success = "Inscription réussie. Vous pouvez maintenant vous connecter.";
-            header("Location: login.php?success=" . urlencode($success));
+            header("Location: /Portfolio/toutpourunnouveaune/login?success=" . urlencode($success));
             exit();
         } else {
             $error = "Erreur lors de l'inscription. Veuillez réessayer.";
-            header("Location: login.php?error=" . urlencode($error));
+            header("Location: /Portfolio/toutpourunnouveaune/login?error=" . urlencode($error));
             exit();
         }
     }

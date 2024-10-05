@@ -1,33 +1,17 @@
 <?php
 session_start();
-require_once '../../config/Database.php';
-require_once '../models/RecipeModel.php';
+require_once '../../vendor/autoload.php';
 
-$database = new Database();
-$db = $database->connect();
+$db = (new Database\DatabaseConnection())->connect();
 
-$recipe = new Recipe($db);
-$recettes = $recipe->getAll();
+$recipe = new \Models\Recipe($db);
+$recipeController = new \Controllers\RecipeController($recipe);
+$recettes = $recipeController->getAllRecipes();
 
 include '../views/templates/header.php';
 include '../views/templates/navbar.php';
-
 ?>
-<style>
 
-h1,h2,h3 {
-    text-align: center;
-}
-
-body {
-    background-image: url('../../assets/image/background.jpg');
-    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
-}
-h1, .mt-4 {
-    background: whitesmoke;
-    border-radius: 15px;
-}
-</style>
 <div class="container mt-4">
     <h1 class="mb-4">Nos recettes</h1>
     <div class="row">

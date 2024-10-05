@@ -1,32 +1,18 @@
 <?php 
 session_start();
 
-include '../../config/Database.php';
-include '../models/AvisMedicauxModel.php';
+require_once '../../vendor/autoload.php';
 
-$database = new Database(); 
-$db = $database->connect(); 
+$db = (new Database\DatabaseConnection())->connect();
 
-$avisMedicaux = new AvisMedicaux($db);
-$avis = $avisMedicaux->getAll();
+$avisMedicaux = new \Models\AvisMedicaux($db);
+$avisMedicauxController = new \Controllers\AvisMedicauxController($avisMedicaux);
+$avis = $avisMedicauxController->getAllAvis();
 
 include '../views/templates/header.php';
 include '../views/templates/navbar.php';
 ?>
-<style>
-h1,h2,h3 {
-    text-align: center;
-}
 
-body {
-    background-image: url('../../assets/image/background.jpg');
-    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
-}
-h1, .mt-5 {
-    background: whitesmoke;
-    border-radius: 15px;
-}
-</style>
 <div class="container mt-5">
     <h1 class="my-4">Consulter les avis médicaux</h1>
     <p>Ces avis médicaux sont ici pour vous aider à mieux comprendre les petites choses nouvelles sur votre petit.</p>

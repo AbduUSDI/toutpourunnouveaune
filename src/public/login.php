@@ -1,17 +1,16 @@
 <?php
 session_start();
 
-require_once '../../config/Database.php';
-require_once '../models/UserModel.php';
+require_once '../../vendor/autoload.php';
+
+$db = (new Database\DatabaseConnection())->connect();
 
 // Génération du token CSRF pour la protection contre les attaques CSRF
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
-
-$database = new Database();
-$db = $database->connect();
-$user = new User($db);
+$user = new \Models\User($db);
+$userController = new \Controllers\UserController($db, $user);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     // Validation du token CSRF
@@ -22,14 +21,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
     $password = filter_input(INPUT_POST, 'mot_de_passe', FILTER_SANITIZE_STRING);
 
-    $userData = $user->getUtilisateurParEmail($email);
+    $userData = $userController->getUtilisateurParEmail($email);
 
     if ($userData && password_verify($password, $userData['mot_de_passe'])) {
         $_SESSION['user'] = $userData;
         if (in_array($userData['role_id'], [1, 2, 3])) {
-            header('Location: index.php');
+            header('Location: /Portfolio/toutpourunnouveaune/home');
         } else {
-            header('Location: login.php');
+            header('Location: /Portfolio/toutpourunnouveaune/login');
         }
         exit;
     } else {
@@ -59,7 +58,7 @@ h1,h2,h3 {
 }
 
 body {
-    background-image: url('../../assets/image/background.jpg');
+    background-image: url('/Portfolio/toutpourunnouveaune/assets/image/background.jpg');
     padding-top: 48px;
 }
 h1, .mt-5 {
@@ -78,7 +77,7 @@ h1, .mt-5 {
     <?php if (isset($error)): ?>
         <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
     <?php endif; ?>
-    <form action="login.php" method="POST">
+    <form action="/Portfolio/toutpourunnouveaune/login" method="POST">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="form-group">
             <label for="email">Email</label>
@@ -135,7 +134,7 @@ h1, .mt-5 {
                 </button>
             </div>
             <div class="modal-body">
-                <form id="registerForm" method="post" action="register.php">
+                <form id="registerForm" method="post" action="/Portfolio/toutpourunnouveaune/register">
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                     <div class="form-group">
                         <label for="nom_utilisateur">Nom d'utilisateur</label>
@@ -187,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const formData = new FormData(this);
 
-        fetch('forgot_password.php', {
+        fetch('/Portfolio/toutpourunnouveaune/forgot_password', {
             method: 'POST',
             body: formData
         })

@@ -1,10 +1,11 @@
 <?php
-require_once '../../config/Database.php';
-require_once '../models/UserModel.php';
+require_once '../../vendor/autoload.php';
 
-$database = new Database();
-$db = $database->connect();
-$user = new User2($db);
+$db = (new Database\DatabaseConnection())->connect();
+
+
+$user = new \Models\UserTwo($db);
+$userController = new \Controllers\UserTwoController($user);
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['token'])) {
     $token = filter_input(INPUT_GET, 'token', FILTER_SANITIZE_STRING);
@@ -26,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['token'])) {
     if ($userData) {
         if ($user->updatePassword($userData['id'], $newPassword)) {
             echo "Votre mot de passe a été réinitialisé avec succès.";
-            header('Location: login.php');
+            header('Location: /Portfolio/toutpourunnouveaune/login');
             exit;
         } else {
             echo "Une erreur s'est produite lors de la réinitialisation du mot de passe.";
@@ -36,23 +37,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['token'])) {
     }
 }
 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+include_once '../views/templates/header.php'
 ?>
-
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Réinitialisation du mot de passe</title>
-</head>
-<body>
-    <h1>Réinitialisation du mot de passe</h1>
-    <form method="POST">
-        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
-        <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
-        <label for="new_password">Nouveau mot de passe :</label>
-        <input type="password" id="new_password" name="new_password" required>
-        <button type="submit">Changer le mot de passe</button>
-    </form>
+    <div class="container mt-5">
+        <h1>Réinitialisation du mot de passe</h1>
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+            <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
+            <label for="new_password">Nouveau mot de passe :</label>
+            <input type="password" id="new_password" name="new_password" required>
+            <button type="submit">Changer le mot de passe</button>
+        </form>
+    </div>
 </body>
 </html>
