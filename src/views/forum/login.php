@@ -1,12 +1,13 @@
-<?php
+<?php 
+
 session_start();
 
-require_once '../../config/Database.php';
-require_once '../models/UserModel.php';
+require_once '../../../vendor/autoload.php';
 
-$database = new Database();
-$db = $database->connect();
-$user = new User($db);
+$db = (new Database\DatabaseConnection())->connect();
+
+$userModel = new \Models\User($db);
+$user = new \Controllers\UserController($db, $userModel);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
@@ -19,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
         $_SESSION['user'] = $userData;
         if (in_array($userData['role_id'], [1, 2, 3])) {
             // Redirige tous les rôles reconnus vers le forum
-            header('Location: indexforum.php');
+            header('Location: /Portfolio/toutpourunnouveaune/forum');
         } else {
             // En cas de rôle non reconnu, rediriger vers la page de connexion avec un message d'erreur
             $error = "Rôle utilisateur non reconnu.";
@@ -34,28 +35,12 @@ include_once 'templates/header.php';
 include_once 'templates/navbar_forum.php';
 ?>
 
-<style>
-h1, h2, h3 {
-    text-align: center;
-}
-
-body {
-    background-image: url('../../assets/image/backgroundwebsite.jpg');
-    padding-top: 48px; /* Padding pour compenser le décalage causé par la navbar fixed-top */
-}
-
-h1, .mt-5 {
-    background: whitesmoke;
-    border-radius: 15px;
-}
-</style>
-
 <div class="container mt-5">
     <h1 class="my-4">Connexion</h1>
     <?php if (isset($error)): ?>
         <div class="alert alert-danger"><?php echo $error; ?></div>
     <?php endif; ?>
-    <form action="login.php" method="POST">
+    <form action="/Portfolio/toutpourunnouveaune/login" method="POST">
         <div class="form-group">
             <label for="email">Email</label>
             <input type="email" class="form-control" id="email" name="email" autocomplete="email" required>
@@ -88,7 +73,7 @@ h1, .mt-5 {
                 </button>
             </div>
             <div class="modal-body">
-                <form id="forgotPasswordForm" method="post" action="forgot_password.php">
+                <form id="forgotPasswordForm" method="post" action="/Portfolio/toutpourunnouveaune/forgot_password">
                     <div class="form-group">
                         <label for="forgotEmail">Email</label>
                         <input type="email" class="form-control" id="forgotEmail" name="forgotEmail" required>
@@ -111,7 +96,7 @@ h1, .mt-5 {
                 </button>
             </div>
             <div class="modal-body">
-                <form id="registerForm" method="post" action="register.php">
+                <form id="registerForm" method="post" action="/Portfolio/toutpourunnouveaune/register">
                     <div class="form-group">
                         <label for="nom_utilisateur">Nom d'utilisateur</label>
                         <input type="text" class="form-control" id="nom_utilisateur" name="nom_utilisateur" required>

@@ -1,30 +1,31 @@
 <?php
 session_start();
-require_once '../../../config/Database.php';
-require_once '../../../config/MongoDB.php';
-require_once '../../models/UserModel.php';
-require_once '../../models/ForumModel.php';
-require_once '../../models/ProfileModel.php';
-require_once '../../models/ResponseModel.php';
 
 // Vérifier si l'utilisateur est connecté
 if (!isset($_SESSION['user'])) {
-    header('Location: ../public/login.php');
+    header('Location: /Portfolio/toutpourunnouveaune/login');
     exit;
 }
 
-$database = new Database();
-$db = $database->connect();
+require_once '../../../../vendor/autoload.php';
 
-$user = new User2($db);
-$profile = new Profile($db);
-$thread = new Thread($db);
-$response = new Response($db);
-$mongoClient = new MongoDBForum();
+$db = (new Database\DatabaseConnection())->connect();
+$mongoClient = new \Database\MongoDBForum();
+
+
+$user = new \Models\UserTwo($db);
+$profile = new \Models\Profile($db);
+$thread = new \Models\Forum($db);
+$response = new \Models\Response($db);
+
+$userController = new \Controllers\UserTwoController($user);
+$profileController = new \Controllers\ProfileController($profile);
+$threadController = new \Controllers\ForumController($thread);
+$responseController = new \Controllers\ResponseController($response);
 
 $userId = $_SESSION['user']['id'];
-$currentUser = $user->getUserById($userId);
-$userProfile = $profile->getProfileByUserId($userId);
+$currentUser = $userController->getUserById($userId);
+$userProfile = $profileController->getProfileByUserId($userId);
 
 // Générer un jeton CSRF pour les formulaires
 if (empty($_SESSION['csrf_token'])) {
@@ -36,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Protection CSRF
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         $_SESSION['error_message'] = "Erreur de sécurité : jeton CSRF invalide.";
-        header('Location: my_profile.php');
+        header('Location: /Portfolio/toutpourunnouveaune/admin/profile');
         exit;
     }
 
@@ -52,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $body = filter_input(INPUT_POST, 'body', FILTER_SANITIZE_STRING);
             
                 if ($id && $title && $body) {
-                    $result = $thread->updateThread($id, $title, $body);
+                    $result = $threadController->updateThread($id, $title, $body);
                     $message = $result ? "Discussion mise à jour avec succès." : "Erreur lors de la mise à jour de la discussion.";
                 } else {
                     $message = "Tous les champs sont requis pour mettre à jour une discussion.";
@@ -65,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $newPassword = filter_input(INPUT_POST, 'new_password', FILTER_SANITIZE_STRING);
                 
                 if ($username && $email) {
-                    $result = $user->updateUserProfile($userId, $username, $email, $newPassword);
+                    $result = $userController->updateUserProfile($userId, $username, $email, $newPassword);
                     if ($result) {
                         $_SESSION['user']['username'] = $username;
                         $_SESSION['user']['email'] = $email;
@@ -81,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $body = filter_input(INPUT_POST, 'body', FILTER_SANITIZE_STRING);
                 
                 if ($id && $body) {
-                    $result = $response->updateResponse($id, $body);
+                    $result = $responseController->updateResponse($id, $body);
                     $message = $result ? "Commentaire mis à jour avec succès." : "Erreur lors de la mise à jour du commentaire.";
                 } else {
                     $message = "Tous les champs sont requis pour mettre à jour un commentaire.";
@@ -92,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
                 
                 if ($id) {
-                    $result = $thread->deleteThread($id) && $mongoClient->deleteThread($id);
+                    $result = $threadController->deleteThread($id) && $mongoClient->deleteThread($id);
                     $message = $result ? "Discussion supprimée avec succès." : "Erreur lors de la suppression de la discussion.";
                 } else {
                     $message = "ID de la discussion invalide pour la suppression.";
@@ -103,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
                 
                 if ($id) {
-                    $result = $response->deleteResponse($id);
+                    $result = $responseController->deleteResponse($id);
                     $message = $result ? "Réponse supprimée avec succès." : "Erreur lors de la suppression de la réponse.";
                 } else {
                     $message = "ID de réponse invalide pour la suppression.";
@@ -113,9 +114,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'send_friend_request':
                 $friend_username = filter_input(INPUT_POST, 'friend_username', FILTER_SANITIZE_STRING);
                 if ($friend_username) {
-                    $receiver = $user->getUserByUsername($friend_username);
+                    $receiver = $userController->getByUsername($friend_username);
                     if ($receiver) {
-                        $result = $user->sendFriendRequest($userId, $receiver['id']);
+                        $result = $userController->sendFriendRequest($userId, $receiver['id']);
                         $message = $result ? "Demande d'ami envoyée avec succès." : "Erreur lors de l'envoi de la demande d'ami.";
                     } else {
                         $message = "Utilisateur non trouvé.";
@@ -129,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $request_id = filter_input(INPUT_POST, 'request_id', FILTER_SANITIZE_NUMBER_INT);
                 $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_STRING);
                 if ($request_id && in_array($status, ['accepted', 'declined'])) {
-                    $result = $user->respondFriendRequest($request_id, $status);
+                    $result = $userController->respondFriendRequest($request_id, $status);
                     $message = $result ? "Demande d'ami mise à jour avec succès." : "Erreur lors de la mise à jour de la demande d'ami.";
                 } else {
                     $message = "ID de la demande et statut requis pour répondre à une demande d'ami.";
@@ -139,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'remove_friend':
                 $request_id = filter_input(INPUT_POST, 'request_id', FILTER_SANITIZE_NUMBER_INT);
                 if ($request_id) {
-                    $result = $user->removeFriend($request_id);
+                    $result = $userController->removeFriend($request_id);
                     $message = $result ? "Ami supprimé avec succès." : "Erreur lors de la suppression de l'ami.";
                 } else {
                     $message = "ID de la demande d'ami invalide pour la suppression.";
@@ -161,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Vérifier le type MIME du fichier
                     if (in_array($filetype, $allowed)) {
                         $imageName = time() . '_' . $image['name'];
-                        if (move_uploaded_file($image['tmp_name'], '../../../assets/uploads/' . $imageName)) {
+                        if (move_uploaded_file($image['tmp_name'], '../../../../assets/uploads/' . $imageName)) {
                             $photo_profil = $imageName;
                         } else {
                             $error = "Erreur : Il y a eu un problème de téléchargement de votre fichier. Veuillez réessayer.";
@@ -172,10 +173,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 
                 if (!isset($error)) { // Mettre à jour uniquement s'il n'y a pas d'erreurs avec le téléchargement de fichier
-                    $result = $profile->saveProfile($userId, $prenom, $nom, $date_naissance, $biographie, $photo_profil);
+                    $result = $profileController->saveProfile($userId, $prenom, $nom, $date_naissance, $biographie, $photo_profil);
                     $message = $result ? "Profil mis à jour avec succès." : "Erreur lors de la mise à jour du profil.";
                     if ($result) {
-                        $userProfile = $profile->getProfileByUserId($userId); // Rafraîchir les données du profil
+                        $userProfile = $profileController->getProfileByUserId($userId);
                     }
                 } else {
                     $message = $error;
@@ -193,55 +194,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['message'] = $message;
     $_SESSION['message_type'] = $result ? 'success' : 'danger';
     
-    header('Location: ' . $_SERVER['PHP_SELF']);
+    header('Location: /Portfolio/toutpourunnouveaune/admin/profile');
     exit;
 }
 
-$friendRequests = $user->getFriendRequests($userId);
-$friends = $user->getFriends($userId);
-$userThreads = $thread->getThreadsByUserId($userId);
-$userResponses = $response->getResponsesByUserId($userId);
+$friendRequests = $userController->getFriendRequests($userId);
+$friends = $userController->getFriends($userId);
+$userThreads = $threadController->getThreadsByUserId($userId);
+$userResponses = $responseController->getResponsesByUserId($userId);
 
-include '../../views/templates/header.php';
-include '../../views/templates/navbar_admin.php';
+include '../../templates/header.php';
+include '../../templates/navbar_admin.php';
 ?>
-
-<style>
-    body {
-        background-image: url('../../../assets/image/background.jpg');
-        padding-top: 48px;
-    }
-    h1, h2, h3 {
-        text-align: center;
-        color: #333;
-    }
-    .container {
-        background: rgba(255, 255, 255, 0.8);
-        border-radius: 15px;
-        padding: 20px;
-        margin-top: 20px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    .form-control, .btn, .alert {
-        border-radius: 5px;
-    }
-    .alert {
-        margin-top: 20px;
-    }
-    .list-group-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-</style>
 
 <div class="container mt-5">
     <h1>Profil de <?php echo htmlspecialchars($currentUser['nom_utilisateur']); ?></h1>
     <div class="card">
         <div class="card-body">
             <?php if (!empty($userProfile['photo_profil'])): ?>
-                <img src="../../../assets/uploads/<?php echo htmlspecialchars($userProfile['photo_profil']); ?>" alt="Photo de profil" class="img-thumbnail mb-3" style="max-width: 200px;">
-            <?php endif; ?>
+                <img src="/Portfolio/toutpourunnouveaune/assets/uploads/<?php echo htmlspecialchars($userProfile['photo_profil']); ?>" alt="Photo de profil" class="img-thumbnail mb-3" style="max-width: 200px;">
+                <?php endif; ?>
             <h5 class="card-title"><?php echo htmlspecialchars($userProfile['prenom'] . ' ' . $userProfile['nom']); ?></h5>
             <p class="card-text"><strong>Date de naissance:</strong> <?php echo htmlspecialchars($userProfile['date_naissance'] ?? 'Non renseignée'); ?></p>
             <p class="card-text"><strong>Biographie:</strong> <?php echo nl2br(htmlspecialchars($userProfile['biographie'] ?? 'Aucune biographie')); ?></p>
@@ -253,7 +225,7 @@ include '../../views/templates/navbar_admin.php';
 </div>
 
 <div class="container mt-5">
-    <form action="my_profile.php" method="POST">
+    <form action="/Portfolio/toutpourunnouveaune/admin/profile" method="POST">
         <input type="hidden" name="action" value="update_profile">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="form-group">
@@ -282,7 +254,7 @@ include '../../views/templates/navbar_admin.php';
             <?php foreach ($friends as $friend): ?>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <?php echo htmlspecialchars($friend['nom_utilisateur']); ?>
-                    <form action="my_profile.php" method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet ami ?');">
+                    <form action="/Portfolio/toutpourunnouveaune/admin/profile" method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet ami ?');">
                         <input type="hidden" name="action" value="remove_friend">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                         <input type="hidden" name="request_id" value="<?php echo htmlspecialchars($friend['request_id']); ?>">
@@ -296,7 +268,7 @@ include '../../views/templates/navbar_admin.php';
 
 <div class="container mt-5">
     <h2>Envoyer une demande d'ami</h2>
-    <form action="my_profile.php" method="POST">
+    <form action="/Portfolio/toutpourunnouveaune/admin/profile" method="POST">
         <input type="hidden" name="action" value="send_friend_request">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="form-group">
@@ -316,14 +288,14 @@ include '../../views/templates/navbar_admin.php';
             <?php foreach ($friendRequests as $request): ?>
                 <li class="list-group-item">
                     <span>Demande d'ami de l'utilisateur ID <?php echo htmlspecialchars($request['sender_id']); ?></span>
-                    <form action="my_profile.php" method="POST" class="d-inline">
+                    <form action="/Portfolio/toutpourunnouveaune/admin/profile" method="POST" class="d-inline">
                         <input type="hidden" name="action" value="respond_friend_request">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                         <input type="hidden" name="request_id" value="<?php echo htmlspecialchars($request['id']); ?>">
                         <input type="hidden" name="status" value="accepted">
                         <button type="submit" class="btn btn-success">Accepter</button>
                     </form>
-                    <form action="my_profile.php" method="POST" class="d-inline">
+                    <form action="/Portfolio/toutpourunnouveaune/admin/profile" method="POST" class="d-inline">
                         <input type="hidden" name="action" value="respond_friend_request">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                         <input type="hidden" name="request_id" value="<?php echo htmlspecialchars($request['id']); ?>">
@@ -369,7 +341,7 @@ include '../../views/templates/navbar_admin.php';
                 <tr>
                     <td colspan="3">
                         <div class="collapse" id="editThreadForm<?php echo htmlspecialchars($thread['id']); ?>">
-                            <form action="my_profile.php" method="POST">
+                            <form action="/Portfolio/toutpourunnouveaune/admin/profile" method="POST">
                                 <input type="hidden" name="action" value="update_thread">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                                 <input type="hidden" name="id" value="<?php echo htmlspecialchars($thread['id']); ?>">
@@ -390,7 +362,7 @@ include '../../views/templates/navbar_admin.php';
             </tbody>
         </table>
     <?php endif; ?>
-    <a href="../../forum/threads/add_thread.php" class="btn btn-info">Créer un nouveau thread</a>
+    <a href="/Portfolio/toutpourunnouveaune/forum/threads/add" class="btn btn-info">Créer un nouveau thread</a>
 </div>
 
 <div class="container mt-5">
@@ -426,7 +398,7 @@ include '../../views/templates/navbar_admin.php';
                     <tr>
                         <td colspan="3">
                             <div class="collapse" id="editResponseForm<?php echo htmlspecialchars($response['id']); ?>">
-                                <form action="my_profile.php" method="POST">
+                                <form action="/Portfolio/toutpourunnouveaune/admin/profile" method="POST">
                                     <input type="hidden" name="action" value="update_response">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($response['id']); ?>">
@@ -453,7 +425,7 @@ include '../../views/templates/navbar_admin.php';
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="my_profile.php" method="POST" enctype="multipart/form-data">
+                <form action="/Portfolio/toutpourunnouveaune/admin/profile" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="action" value="update_profile_info">
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                     <div class="mb-3">
@@ -530,4 +502,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 
-<?php include '../../views/templates/footer.php'; ?>
+<?php include '../../templates/footer.php'; ?>

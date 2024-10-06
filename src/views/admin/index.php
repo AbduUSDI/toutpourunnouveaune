@@ -3,40 +3,39 @@ session_start();
 
 // Vérification de l'authentification et des autorisations
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {     
-    header('Location: ../public/login.php');     
+    header('Location: /Portfolio/toutpourunnouveaune/login');     
     exit; 
 }  
 
-// Inclure les fichiers requis avec vérification de l'existence
-require_once '../../config/Database.php'; 
-require_once '../../config/MongoDB.php'; 
-require_once '../models/UserModel.php'; 
-require_once '../models/AvisMedicauxModel.php'; 
-require_once '../models/ForumModel.php';
+require_once '../../../vendor/autoload.php';
 
-// Connexion à la base de données MySQL
-$database = new Database(); 
-$db = $database->connect();  
+// Connexion à la base de données MySQL  
+$db = (new Database\DatabaseConnection())->connect(); 
 
 // Connexion à MongoDB
-$mongoClient = new MongoDB(); 
+$mongoClient = new \Database\MongoDBConnection(); 
 $quiz = $mongoClient; 
 $scores = $quiz->getScoresParents();  
 
 // Instancier les modèles
-$userModel = new User($db); 
-$avisMedicauxModel = new AvisMedicaux($db);  
-$threadModel = new Thread($db);
+$user = new \Models\User($db); 
+$avisMedicaux = new \Models\AvisMedicaux($db);  
+$forum = new \Models\Forum($db);
+
+// Instancier les contrôleurs
+$userController = new \Controllers\UserController($db, $user);
+$avisMedicauxController = new \Controllers\AvisMedicauxController($avisMedicaux);
+$threadController = new \Controllers\ForumController($forum);
 
 // Récupérer les données
-$avis = $avisMedicauxModel->getDerniersAvis();  
-$threads = $threadModel->getThreads();
+$avis = $avisMedicauxController->getDerniersAvis();  
+$threads = $threadController->getThreads();
 
 // Extraire les IDs d'utilisateurs
 $userIds = array_column($scores, 'user_id');  
 
 // Récupérer les noms d'utilisateurs depuis MySQL
-$usernames = $userModel->getUsernames($db, $userIds);  
+$usernames = $userController->getUsernames($db, $userIds);  
 
 // Combiner les scores et les noms d'utilisateurs
 foreach ($scores as &$score) {
@@ -54,59 +53,9 @@ usort($scores, function($a, $b) {
 $totalScore = array_sum(array_column($scores, 'total_score'));
 
 // Inclure les fichiers de navigation et de styles
-include_once '../views/templates/header.php'; 
+include_once '../templates/header.php';
+include_once '../templates/navbar_admin.php';
 ?>  
-
-<style>
-h1, h2, h3 {
-    text-align: center;
-}
-
-body {
-    background-image: url('../../assets/image/background.jpg');
-    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
-}
-
-h1, .mt-5 {
-    background: whitesmoke;
-    border-radius: 15px;
-}
-</style>
-
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" style="background: linear-gradient(to right, #98B46D, #DAE8C5);">
-    <a class="navbar-brand" href="../../index.php">Tout pour un nouveau né</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="index.php">Accueil / Dashboard</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="users/manage_users.php">Gérer Utilisateurs</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="guide/manage_guides.php">Gérer les guides</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="quiz/manage_quizzes.php">Gérer les Quiz</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="recipes/manage_recipes.php">Gérer les Recettes</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="profile/my_profile.php">Mon profil</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="comments/manage_comment.php">Gérer commentaires</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="logout.php">Déconnexion</a>
-            </li>
-        </ul>
-    </div>
-</nav>
 
 <div class="container mt-5">
     <br>
@@ -127,7 +76,7 @@ h1, .mt-5 {
                 <ul class="list-group mb-4">
                     <?php foreach ($threads as $thread): ?>
                         <li class="list-group-item">
-                            <h5><a href="../forum/thread.php?id=<?php echo htmlspecialchars($thread['id']); ?>"><?php echo htmlspecialchars($thread['title']); ?></a></h5>
+                            <h5><a href="/Portfolio/toutpourunnouveaune/forum/thread/<?php echo htmlspecialchars($thread['id']); ?>"><?php echo htmlspecialchars($thread['title']); ?></a></h5>
                             <p><?php echo htmlspecialchars($thread['body']); ?></p>
                             <small class="text-muted">Par <?php echo htmlspecialchars($thread['author']); ?> le <?php echo htmlspecialchars($thread['created_at']); ?></small>
                         </li>
@@ -178,4 +127,4 @@ h1, .mt-5 {
     </ul> 
 </div>  
 
-<?php include_once '../views/templates/footer.php'; ?> 
+<?php include_once '../templates/footer.php'; ?> 

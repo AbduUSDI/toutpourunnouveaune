@@ -1,46 +1,29 @@
 <?php
-session_start();
-require_once '../../../config/Database.php';
-require_once '../../models/UserModel.php';
-require_once '../../models/ForumModel.php';
-require_once '../../models/ResponseModel.php';
 
-// Vérification de la connexion de l'utilisateur
+session_start();
+
+// Vérification si l'utilisateur est connecté
 if (!isset($_SESSION['user'])) {
-    header('Location: ../login.php');
+    header('Location: /Portfolio/toutpourunnouveaune/login');
     exit;
 }
 
-// Connexion à la base de données
-$database = new Database();
-$db = $database->connect();
+require_once '../../../../vendor/autoload.php';
+
+$db = (new Database\DatabaseConnection())->connect();
 
 // Instanciation des modèles
-$thread = new Thread($db);
-$response = new Response($db);
+$forum = new \Models\Forum($db);
+
+// Instanciation des controleurs
+$threadController = new \Controllers\ForumController($forum);
 
 // Récupération des threads
-$threads = $thread->getThreads();
+$threads = $threadController->getThreads();
 
 include_once '../templates/header.php';
 include_once '../templates/navbar_forum.php';
 ?>
-
-<style>
-h1, h2, h3 {
-    text-align: center;
-}
-
-body {
-    background-image: url('../../../assets/image/backgroundwebsite.jpg');
-    padding-top: 48px; /* Un padding pour compenser le décalage causé par la navbar fixed-top */
-}
-
-h1, .mt-5 {
-    background: whitesmoke;
-    border-radius: 15px;
-}
-</style>
 
 <div class="container mt-5">
     <h1 class="my-4">Forum</h1>
@@ -55,7 +38,7 @@ h1, .mt-5 {
                 <?php else: ?>
                     <?php foreach ($threads as $thread): ?>
                         <li class="list-group-item">
-                            <h5><a href="thread.php?id=<?php echo htmlspecialchars($thread['id']); ?>"><?php echo htmlspecialchars($thread['title']); ?></a></h5>
+                            <h5><a href="/Portfolio/toutpourunnouveaune/forum/thread/<?php echo htmlspecialchars($thread['id']); ?>"><?php echo htmlspecialchars($thread['title']); ?></a></h5>
                             <p><?php echo nl2br(htmlspecialchars($thread['body'])); ?></p>
                             <small class="text-muted">Par <?php echo htmlspecialchars($thread['author']); ?> le <?php echo htmlspecialchars($thread['created_at']); ?></small>
                         </li>

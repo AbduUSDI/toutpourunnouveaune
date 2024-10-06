@@ -60,7 +60,7 @@ class UserController {
     }
 
     // Récupérer les noms d'utilisateur pour une liste d'IDs
-    public function getUsernames($userIds) {
-        return $this->user->getUsernames($this->db, $userIds);
+    public function getUsernames($db, $userIds) {
+        return $this->user->getUsernames($db, $userIds);
     }
 }

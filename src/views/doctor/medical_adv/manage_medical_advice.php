@@ -1,17 +1,17 @@
 <?php
-session_start();
-if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 2) {
-    header('Location: ../public/login.php');
-    exit;
+session_start(); 
+if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 2) {     
+    header('Location: /Portfolio/toutpourunnouveaune/login');     
+    exit; 
 }
 
-require_once '../../../config/Database.php';
-require_once '../../models/AvisMedicauxModel.php';
+require_once '../../../../vendor/autoload.php';
 
-$database = new Database();
-$db = $database->connect();
+// Connexion à la base de données MySQL  
+$db = (new Database\DatabaseConnection())->connect(); 
 
-$advice = new AvisMedicaux($db);
+$adviceModel = new \Models\AvisMedicaux($db);
+$advice = new \Controllers\AvisMedicauxController($adviceModel);
 
 // Gestion des actions CRUD
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $contenu = filter_input(INPUT_POST, 'contenu', FILTER_SANITIZE_STRING);
                 
                 if ($titre && $contenu) {
-                    $result = $advice->create($titre, $contenu, $_SESSION['user']['id']);
+                    $result = $advice->createAvis($titre, $contenu, $_SESSION['user']['id']);
                     $message = $result ? "Avis médical créé avec succès." : "Erreur lors de la création de l'avis médical.";
                 } else {
                     $message = "Tous les champs sont requis pour créer un avis médical.";
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $contenu = filter_input(INPUT_POST, 'contenu', FILTER_SANITIZE_STRING);
                 
                 if ($id && $titre && $contenu) {
-                    $result = $advice->update($id, $titre, $contenu);
+                    $result = $advice->updateAvis($id, $titre, $contenu);
                     $message = $result ? "Avis médical mis à jour avec succès." : "Erreur lors de la mise à jour de l'avis médical.";
                 } else {
                     $message = "Tous les champs sont requis pour mettre à jour un avis médical.";
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
                 
                 if ($id) {
-                    $result = $advice->delete($id);
+                    $result = $advice->deleteAvis($id);
                     $message = $result ? "Avis médical supprimé avec succès." : "Erreur lors de la suppression de l'avis médical.";
                 } else {
                     $message = "ID d'avis médical invalide pour la suppression.";
@@ -72,25 +72,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-$advices = $advice->getAll();
+$advices = $advice->getAllAvis();
 
-include '../../views/templates/header.php';
-include '../../views/templates/navbar_doctor.php';
+include '../../templates/header.php';
+include '../../templates/navbar_doctor.php';
 ?>
-<style>
-h1,h2,h3 {
-    text-align: center;
-}
 
-body {
-    background-image: url('../../../assets/image/background.jpg');
-    padding-top: 48px;
-}
-h1, .mt-5 {
-    background: whitesmoke;
-    border-radius: 15px;
-}
-</style>
 <div class="container mt-4">
     <h1 class="mb-4">Gestion des Avis Médicaux</h1>
 
@@ -124,10 +111,10 @@ h1, .mt-5 {
         <?php foreach ($advices as $advice): ?>
             <div class="col-md-6 mb-4">
                 <div class="card">
-                    <div class="card-header"><?php echo htmlspecialchars($advice['titre']); ?></div>
+                    <div class="card-header"><?php echo htmlspecialchars_decode($advice['titre']); ?></div>
                     <div class="card-body">
                         <h5 class="card-title">Contenu</h5>
-                        <p class="card-text"><?php echo nl2br(htmlspecialchars($advice['contenu'])); ?></p>
+                        <p class="card-text"><?php echo nl2br(htmlspecialchars_decode($advice['contenu'])); ?></p>
                         <button class="btn btn-primary btn-modifier" type="button" data-bs-toggle="collapse" data-bs-target="#editForm<?php echo $advice['id']; ?>" aria-expanded="false" aria-controls="editForm<?php echo $advice['id']; ?>">
                             Modifier
                         </button>
@@ -142,11 +129,11 @@ h1, .mt-5 {
                                 <input type="hidden" name="id" value="<?php echo $advice['id']; ?>">
                                 <div class="mb-3">
                                     <label for="titre<?php echo $advice['id']; ?>" class="form-label">Titre</label>
-                                    <input type="text" class="form-control" id="titre<?php echo $advice['id']; ?>" name="titre" value="<?php echo htmlspecialchars($advice['titre']); ?>" required>
+                                    <input type="text" class="form-control" id="titre<?php echo $advice['id']; ?>" name="titre" value="<?php echo htmlspecialchars_decode($advice['titre']); ?>" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="contenu<?php echo $advice['id']; ?>" class="form-label">Contenu</label>
-                                    <textarea class="form-control" id="contenu<?php echo $advice['id']; ?>" name="contenu" rows="3" required><?php echo htmlspecialchars($advice['contenu']); ?></textarea>
+                                    <textarea class="form-control" id="contenu<?php echo $advice['id']; ?>" name="contenu" rows="3" required><?php echo htmlspecialchars_decode($advice['contenu']); ?></textarea>
                                 </div>
                                 <button type="submit" class="btn btn-success">Enregistrer les modifications</button>
                             </form>
@@ -171,4 +158,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-<?php include '../../views/templates/footer.php'; ?>
+<?php include '../../templates/footer.php'; ?>

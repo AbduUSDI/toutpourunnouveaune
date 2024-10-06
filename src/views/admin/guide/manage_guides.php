@@ -1,20 +1,19 @@
 <?php
+
 session_start();
-// Vérifier si l'utilisateur est connecté et a les droits d'accès
-if (!isset($_SESSION['user']) || ($_SESSION['user']['role_id'] != 1 && $_SESSION['user']['role_id'] != 2)) {
-    header('Location: ../login.php');
+if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
+    header('Location: /Portfolio/toutpourunnouveaune/login');
     exit;
 }
+require_once '../../../../vendor/autoload.php';
 
-require_once '../../../config/Database.php';
-require_once '../../models/UserModel.php';
-require_once '../../models/GuideModel.php';
+// Connexion à la base de données MySQL  
+$db = (new Database\DatabaseConnection())->connect();
 
-$database = new Database();
-$db = $database->connect();
+$guide = new \Models\Guide($db);
+$guideController = new \Controllers\GuideController($guide);
 
-$guideManager = new Guide($db);
-$guides = $guideManager->getAllGuides();
+$guides = $guideController->getAllGuides();
 
 // Traitement des actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -33,56 +32,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     switch ($action) {
         case 'create':
             if ($titre && $contenu) {
-                $guideManager->createGuide($titre, $contenu, $_SESSION['user']['id']);
+                $guideController->createGuide($titre, $contenu, $_SESSION['user']['id']);
             }
             break;
         case 'update':
             if ($id && $titre && $contenu) {
-                $guideManager->updateGuide($id, $titre, $contenu);
+                $guideController->updateGuide($id, $titre, $contenu);
             }
             break;
         case 'delete':
             if ($id) {
-                $guideManager->deleteGuide($id);
+                $guideController->deleteGuide($id);
             }
             break;
         default:
             $_SESSION['error_message'] = "Action non valide.";
             break;
     }
-    header('Location: manage_guides.php');
+    header('Location: /Portfolio/toutpourunnouveaune/admin/guide');
     exit;
 }
 
 // Générer un jeton CSRF pour protéger le formulaire
 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
-include '../../views/templates/header.php';
-include '../../views/templates/navbar_admin.php';
+include '../../templates/header.php';
+include '../../templates/navbar_admin.php';
 ?>
-
-<style>
-    h1, h2, h3 {
-        text-align: center;
-    }
-
-    body {
-        background-image: url('../../../assets/image/background.jpg');
-        padding-top: 48px;
-    }
-
-    h1, .mt-5 {
-        background: whitesmoke;
-        border-radius: 15px;
-    }
-</style>
 
 <div class="container mt-5">
     <h1>Gestion des Guides pour Bébé</h1>
 
     <!-- Formulaire pour créer un nouveau guide -->
     <h2 class="mt-4">Ajouter un nouveau guide</h2>
-    <form action="manage_guides.php" method="POST">
+    <form action="/Portfolio/toutpourunnouveaune/admin/guide" method="POST">
         <input type="hidden" name="action" value="create">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="form-group">
@@ -96,41 +79,33 @@ include '../../views/templates/navbar_admin.php';
         <button type="submit" class="btn btn-info">Ajouter le guide</button>
     </form>
 
-    <!-- Liste des guides existants -->
+    <!-- Liste des guides existants sous forme de cartes -->
     <h2 class="mt-4">Guides existants</h2>
-    <div class="container mt-5">
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped table-hover" style="background: white">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Titre</th>
-                        <th>Auteur</th>
-                        <th>Contenu</th>
-                        <th>Date de création</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($guides as $guide): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($guide['titre']); ?></td>
-                            <td><?php echo htmlspecialchars($guide['auteur_nom']); ?></td>
-                            <td><?php echo htmlspecialchars($guide['contenu']); ?></td>
-                            <td><?php echo $guide['date_creation']; ?></td>
-                            <td>
-                                <a href="edit_guide.php?id=<?php echo htmlspecialchars($guide['id']); ?>" class="btn btn-sm btn-warning">Modifier</a>
-                                <form action="manage_guides.php" method="POST" style="display:inline;">
-                                    <input type="hidden" name="action" value="delete">
-                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
-                                    <input type="hidden" name="id" value="<?php echo htmlspecialchars($guide['id']); ?>">
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce guide ?');">Supprimer</button>
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+    <div class="row">
+        <?php foreach ($guides as $guide): ?>
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title"><?php echo htmlspecialchars_decode($guide['titre']); ?></h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Par : <?php echo htmlspecialchars_decode($guide['auteur_nom']); ?></h6>
+                        <p class="card-text"><?php echo htmlspecialchars_decode($guide['contenu']); ?></p>
+                        <small class="text-muted">Créé le : <?php echo $guide['date_creation']; ?></small>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <a href="/Portfolio/toutpourunnouveaune/admin/guide/edit/<?php echo htmlspecialchars($guide['id']); ?>" class="btn btn-sm btn-warning">Modifier</a>
+                            
+                            <form action="/Portfolio/toutpourunnouveaune/admin/guide" method="POST" style="display:inline;">
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+                                <input type="hidden" name="id" value="<?php echo htmlspecialchars($guide['id']); ?>">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce guide ?');">Supprimer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
     </div>
+</div>
 
-<?php include '../../views/templates/footer.php'; ?>
+<?php include '../../templates/footer.php'; ?>

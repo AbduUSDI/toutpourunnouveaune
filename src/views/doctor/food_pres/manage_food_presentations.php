@@ -1,17 +1,17 @@
 <?php
-session_start();
-if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 2) {
-    header('Location: ../public/login.php');
-    exit;
+session_start(); 
+if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 2) {     
+    header('Location: /Portfolio/toutpourunnouveaune/login');     
+    exit; 
 }
 
-require_once '../../../config/Database.php';
-require_once '../../models/FoodPresentationModel.php';
+require_once '../../../../vendor/autoload.php';
 
-$database = new Database();
-$db = $database->connect();
+// Connexion à la base de données MySQL  
+$db = (new Database\DatabaseConnection())->connect(); 
 
-$recipe = new FoodPresentation($db);
+$recipeModel = new \Models\FoodPresentation($db);
+$recipe = new \Controllers\FoodPresentationController($recipeModel);
 
 // Gestion des actions CRUD
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $groupe_age = filter_input(INPUT_POST, 'groupe_age', FILTER_SANITIZE_STRING);
                     
                     if ($titre && $contenu && $groupe_age) {
-                        $result = $recipe->create($titre, $contenu, $groupe_age, $_SESSION['user']['id']);
+                        $result = $recipe->createPresentation($titre, $contenu, $groupe_age, $_SESSION['user']['id']);
                         $message = $result ? "Présentation alimentaire créée avec succès." : "Erreur lors de la création de la présentation alimentaire.";
                     } else {
                         $message = "Tous les champs sont requis pour créer une présentation alimentaire.";
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $groupe_age = filter_input(INPUT_POST, 'groupe_age', FILTER_SANITIZE_STRING);
                     
                     if ($id && $titre && $contenu && $groupe_age) {
-                        $result = $recipe->update($id, $titre, $contenu, $groupe_age);
+                        $result = $recipe->updatePresentation($id, $titre, $contenu, $groupe_age);
                         $message = $result ? "Présentation alimentaire mise à jour avec succès." : "Erreur lors de la mise à jour de la présentation alimentaire.";
                     } else {
                         $message = "Tous les champs sont requis pour mettre à jour une présentation alimentaire.";
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
                     
                     if ($id) {
-                        $result = $recipe->delete($id);
+                        $result = $recipe->deletePresentation($id);
                         $message = $result ? "Présentation alimentaire supprimée avec succès." : "Erreur lors de la suppression de la présentation alimentaire.";
                     } else {
                         $message = "ID de présentation alimentaire invalide pour la suppression.";
@@ -77,25 +77,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$recettes = $recipe->getAll();
+$recettes = $recipe->getAllPresentations();
 
-include '../../views/templates/header.php';
-include '../../views/templates/navbar_doctor.php';
+include '../../templates/header.php';
+include '../../templates/navbar_doctor.php';
 ?>
-<style>
-h1,h2,h3 {
-    text-align: center;
-}
-
-body {
-    background-image: url('../../../assets/image/background.jpg');
-    padding-top: 48px;
-}
-h1, .mt-5 {
-    background: whitesmoke;
-    border-radius: 15px;
-}
-</style>
 <div class="container mt-4">
     <h1 class="mb-4">Gestion des Présentations Alimentaires</h1>
 
@@ -126,7 +112,7 @@ h1, .mt-5 {
                     <textarea class="form-control" id="contenu" name="contenu" rows="3" required></textarea>
                 </div>
                 <div class="mb-3">
-                    <label for="groupe_age" class="form-label">Tranche d'âge</label>
+                    <label for="groupe_age" class="form-label">Tranche d'âge concernées</label>
                     <textarea class="form-control" id="groupe_age" name="groupe_age" rows="3" required></textarea>
                 </div>
                 <input type="hidden" name="medecin_id" value="<?php echo $_SESSION['user']['id']; ?>">
@@ -140,13 +126,13 @@ h1, .mt-5 {
             <div class="col-md-6 mb-4">
                 <div class="card">
                     <div class="card-header">
-                        <?= htmlspecialchars($recette['titre']) ?>
+                        <?= htmlspecialchars_decode($recette['titre']) ?>
                     </div>
                     <div class="card-body">
                         <h5 class="card-title">Contenu</h5>
-                        <p class="card-text"><?= nl2br(htmlspecialchars($recette['contenu'])) ?></p>
-                        <h5 class="card-title">Tranche d'âge</h5>
-                        <p class="card-text"><?= nl2br(htmlspecialchars($recette['groupe_age'])) ?></p>
+                        <p class="card-text"><?= nl2br(htmlspecialchars_decode($recette['contenu'])) ?></p>
+                        <h5 class="card-title">Tranche d'âge concernées</h5>
+                        <p class="card-text"><?= nl2br(htmlspecialchars_decode($recette['groupe_age'])) ?></p>
                         <button class="btn btn-primary btn-modifier" type="button" data-bs-toggle="collapse" data-bs-target="#editForm<?= $recette['id'] ?>" aria-expanded="false" aria-controls="editForm<?= $recette['id'] ?>">
                             Modifier
                         </button>
@@ -161,15 +147,15 @@ h1, .mt-5 {
                                 <input type="hidden" name="id" value="<?= $recette['id'] ?>">
                                 <div class="mb-3">
                                     <label for="titre<?= $recette['id'] ?>" class="form-label">Titre</label>
-                                    <input type="text" class="form-control" id="titre<?= $recette['id'] ?>" name="titre" value="<?= htmlspecialchars($recette['titre']) ?>" required>
+                                    <input type="text" class="form-control" id="titre<?= $recette['id'] ?>" name="titre" value="<?= htmlspecialchars_decode($recette['titre']) ?>" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="contenu<?= $recette['id'] ?>" class="form-label">Contenu</label>
-                                    <textarea class="form-control" id="contenu<?= $recette['id'] ?>" name="contenu" rows="3" required><?= htmlspecialchars($recette['contenu']) ?></textarea>
+                                    <textarea class="form-control" id="contenu<?= $recette['id'] ?>" name="contenu" rows="3" required><?= htmlspecialchars_decode($recette['contenu']) ?></textarea>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="groupe_age<?= $recette['id'] ?>" class="form-label">Tranche d'âge</label>
-                                    <textarea class="form-control" id="groupe_age<?= $recette['id'] ?>" name="groupe_age" rows="3" required><?= htmlspecialchars($recette['groupe_age']) ?></textarea>
+                                    <label for="groupe_age<?= $recette['id'] ?>" class="form-label">Tranche d'âge concernées</label>
+                                    <textarea class="form-control" id="groupe_age<?= $recette['id'] ?>" name="groupe_age" rows="3" required><?= htmlspecialchars_decode($recette['groupe_age']) ?></textarea>
                                 </div>
                                 <button type="submit" class="btn btn-success">Enregistrer les modifications</button>
                             </form>
@@ -194,4 +180,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-<?php include '../../views/templates/footer.php'; ?>
+<?php include '../../templates/footer.php'; ?>

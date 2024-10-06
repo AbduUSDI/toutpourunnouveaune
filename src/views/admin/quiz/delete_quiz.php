@@ -1,30 +1,30 @@
 <?php
+
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
-    header('Location: ../public/login.php');
+    header('Location: /Portfolio/toutpourunnouveaune/login');
     exit;
 }
+require_once '../../../../vendor/autoload.php';
 
-require_once '../../../config/Database.php';
-require_once '../../models/QuizModel.php';
+// Connexion à la base de données MySQL  
+$db = (new Database\DatabaseConnection())->connect(); 
 
-$database = new Database();
-$db = $database->connect();
-
-$quiz = new Quiz($db);
+$quiz = new \Models\Quiz($db);
+$quizController = new \Controllers\QuizController($quiz);
 
 $quiz_id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
 
 // Vérification CSRF
 if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
     $_SESSION['error_message'] = "Erreur de sécurité : jeton CSRF invalide.";
-    header('Location: manage_quizzes.php');
+    header('Location: /Portfolio/toutpourunnouveaune/admin/quiz');
     exit;
 }
 
 if ($quiz_id) {
-    $quiz->deleteQuiz($quiz_id);
+    $quizController->deleteQuiz($quiz_id);
 }
 
-header('Location: manage_quizzes.php');
+header('Location: /Portfolio/toutpourunnouveaune/admin/quiz');
 exit;

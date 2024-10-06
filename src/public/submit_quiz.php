@@ -25,45 +25,48 @@ $user_id = $_SESSION['user']['id'];
 try {
     $existingUser = $collection->findOne(['user_id' => $user_id]);
 
-    if ($existingUser) {
-        $newTotalScore = $score + $existingUser['total_score'];
+if ($existingUser) {
+    // Convertir total_score en entier avant l'addition
+    $newTotalScore = intval($existingUser['total_score']) + $score;
 
-        $quizScores = $existingUser['quiz_scores'];
-        $quizFound = false;
+    $quizScores = $existingUser['quiz_scores'];
+    $quizFound = false;
 
-        foreach ($quizScores as &$quizScore) {
-            if ($quizScore['quiz_id'] == $quiz_id) {
-                $quizScore['score'] += $score;
-                $quizFound = true;
-                break;
-            }
+    foreach ($quizScores as &$quizScore) {
+        if ($quizScore['quiz_id'] == $quiz_id) {
+            // Convertir le score en entier avant l'addition
+            $quizScore['score'] = intval($quizScore['score']) + $score;
+            $quizFound = true;
+            break;
         }
-
-        if (!$quizFound) {
-            $quizScores[] = ['quiz_id' => $quiz_id, 'score' => $score];
-        }
-
-        $collection->updateOne(
-            ['user_id' => $user_id],
-            [
-                '$set' => [
-                    'total_score' => $newTotalScore,
-                    'quiz_scores' => $quizScores,
-                    'updated_at' => new MongoDB\BSON\UTCDateTime()
-                ]
-            ]
-        );
-    } else {
-        $collection->insertOne([
-            'user_id' => $user_id,
-            'total_score' => $score,
-            'quiz_scores' => [
-                ['quiz_id' => $quiz_id, 'score' => $score]
-            ],
-            'created_at' => new MongoDB\BSON\UTCDateTime(),
-            'updated_at' => new MongoDB\BSON\UTCDateTime()
-        ]);
     }
+
+    if (!$quizFound) {
+        $quizScores[] = ['quiz_id' => $quiz_id, 'score' => $score];
+    }
+
+    $collection->updateOne(
+        ['user_id' => $user_id],
+        [
+            '$set' => [
+                'total_score' => $newTotalScore,
+                'quiz_scores' => $quizScores,
+                'updated_at' => new MongoDB\BSON\UTCDateTime()
+            ]
+        ]
+    );
+} else {
+    $collection->insertOne([
+        'user_id' => $user_id,
+        'total_score' => $score,
+        'quiz_scores' => [
+            ['quiz_id' => $quiz_id, 'score' => $score]
+        ],
+        'created_at' => new MongoDB\BSON\UTCDateTime(),
+        'updated_at' => new MongoDB\BSON\UTCDateTime()
+    ]);
+}
+
 } catch (Exception $e) {
     error_log('Erreur lors de la soumission du quiz : ' . $e->getMessage());
     die('Erreur lors de la soumission du quiz. Veuillez réessayer.');

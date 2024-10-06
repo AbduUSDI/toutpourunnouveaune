@@ -1,32 +1,34 @@
 <?php
+// Vérification de l'identification de l'utilisateur, il doit être role 1 donc admin, sinon page login.php
+
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
-    header('Location: ../login.php');
+    header('Location: /Portfolio/toutpourunnouveaune/login');
     exit;
 }
+require_once '../../../../vendor/autoload.php';
 
-require_once '../../../config/Database.php';
-require_once '../../models/UserModel.php';
+// Connexion à la base de données MySQL  
+$db = (new Database\DatabaseConnection())->connect(); 
+
+$user = new \Models\User($db);
+$userManager = new \Controllers\UserController($db, $user);
 
 if (!isset($_GET['id'])) {
-    header('Location: manage_users.php');
+    header('Location: /Portfolio/toutpourunnouveaune/admin/users');
     exit;
 }
 
 $user_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 if (!$user_id) {
-    header('Location: manage_users.php');
+    header('Location: /Portfolio/toutpourunnouveaune/admin/users');
     exit;
 }
 
-$database = new Database();
-$db = $database->connect();
-
-$userManager = new User($db);
 $user = $userManager->getUtilisateurParId($user_id);
 
 if (!$user) {
-    header('Location: manage_users.php');
+    header('Location: /Portfolio/toutpourunnouveaune/admin/users');
     exit;
 }
 
@@ -49,34 +51,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['error_message'] = "Tous les champs sont requis.";
     }
 
-    header('Location: manage_users.php');
+    header('Location: /Portfolio/toutpourunnouveaune/admin/users');
     exit;
 }
 
 // Générer un jeton CSRF
 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
-include_once '../../views/templates/header.php';
-include_once '../../views/templates/navbar_admin.php';
+include_once '../../templates/header.php';
+include_once '../../templates/navbar_admin.php';
 ?>
-<style>
 
-h1,h2,h3 {
-    text-align: center;
-}
-
-body {
-    background-image: url('../../../assets/image/background.jpg');
-    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
-}
-h1, .mt-5 {
-    background: whitesmoke;
-    border-radius: 15px;
-}
-</style>
 <div class="container mt-5">
     <h1 class="my-4">Modifier Utilisateur</h1>
-    <form action="edit_user.php?id=<?php echo htmlspecialchars($user['id']); ?>" method="POST">
+    <form action="/Portfolio/toutpourunnouveaune/admin/users/edit/<?php echo htmlspecialchars($user['id']); ?>" method="POST">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="form-group">
             <label for="username">Nom d'utilisateur</label>
@@ -129,4 +117,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-<?php include '../../views/templates/footer.php'; ?>
+<?php include '../../templates/footer.php'; ?>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../../vendor/autoload.php'; // Assurez-vous que le chemin vers autoload.php est correct
+require '../../../vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
             $mail->Username = 'abdu.usdi@gmail.com'; // Remplacez par votre adresse email Gmail
-            $mail->Password = 'toutpourunnouveaune';    // Remplacez par votre mot de passe Gmail ou par un mot de passe d'application
+            $mail->Password = 'Abdufufu2525+';    // Remplacez par votre mot de passe Gmail ou par un mot de passe d'application
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
 
@@ -53,21 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 include 'templates/header.php';
 include 'templates/navbar_forum.php';
 ?>
-<style>
 
-h1,h2,h3 {
-    text-align: center;
-}
-
-body {
-    background-image: url('../../assets/image/backgroundwebsite.jpg');
-    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
-}
-h1, .mt-5 {
-    background: whitesmoke;
-    border-radius: 15px;
-}
-</style>
     <div class="container mt-5">
         <h1 class="text-center">Nous contacter</h1>
 

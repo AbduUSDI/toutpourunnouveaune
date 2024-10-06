@@ -1,17 +1,17 @@
 <?php
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 3) {
-    header('Location: ../public/login.php');
+    header('Location: /Portfolio/toutpourunnouveaune/login');
     exit;
 }
 
-require_once '../../../config/Database.php';
-require_once '../../models/TrackingModel.php';
 
-$database = new Database();
-$db = $database->connect();
+require_once '../../../../vendor/autoload.php';
 
-$dailyTracking = new Tracking($db);
+$db = (new Database\DatabaseConnection())->connect();
+
+$tracking = new \Models\Tracking($db);
+$dailyTracking = new \Controllers\TrackingController($tracking);
 
 // Gestion des actions CRUD
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -21,33 +21,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-        $utilisateur_id = filter_input(INPUT_POST, 'utilisateur_id', FILTER_SANITIZE_NUMBER_INT);
-        $date = filter_input(INPUT_POST, 'date', FILTER_SANITIZE_STRING);
-        $heure_repas = filter_input(INPUT_POST, 'heure_repas', FILTER_SANITIZE_STRING);
-        $duree_repas = filter_input(INPUT_POST, 'duree_repas', FILTER_SANITIZE_NUMBER_INT);
-        $heure_change = filter_input(INPUT_POST, 'heure_change', FILTER_SANITIZE_STRING);
-        $medicament = filter_input(INPUT_POST, 'medicament', FILTER_SANITIZE_STRING);
-        $notes = filter_input(INPUT_POST, 'notes', FILTER_SANITIZE_STRING);
 
-        if (!$utilisateur_id || !$date || !$heure_repas) {
-            $message = "Les champs utilisateur, date et heure de repas sont requis.";
-        } else {
-            switch ($action) {
-                case 'create':
-                    $result = $dailyTracking->create($utilisateur_id, $date, $heure_repas, $duree_repas, $heure_change, $medicament, $notes);
-                    $message = $result ? "Suivi quotidien créé avec succès." : "Erreur lors de la création du suivi quotidien.";
-                    break;
-                case 'update':
-                    $result = $dailyTracking->update($id, $utilisateur_id, $date, $heure_repas, $duree_repas, $heure_change, $medicament, $notes);
-                    $message = $result ? "Suivi quotidien mis à jour avec succès." : "Erreur lors de la mise à jour du suivi quotidien.";
-                    break;
-                case 'delete':
-                    $result = $dailyTracking->delete($id);
+        switch ($action) {
+            case 'create':
+            case 'update':
+                $utilisateur_id = filter_input(INPUT_POST, 'utilisateur_id', FILTER_SANITIZE_NUMBER_INT);
+                $date = filter_input(INPUT_POST, 'date', FILTER_SANITIZE_STRING);
+                $heure_repas = filter_input(INPUT_POST, 'heure_repas', FILTER_SANITIZE_STRING);
+                $duree_repas = filter_input(INPUT_POST, 'duree_repas', FILTER_SANITIZE_NUMBER_INT);
+                $heure_change = filter_input(INPUT_POST, 'heure_change', FILTER_SANITIZE_STRING);
+                $medicament = filter_input(INPUT_POST, 'medicament', FILTER_SANITIZE_STRING);
+                $notes = filter_input(INPUT_POST, 'notes', FILTER_SANITIZE_STRING);
+
+                // Validation des champs pour 'create' et 'update'
+                if (!$utilisateur_id || !$date || !$heure_repas) {
+                    $message = "Les champs utilisateur, date et heure de repas sont requis.";
+                } else {
+                    if ($action === 'create') {
+                        $result = $dailyTracking->createTracking($utilisateur_id, $date, $heure_repas, $duree_repas, $heure_change, $medicament, $notes);
+                        $message = $result ? "Suivi quotidien créé avec succès." : "Erreur lors de la création du suivi quotidien.";
+                    } elseif ($action === 'update') {
+                        $result = $dailyTracking->updateTracking($id, $utilisateur_id, $date, $heure_repas, $duree_repas, $heure_change, $medicament, $notes);
+                        $message = $result ? "Suivi quotidien mis à jour avec succès." : "Erreur lors de la mise à jour du suivi quotidien.";
+                    }
+                }
+                break;
+
+            case 'delete':
+                // Seule la validation de l'ID est nécessaire pour la suppression
+                if (!$id) {
+                    $message = "ID invalide pour la suppression.";
+                } else {
+                    $result = $dailyTracking->deleteTracking($id);
                     $message = $result ? "Suivi quotidien supprimé avec succès." : "Erreur lors de la suppression du suivi quotidien.";
-                    break;
-                default:
-                    $message = "Action non reconnue.";
-            }
+                }
+                break;
+
+            default:
+                $message = "Action non reconnue.";
         }
     } catch (Exception $e) {
         $message = "Une erreur est survenue : " . $e->getMessage();
@@ -60,25 +71,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-$recettes = $dailyTracking->getTracking();
+$recettes = $dailyTracking->getAllTracking();
 
-include '../../views/templates/header.php';
-include '../../views/templates/navbar_parent.php';
+include '../../templates/header.php';
+include '../../templates/navbar_parent.php';
 ?>
-<style>
-h1,h2,h3 {
-    text-align: center;
-}
-
-body {
-    background-image: url('../../../assets/image/background.jpg');
-    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
-}
-h1, .mt-5 {
-    background: whitesmoke;
-    border-radius: 15px;
-}
-</style>
 <div class="container mt-4">
     <h1 class="mb-4">Gestion des Suivi quotidien</h1>
 
@@ -218,4 +215,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-<?php include '../../views/templates/footer.php'; ?>
+<?php include '../../templates/footer.php'; ?>

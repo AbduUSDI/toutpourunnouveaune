@@ -9,7 +9,7 @@
                 <a class="nav-link" href="/Portfolio/toutpourunnouveaune/doctor">Accueil</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/Portfolio/toutpourunnouveaune/doctor/forum">Forum</a>
+                <a class="nav-link" href="/Portfolio/toutpourunnouveaune/forum">Forum</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/Portfolio/toutpourunnouveaune/doctor/food_pres">Gérer les conseils de nutrition</a>

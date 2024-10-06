@@ -29,22 +29,23 @@ RewriteRule ^add_comment$ src/public/index.php?page=add_comment [L,QSA]
 # Réécriture pour les pages dynamiques avec des IDs (par exemple, /comment/1, /guide/2)
 RewriteRule ^quiz/([0-9]+)$ src/public/quiz.php?id=$1 [L,QSA]
 RewriteRule ^forum/thread/([0-9]+)$ src/views/forum/threads/thread.php?id=$1 [L,QSA]
+RewriteRule ^admin/users/edit/([0-9]+)$ src/views/admin/users/edit_user.php?id=$1 [L,QSA]
+RewriteRule ^admin/quiz/update/([0-9]+)$ src/views/admin/quiz/update_quiz.php?id=$1 [L,QSA]
+RewriteRule ^admin/guide/edit/([0-9]+)$ src/views/admin/guide/edit_guide.php?id=$1 [L,QSA]
+RewriteRule ^admin/comments/edit/([0-9]+)$ src/views/admin/comments/edit_comment.php?id=$1 [L,QSA]
 
 # Réécriture pour les vues de l'administration (exemple: /admin, /admin/comments, etc.)
 RewriteRule ^admin$ src/views/admin/index.php [L]
 RewriteRule ^admin/comments$ src/views/admin/comments/manage_comment.php [L]
-RewriteRule ^admin/comments/edit$ src/views/admin/comments/edit_comment.php [L]
 RewriteRule ^admin/guide$ src/views/admin/guide/manage_guides.php [L]
-RewriteRule ^admin/guide/edit$ src/views/admin/guide/edit_guide.php [L]
 RewriteRule ^admin/quiz$ src/views/admin/quiz/manage_quizzes.php [L]
 RewriteRule ^admin/quiz/add$ src/views/admin/quiz/add_quiz.php [L]
 RewriteRule ^admin/quiz/delete$ src/views/admin/quiz/delete_quiz.php [L]
-RewriteRule ^admin/quiz/update$ src/views/admin/quiz/update_quiz.php [L]
 RewriteRule ^admin/recipes$ src/views/admin/recipes/manage_recipes.php [L]
 RewriteRule ^admin/users$ src/views/admin/users/manage_users.php [L]
 RewriteRule ^admin/users/add$ src/views/admin/users/add_user.php [L]
 RewriteRule ^admin/users/delete$ src/views/admin/users/delete_user.php [L]
-RewriteRule ^admin/users/edit$ src/views/admin/users/edit_user.php [L]
+RewriteRule ^admin/profile$ src/views/admin/profile/my_profile.php [L]
 
 # Réécriture pour les vues des docteurs
 RewriteRule ^doctor$ src/views/doctor/index.php [L]

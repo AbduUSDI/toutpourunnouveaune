@@ -66,10 +66,11 @@ class ForumController {
     // Récupérer les threads créés par un utilisateur spécifique
     public function getThreadsByUserId($userId) {
         $threads = $this->forum->getThreadsByUserId($userId);
-        if ($threads) {
+        if ($threads && is_array($threads)) {
             return $threads;
         } else {
-            return "Aucun thread trouvé pour cet utilisateur.";
+            return [];
         }
     }
+    
 }

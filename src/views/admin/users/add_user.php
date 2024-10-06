@@ -1,22 +1,19 @@
 <?php
-// Vérification de l'identification de l'utilisateur, il doit être role 1 donc admin, sinon redirection vers login.php
+// Vérification de l'identification de l'utilisateur, il doit être role 1 donc admin, sinon page login.php
+
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
-    header('Location: ../public/login.php');
+    header('Location: /Portfolio/toutpourunnouveaune/login');
     exit;
 }
+require_once '../../../../vendor/autoload.php';
 
-require_once '../../../config//Database.php';
-require_once '../../models/UserModel.php';
+// Connexion à la base de données MySQL  
+$db = (new Database\DatabaseConnection())->connect(); 
 
-// Connexion à la base de données
-$database = new Database();
-$db = $database->connect();
+$user = new \Models\User($db);
+$userController = new \Controllers\UserController($db, $user);
 
-// Instance User pour utiliser les méthodes en rapport aux utilisateurs
-$user = new User($db);
-
-// Traitement et récupération des données du formulaire (POST) d'ajout d'utilisateur
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password']; // Le hachage sera fait dans la méthode addUser
@@ -24,34 +21,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
 
     // Utilisation de la méthode préparée "addUser" pour ajouter le nouvel utilisateur
-    $user->addUser($email, $password, $role_id, $username);
+    $userController->addUser($email, $password, $role_id, $username);
 
     // Redirection vers la page de gestion des utilisateurs
-    header('Location: manage_users.php');
+    header('Location: /Portfolio/toutpourunnouveaune/admin/users');
     exit;
 }
 
-include_once '../../views/templates/header.php';
-include_once '../../views/templates/navbar_admin.php';
+include_once '../../templates/header.php';
+include_once '../../templates/navbar_admin.php';
 ?>
-<style>
-
-h1,h2,h3 {
-    text-align: center;
-}
-
-body {
-    background-image: url('../../../assets/image/background.jpg');
-    padding-top: 48px; /* Un padding pour régler le décalage à cause de la class fixed-top de la navbar */
-}
-h1, .mt-5 {
-    background: whitesmoke;
-    border-radius: 15px;
-}
-</style>
+<!-- Formulaire d'ajout utilisateur, utilisation de la méthode POST -->
 <div class="container mt-5">
     <h1 class="my-4">Ajouter un Utilisateur</h1>
-    <form action="add_user.php" method="POST">
+    <form action="/Portfolio/toutpourunnouveaune/admin/users/add" method="POST">
         <div class="form-group">
             <label for="email">Email</label>
             <input type="email" class="form-control" id="email" name="email" required>
@@ -76,4 +59,4 @@ h1, .mt-5 {
     </form>
 </div>
 
-<?php include_once '../../views/templates/footer.php'; ?>
+<?php include_once '../../templates/footer.php'; ?>

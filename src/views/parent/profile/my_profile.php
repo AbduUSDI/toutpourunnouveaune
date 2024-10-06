@@ -20,7 +20,7 @@ $response = new \Models\Response($db);
 
 $userController = new \Controllers\UserTwoController($user);
 $profileController = new \Controllers\ProfileController($profile);
-$threadController = new \Controllers\ForumController($forum);
+$threadController = new \Controllers\ForumController($thread);
 $responseController = new \Controllers\ResponseController($response);
 
 $userId = $_SESSION['user']['id'];
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Protection CSRF
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         $_SESSION['error_message'] = "Erreur de sécurité : jeton CSRF invalide.";
-        header('Location: /Portfolio/toutpourunnouveaune/my_profile');
+        header('Location: /Portfolio/toutpourunnouveaune/parent/profile');
         exit;
     }
 
@@ -162,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Vérifier le type MIME du fichier
                     if (in_array($filetype, $allowed)) {
                         $imageName = time() . '_' . $image['name'];
-                        if (move_uploaded_file($image['tmp_name'], '../../../assets/uploads/' . $imageName)) {
+                        if (move_uploaded_file($image['tmp_name'], '../../../../assets/uploads/' . $imageName)) {
                             $photo_profil = $imageName;
                         } else {
                             $error = "Erreur : Il y a eu un problème de téléchargement de votre fichier. Veuillez réessayer.";
@@ -176,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $result = $profileController->saveProfile($userId, $prenom, $nom, $date_naissance, $biographie, $photo_profil);
                     $message = $result ? "Profil mis à jour avec succès." : "Erreur lors de la mise à jour du profil.";
                     if ($result) {
-                        $userProfile = $profileController->getProfileByUserId($userId); // Rafraîchir les données du profil
+                        $userProfile = $profileController->getProfileByUserId($userId);
                     }
                 } else {
                     $message = $error;
@@ -194,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['message'] = $message;
     $_SESSION['message_type'] = $result ? 'success' : 'danger';
     
-    header('Location: ' . $_SERVER['PHP_SELF']);
+    header('Location: /Portfolio/toutpourunnouveaune/parent/profile');
     exit;
 }
 
@@ -203,8 +203,8 @@ $friends = $userController->getFriends($userId);
 $userThreads = $threadController->getThreadsByUserId($userId);
 $userResponses = $responseController->getResponsesByUserId($userId);
 
-include '../../views/templates/header.php';
-include '../../views/templates/navbar_parent.php';
+include '../../templates/header.php';
+include '../../templates/navbar_parent.php';
 ?>
 
 <div class="container mt-5">
@@ -212,8 +212,8 @@ include '../../views/templates/navbar_parent.php';
     <div class="card">
         <div class="card-body">
             <?php if (!empty($userProfile['photo_profil'])): ?>
-                <img src="../../../assets/uploads/<?php echo htmlspecialchars($userProfile['photo_profil']); ?>" alt="Photo de profil" class="img-thumbnail mb-3" style="max-width: 200px;">
-            <?php endif; ?>
+                <img src="/Portfolio/toutpourunnouveaune/assets/uploads/<?php echo htmlspecialchars($userProfile['photo_profil']); ?>" alt="Photo de profil" class="img-thumbnail mb-3" style="max-width: 200px;">
+                <?php endif; ?>
             <h5 class="card-title"><?php echo htmlspecialchars($userProfile['prenom'] . ' ' . $userProfile['nom']); ?></h5>
             <p class="card-text"><strong>Date de naissance:</strong> <?php echo htmlspecialchars($userProfile['date_naissance'] ?? 'Non renseignée'); ?></p>
             <p class="card-text"><strong>Biographie:</strong> <?php echo nl2br(htmlspecialchars($userProfile['biographie'] ?? 'Aucune biographie')); ?></p>
@@ -225,7 +225,7 @@ include '../../views/templates/navbar_parent.php';
 </div>
 
 <div class="container mt-5">
-    <form action="/Portfolio/toutpourunnouveaune/parent/my_profile" method="POST">
+    <form action="/Portfolio/toutpourunnouveaune/parent/profile" method="POST">
         <input type="hidden" name="action" value="update_profile">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="form-group">
@@ -254,7 +254,7 @@ include '../../views/templates/navbar_parent.php';
             <?php foreach ($friends as $friend): ?>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <?php echo htmlspecialchars($friend['nom_utilisateur']); ?>
-                    <form action="/Portfolio/toutpourunnouveaune/parent/my_profile" method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet ami ?');">
+                    <form action="/Portfolio/toutpourunnouveaune/parent/profile" method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet ami ?');">
                         <input type="hidden" name="action" value="remove_friend">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                         <input type="hidden" name="request_id" value="<?php echo htmlspecialchars($friend['request_id']); ?>">
@@ -268,7 +268,7 @@ include '../../views/templates/navbar_parent.php';
 
 <div class="container mt-5">
     <h2>Envoyer une demande d'ami</h2>
-    <form action="/Portfolio/toutpourunnouveaune/parent/my_profile" method="POST">
+    <form action="/Portfolio/toutpourunnouveaune/parent/profile" method="POST">
         <input type="hidden" name="action" value="send_friend_request">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="form-group">
@@ -288,14 +288,14 @@ include '../../views/templates/navbar_parent.php';
             <?php foreach ($friendRequests as $request): ?>
                 <li class="list-group-item">
                     <span>Demande d'ami de l'utilisateur ID <?php echo htmlspecialchars($request['sender_id']); ?></span>
-                    <form action="/Portfolio/toutpourunnouveaune/parent/my_profile" method="POST" class="d-inline">
+                    <form action="/Portfolio/toutpourunnouveaune/parent/profile" method="POST" class="d-inline">
                         <input type="hidden" name="action" value="respond_friend_request">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                         <input type="hidden" name="request_id" value="<?php echo htmlspecialchars($request['id']); ?>">
                         <input type="hidden" name="status" value="accepted">
                         <button type="submit" class="btn btn-success">Accepter</button>
                     </form>
-                    <form action="/Portfolio/toutpourunnouveaune/parent/my_profile" method="POST" class="d-inline">
+                    <form action="/Portfolio/toutpourunnouveaune/parent/profile" method="POST" class="d-inline">
                         <input type="hidden" name="action" value="respond_friend_request">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                         <input type="hidden" name="request_id" value="<?php echo htmlspecialchars($request['id']); ?>">
@@ -341,7 +341,7 @@ include '../../views/templates/navbar_parent.php';
                 <tr>
                     <td colspan="3">
                         <div class="collapse" id="editThreadForm<?php echo htmlspecialchars($thread['id']); ?>">
-                            <form action="/Portfolio/toutpourunnouveaune/parent/my_profile" method="POST">
+                            <form action="/Portfolio/toutpourunnouveaune/parent/profile" method="POST">
                                 <input type="hidden" name="action" value="update_thread">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                                 <input type="hidden" name="id" value="<?php echo htmlspecialchars($thread['id']); ?>">
@@ -362,7 +362,7 @@ include '../../views/templates/navbar_parent.php';
             </tbody>
         </table>
     <?php endif; ?>
-    <a href="../../forum/threads/add_thread.php" class="btn btn-info">Créer un nouveau thread</a>
+    <a href="/Portfolio/toutpourunnouveaune/forum/threads/add" class="btn btn-info">Créer un nouveau thread</a>
 </div>
 
 <div class="container mt-5">
@@ -398,7 +398,7 @@ include '../../views/templates/navbar_parent.php';
                     <tr>
                         <td colspan="3">
                             <div class="collapse" id="editResponseForm<?php echo htmlspecialchars($response['id']); ?>">
-                                <form action="my_profile.php" method="POST">
+                                <form action="/Portfolio/toutpourunnouveaune/parent/profile" method="POST">
                                     <input type="hidden" name="action" value="update_response">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($response['id']); ?>">
@@ -425,7 +425,7 @@ include '../../views/templates/navbar_parent.php';
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="my_profile.php" method="POST" enctype="multipart/form-data">
+                <form action="/Portfolio/toutpourunnouveaune/parent/profile" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="action" value="update_profile_info">
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                     <div class="mb-3">
@@ -502,4 +502,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 
-<?php include '../../views/templates/footer.php'; ?>
+<?php include '../../templates/footer.php'; ?>

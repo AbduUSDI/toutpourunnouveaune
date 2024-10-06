@@ -1,11 +1,17 @@
 <?php
-include '../../../config/Database.php';
-include '../../models/TrackingModel.php';
+session_start();
+if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 3) {
+    header('Location: /Portfolio/toutpourunnouveaune/login');
+    exit;
+}
 
-$database = new Database();
-$db = $database->connect();
 
-$tracking = new Tracking($db);
+require_once '../../../../vendor/autoload.php';
+
+$db = (new Database\DatabaseConnection())->connect();
+
+$tracking = new \Models\Tracking($db);
+$dailyTracking = new \Controllers\TrackingController($tracking);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $utilisateur_id = filter_input(INPUT_POST, 'utilisateur_id', FILTER_SANITIZE_NUMBER_INT);
@@ -17,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $notes = filter_input(INPUT_POST, 'notes', FILTER_SANITIZE_STRING);
 
     if ($utilisateur_id && $date && $heure_repas) {
-        $result = $tracking->create($utilisateur_id, $date, $heure_repas, $duree_repas, $heure_change, $medicament, $notes);
+        $result = $dailyTracking->createTracking($utilisateur_id, $date, $heure_repas, $duree_repas, $heure_change, $medicament, $notes);
 
         if ($result) {
             echo "Suivi quotidien ajouté avec succès.";

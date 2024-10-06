@@ -4,5 +4,5 @@
 
 session_start();
 session_destroy();
-header('Location: ../public/index.php');
+header('Location: /Portfolio/toutpourunnouveaune/home');
 exit;

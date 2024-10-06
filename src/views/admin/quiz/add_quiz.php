@@ -1,23 +1,23 @@
 <?php
+
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
-    header('Location: ../public/login.php');
+    header('Location: /Portfolio/toutpourunnouveaune/login');
     exit;
 }
+require_once '../../../../vendor/autoload.php';
 
-require_once '../../../config/Database.php';
-require_once '../../models/QuizModel.php';
+// Connexion à la base de données MySQL  
+$db = (new Database\DatabaseConnection())->connect(); 
 
-$database = new Database();
-$db = $database->connect();
-
-$quiz = new Quiz($db);
+$quiz = new \Models\Quiz($db);
+$quizController = new \Controllers\QuizController($quiz);
 
 // Protection CSRF
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         $_SESSION['error_message'] = "Erreur de sécurité : jeton CSRF invalide.";
-        header('Location: add_quiz.php');
+        header('Location: /Portfolio/toutpourunnouveaune/admin/quiz/add');
         exit;
     }
 
@@ -25,37 +25,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $questions = $_POST['questions']; // Validation personnalisée nécessaire pour les tableaux complexes
 
     if ($titre && $questions) {
-        $quiz->addQuiz($titre, $questions);
-        header('Location: manage_quizzes.php');
+        $quizController->addQuiz($titre, $questions);
+        header('Location: /Portfolio/toutpourunnouveaune/admin/quiz');
         exit;
     }
 }
 
 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
-include_once '../../views/templates/header.php';
-include_once '../../views/templates/navbar_admin.php';
+include_once '../../templates/header.php';
+include_once '../../templates/navbar_admin.php';
 ?>
-
-<style>
-    h1, h2, h3 {
-        text-align: center;
-    }
-
-    body {
-        background-image: url('../../../assets/image/background.jpg');
-        padding-top: 48px;
-    }
-
-    h1, .mt-5 {
-        background: whitesmoke;
-        border-radius: 15px;
-    }
-</style>
 
 <div class="container mt-5">
     <h1>Créer un nouveau Quiz</h1>
-    <form id="quizForm" method="post" action="add_quiz.php">
+    <form id="quizForm" method="post" action="/Portfolio/toutpourunnouveaune/admin/quiz/add">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="form-group">
             <label for="titre">Titre du Quiz</label>
@@ -126,5 +110,5 @@ include_once '../../views/templates/navbar_admin.php';
 </script>
 
 <?php
-require_once '../../views/templates/footer.php';
+require_once '../../templates/footer.php';
 ?>

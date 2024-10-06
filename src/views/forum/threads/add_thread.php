@@ -1,21 +1,21 @@
 <?php
+
 session_start();
 
 // Vérification si l'utilisateur est connecté
 if (!isset($_SESSION['user'])) {
-    header('Location: ../login.php');
+    header('Location: /Portfolio/toutpourunnouveaune/login');
     exit;
 }
 
-require_once '../../../config/Database.php';
-require_once '../../models/ForumModel.php';
+require_once '../../../../vendor/autoload.php';
 
-// Connexion à la base de données
-$database = new Database();
-$db = $database->connect();
+$db = (new Database\DatabaseConnection())->connect();
 
-// Instanciation du modèle Thread
-$thread = new Thread($db);
+// Instanciation du modèle Forum
+$forum = new \Models\Forum($db);
+
+$threadController = new \Controllers\ForumController($forum);
 
 $error_message = '';
 
@@ -31,9 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error_message = "Tous les champs sont requis.";
     } else {
         // Tentative de création de la nouvelle discussion
-        if ($thread->addThread($title, $body, $user_id)) {
+        if ($threadController->addThread($title, $body, $user_id)) {
             // Redirection vers la page principale du forum si succès
-            header('Location: ../indexforum.php');
+            header('Location: /Portfolio/toutpourunnouveaune/forum');
             exit;
         } else {
             // Message d'erreur si l'insertion échoue
@@ -46,22 +46,6 @@ require_once '../templates/header.php';
 require_once '../templates/navbar_forum.php';
 ?>
 
-<style>
-    h1, h2, h3 {
-        text-align: center;
-    }
-
-    body {
-        background-image: url('../../../assets/image/backgroundwebsite.jpg');
-        padding-top: 48px; /* Un padding pour régler le décalage à cause de la classe fixed-top de la navbar */
-    }
-
-    h1, .mt-5 {
-        background: whitesmoke;
-        border-radius: 15px;
-    }
-</style>
-
 <div class="container mt-5">
     <h1>Créer une nouvelle discussion</h1>
     
@@ -73,7 +57,7 @@ require_once '../templates/navbar_forum.php';
     <?php endif; ?>
     
     <!-- Formulaire de création de discussion -->
-    <form method="post" action="add_thread.php">
+    <form method="post" action="/Portfolio/toutpourunnouveaune/forum/threads/add">
         <div class="form-group">
             <label for="title">Titre</label>
             <input type="text" class="form-control" id="title" name="title" value="<?php echo isset($title) ? $title : ''; ?>" required>

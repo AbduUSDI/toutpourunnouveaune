@@ -1,17 +1,17 @@
 <?php
+
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
-    header('Location: ../public/login.php');
+    header('Location: /Portfolio/toutpourunnouveaune/login');
     exit;
 }
+require_once '../../../../vendor/autoload.php';
 
-require_once '../../../config/Database.php';
-require_once '../../models/RecipeModel.php';
+// Connexion à la base de données MySQL  
+$db = (new Database\DatabaseConnection())->connect(); 
 
-$database = new Database();
-$db = $database->connect();
-
-$recipe = new Recipe($db);
+$recipe = new \Models\Recipe($db);
+$recipeController = new \Controllers\RecipeController($recipe);
 
 // Protection CSRF
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $instructions = filter_input(INPUT_POST, 'instructions', FILTER_SANITIZE_STRING);
                     
                     if ($titre && $ingredients && $instructions) {
-                        $result = $recipe->create($titre, $ingredients, $instructions, $_SESSION['user']['id']);
+                        $result = $recipeController->createRecipe($titre, $ingredients, $instructions, $_SESSION['user']['id']);
                         $message = $result ? "Recette créée avec succès." : "Erreur lors de la création de la recette.";
                     } else {
                         $message = "Tous les champs sont requis pour créer une recette.";
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $instructions = filter_input(INPUT_POST, 'instructions', FILTER_SANITIZE_STRING);
                     
                     if ($id && $titre && $ingredients && $instructions) {
-                        $result = $recipe->update($id, $titre, $ingredients, $instructions);
+                        $result = $recipeController->updateRecipe($id, $titre, $ingredients, $instructions);
                         $message = $result ? "Recette mise à jour avec succès." : "Erreur lors de la mise à jour de la recette.";
                     } else {
                         $message = "Tous les champs sont requis pour mettre à jour une recette.";
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
                     
                     if ($id) {
-                        $result = $recipe->delete($id);
+                        $result = $recipeController->deleteRecipe($id);
                         $message = $result ? "Recette supprimée avec succès." : "Erreur lors de la suppression de la recette.";
                     } else {
                         $message = "ID de recette invalide pour la suppression.";
@@ -86,26 +86,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Générer un jeton CSRF pour cette session
 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
-$recettes = $recipe->getAll();
+$recettes = $recipeController->getAllRecipes();
 
-include '../../views/templates/header.php';
-include '../../views/templates/navbar_admin.php';
+include '../../templates/header.php';
+include '../../templates/navbar_admin.php';
 ?>
-<style>
-h1, h2, h3 {
-    text-align: center;
-}
 
-body {
-    background-image: url('../../../assets/image/background.jpg');
-    padding-top: 48px;
-}
-
-h1, .mt-4 {
-    background: whitesmoke;
-    border-radius: 15px;
-}
-</style>
 <div class="container mt-4">
     <h1 class="mb-4">Gestion des Recettes</h1>
 
@@ -154,9 +140,9 @@ h1, .mt-4 {
                     </div>
                     <div class="card-body text-center">
                         <h5 class="card-title">Ingrédients</h5>
-                        <p class="card-text"><?= nl2br(htmlspecialchars($recette['ingredients'])) ?></p>
+                        <p class="card-text"><?= nl2br(htmlspecialchars_decode($recette['ingredients'])) ?></p>
                         <h5 class="card-title">Instructions</h5>
-                        <p class="card-text"><?= nl2br(htmlspecialchars($recette['instructions'])) ?></p>
+                        <p class="card-text"><?= nl2br(htmlspecialchars_decode($recette['instructions'])) ?></p>
                         <button class="btn btn-warning btn-modifier" type="button" data-bs-toggle="collapse" data-bs-target="#editForm<?= htmlspecialchars($recette['id']) ?>" aria-expanded="false" aria-controls="editForm<?= htmlspecialchars($recette['id']) ?>">
                             Modifier
                         </button>
@@ -173,15 +159,15 @@ h1, .mt-4 {
                                 <input type="hidden" name="id" value="<?= htmlspecialchars($recette['id']) ?>">
                                 <div class="mb-3">
                                     <label for="titre<?= htmlspecialchars($recette['id']) ?>" class="form-label">Titre</label>
-                                    <input type="text" class="form-control" id="titre<?= htmlspecialchars($recette['id']) ?>" name="titre" value="<?= htmlspecialchars($recette['titre']) ?>" required>
+                                    <input type="text" class="form-control" id="titre<?= htmlspecialchars($recette['id']) ?>" name="titre" value="<?= htmlspecialchars_decode($recette['titre']) ?>" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="ingredients<?= htmlspecialchars($recette['id']) ?>" class="form-label">Ingrédients</label>
-                                    <textarea class="form-control" id="ingredients<?= htmlspecialchars($recette['id']) ?>" name="ingredients" rows="3" required><?= htmlspecialchars($recette['ingredients']) ?></textarea>
+                                    <textarea class="form-control" id="ingredients<?= htmlspecialchars($recette['id']) ?>" name="ingredients" rows="3" required><?= htmlspecialchars_decode($recette['ingredients']) ?></textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label for="instructions<?= htmlspecialchars($recette['id']) ?>" class="form-label">Instructions</label>
-                                    <textarea class="form-control" id="instructions<?= htmlspecialchars($recette['id']) ?>" name="instructions" rows="3" required><?= htmlspecialchars($recette['instructions']) ?></textarea>
+                                    <textarea class="form-control" id="instructions<?= htmlspecialchars($recette['id']) ?>" name="instructions" rows="3" required><?= htmlspecialchars_decode($recette['instructions']) ?></textarea>
                                 </div>
                                 <button type="submit" class="btn btn-success">Enregistrer les modifications</button>
                             </form>
@@ -206,4 +192,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-<?php include '../../views/templates/footer.php'; ?>
+<?php include '../../templates/footer.php'; ?>
