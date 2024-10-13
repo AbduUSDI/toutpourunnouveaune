@@ -1,6 +1,6 @@
 # Activer le module de réécriture
 RewriteEngine On
-RewriteBase /Portfolio/Toutpourunnouveaune/
+RewriteBase /Toutpourunnouveaune/
 
 # Redirection de toutes les erreurs vers une page 404 personnalisée
 ErrorDocument 404 /Toutpourunnouveaune/404.php

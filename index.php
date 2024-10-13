@@ -1,3 +1,3 @@
 <?php
-header('Location: /Portfolio/toutpourunnouveaune/login');
+header('Location: /toutpourunnouveaune/login');
 exit;
