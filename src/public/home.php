@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../../vendor/autoload.php';
+require '../../../vendor/autoload.php';
 $db = (new Database\DatabaseTPUNN())->connect();
 
 require_once '../views/templates/header.php';
