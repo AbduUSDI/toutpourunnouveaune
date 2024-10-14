@@ -4,16 +4,16 @@ session_start();
 require '../../vendor/autoload.php';
 
 // Connexion à la base de données
-$database = new \Database\DatabaseConnection();
+$database = new \Database\DatabaseTPUNN();
 $db = $database->connect();
 
 // Initialisation des Models pour les inclure dans les contrôleurs
 $guide = new \Models\Guide($db);
-$comment = new \Models\Comment($db);
+$comment = new \Models\CommentTPUNN($db);
 
 // Gestionnaires pour les guides et les commentaires
 $guideController = new \Controllers\GuideController($guide);
-$commentController = new \Controllers\CommentController($comment);
+$commentController = new \Controllers\CommentTPUNNController($comment);
 
 // Génération du token CSRF pour le formulaire
 if (empty($_SESSION['csrf_token'])) {

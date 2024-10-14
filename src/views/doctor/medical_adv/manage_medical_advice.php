@@ -8,7 +8,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 2) {
 require_once '../../../../vendor/autoload.php';
 
 // Connexion à la base de données MySQL  
-$db = (new Database\DatabaseConnection())->connect(); 
+$db = (new Database\DatabaseTPUNN())->connect(); 
 
 $adviceModel = new \Models\AvisMedicaux($db);
 $advice = new \Controllers\AvisMedicauxController($adviceModel);

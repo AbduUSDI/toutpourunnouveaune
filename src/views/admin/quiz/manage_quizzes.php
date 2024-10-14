@@ -8,10 +8,10 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
 require_once '../../../../vendor/autoload.php';
 
 // Connexion à la base de données MySQL  
-$db = (new Database\DatabaseConnection())->connect(); 
+$db = (new Database\DatabaseTPUNN())->connect(); 
 
-$quiz = new \Models\Quiz($db);
-$quizController = new \Controllers\QuizController($quiz);
+$quiz = new \Models\QuizTPUNN($db);
+$quizController = new \Controllers\QuizTPUNNController($quiz);
 
 $quizzes = $quizController->getAllQuizzes();
 

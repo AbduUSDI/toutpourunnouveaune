@@ -8,7 +8,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
 require_once '../../../../vendor/autoload.php';
 
 // Connexion à la base de données MySQL  
-$db = (new Database\DatabaseConnection())->connect();
+$db = (new Database\DatabaseTPUNN())->connect();
 
 $guide = new \Models\Guide($db);
 $guideController = new \Controllers\GuideController($guide);

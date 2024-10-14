@@ -10,12 +10,12 @@ if (!isset($_SESSION['user'])) {
 
 require_once '../../../../vendor/autoload.php';
 
-$db = (new Database\DatabaseConnection())->connect();
+$db = (new Database\DatabaseTPUNN())->connect();
 
 // Instanciation du modèle Forum
-$forum = new \Models\Forum($db);
+$forum = new \Models\ForumTPUNN($db);
 
-$threadController = new \Controllers\ForumController($forum);
+$threadController = new \Controllers\ForumTPUNNController($forum);
 
 $error_message = '';
 

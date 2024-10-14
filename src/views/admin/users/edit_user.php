@@ -9,10 +9,10 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
 require_once '../../../../vendor/autoload.php';
 
 // Connexion à la base de données MySQL  
-$db = (new Database\DatabaseConnection())->connect(); 
+$db = (new Database\DatabaseTPUNN())->connect(); 
 
-$user = new \Models\User($db);
-$userManager = new \Controllers\UserController($db, $user);
+$user = new \Models\UserOne($db);
+$userManager = new \Controllers\UserOneController($db, $user);
 
 if (!isset($_GET['id'])) {
     header('Location: /Portfolio/toutpourunnouveaune/admin/users');

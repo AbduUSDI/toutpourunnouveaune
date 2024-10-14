@@ -10,13 +10,13 @@ if (!isset($_SESSION['user'])) {
 
 require_once '../../../../vendor/autoload.php';
 
-$db = (new Database\DatabaseConnection())->connect();
+$db = (new Database\DatabaseTPUNN())->connect();
 
 // Instanciation des modèles
-$forum = new \Models\Forum($db);
+$forum = new \Models\ForumTPUNN($db);
 
 // Instanciation des controleurs
-$threadController = new \Controllers\ForumController($forum);
+$threadController = new \Controllers\ForumTPUNNController($forum);
 
 // Récupération des threads
 $threads = $threadController->getThreads();

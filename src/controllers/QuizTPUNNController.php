@@ -1,12 +1,12 @@
 <?php
 namespace Controllers;
 
-use Models\Quiz;
+use Models\QuizTPUNN;
 
-class QuizController {
+class QuizTPUNNController {
     private $quiz;
 
-    public function __construct(Quiz $quiz) {
+    public function __construct(QuizTPUNN $quiz) {
         $this->quiz = $quiz;
     }
 

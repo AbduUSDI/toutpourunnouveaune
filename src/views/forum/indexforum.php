@@ -10,16 +10,16 @@ if (!isset($_SESSION['user'])) {
 require_once '../../../vendor/autoload.php';
 
 // Instance Database
-$db = (new Database\DatabaseConnection())->connect();
-$mongoClient = new \Database\MongoDBForum();
+$db = (new Database\DatabaseTPUNN())->connect();
+$mongoClient = new \Database\MongoTPUNNForum();
 
 // Instance Modèles
 $user = new \Models\UserTwo($db);
-$forum = new \Models\Forum($db);
+$forum = new \Models\ForumTPUNN($db);
 
 // Instance Controleurs
 $userController = new \Controllers\UserTwoController($user);
-$threadController = new \Controllers\ForumController($forum);
+$threadController = new \Controllers\ForumTPUNNController($forum);
 
 $viewsCollection = $mongoClient->getCollection('views');
 

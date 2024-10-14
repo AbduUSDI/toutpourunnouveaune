@@ -8,11 +8,11 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
 require_once '../../../../vendor/autoload.php';
 
 // Connexion à la base de données MySQL  
-$db = (new Database\DatabaseConnection())->connect(); 
+$db = (new Database\DatabaseTPUNN())->connect(); 
 // Connexion à la base de données
 
-$user = new \Models\User($db);
-$userController = new \Controllers\UserController($db, $user);
+$user = new \Models\UserOne($db);
+$userController = new \Controllers\UserOneController($db, $user);
 
 // Utilisation d'une méthode pour afficher tous les utilisateurs
 $users = $userController->getAllUtilisateurs();

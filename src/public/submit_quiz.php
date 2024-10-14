@@ -7,12 +7,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['csrf_token']) || $_P
     die('Action non autorisée.');
 }
 
-$db = (new Database\DatabaseConnection())->connect();
+$db = (new Database\DatabaseTPUNN())->connect();
 
-$quiz = new \Models\Quiz($db);
-$quizController = new \Controllers\QuizController($quiz);
+$quiz = new \Models\QuizTPUNN($db);
+$quizController = new \Controllers\QuizTPUNNController($quiz);
 
-$mongoClient = new \Database\MongoDBConnection();
+$mongoClient = new \Database\MongoDBConnectionTPUNN();
 $collection = $mongoClient->getCollection('scores');
 
 $quiz_id = filter_input(INPUT_POST, 'quiz_id', FILTER_SANITIZE_NUMBER_INT);

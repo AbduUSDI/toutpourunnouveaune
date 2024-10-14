@@ -4,10 +4,10 @@ session_start();
 
 require_once '../../../vendor/autoload.php';
 
-$db = (new Database\DatabaseConnection())->connect();
+$db = (new Database\DatabaseTPUNN())->connect();
 
-$userModel = new \Models\User($db);
-$user = new \Controllers\UserController($db, $userModel);
+$userModel = new \Models\UserOne($db);
+$user = new \Controllers\UserOneController($db, $userModel);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);

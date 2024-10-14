@@ -2,7 +2,7 @@
 require '../../vendor/autoload.php';
 session_start();
 
-$database = new \Database\DatabaseConnection();
+$database = new \Database\DatabaseTPUNN();
 $db = $database->connect();
 
 $foodPresentation = new \Models\FoodPresentation($db);

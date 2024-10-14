@@ -5,7 +5,7 @@ use PDO;
 use Exception;
 
 
-class Quiz {
+class QuizTPUNN {
     private $conn;
     private $table_quiz = 'quizzes';
     private $table_question = 'questions';

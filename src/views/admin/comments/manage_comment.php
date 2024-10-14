@@ -8,10 +8,10 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
 require_once '../../../../vendor/autoload.php';
 
 // Connexion à la base de données MySQL  
-$db = (new Database\DatabaseConnection())->connect();
+$db = (new Database\DatabaseTPUNN())->connect();
 
-$comment = new \Models\Comment($db);
-$commentController = new \Controllers\CommentController($comment);
+$comment = new \Models\CommentTPUNN($db);
+$commentController = new \Controllers\CommentTPUNNController($comment);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Protection CSRF

@@ -10,22 +10,22 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
 require_once '../../../vendor/autoload.php';
 
 // Connexion à la base de données MySQL  
-$db = (new Database\DatabaseConnection())->connect(); 
+$db = (new Database\DatabaseTPUNN())->connect(); 
 
 // Connexion à MongoDB
-$mongoClient = new \Database\MongoDBConnection(); 
+$mongoClient = new \Database\MongoDBConnectionTPUNN(); 
 $quiz = $mongoClient; 
 $scores = $quiz->getScoresParents();  
 
 // Instancier les modèles
-$user = new \Models\User($db); 
+$user = new \Models\UserOne($db); 
 $avisMedicaux = new \Models\AvisMedicaux($db);  
-$forum = new \Models\Forum($db);
+$forum = new \Models\ForumTPUNN($db);
 
 // Instancier les contrôleurs
-$userController = new \Controllers\UserController($db, $user);
+$userController = new \Controllers\UserOneController($db, $user);
 $avisMedicauxController = new \Controllers\AvisMedicauxController($avisMedicaux);
-$threadController = new \Controllers\ForumController($forum);
+$threadController = new \Controllers\ForumTPUNNController($forum);
 
 // Récupérer les données
 $avis = $avisMedicauxController->getDerniersAvis();  

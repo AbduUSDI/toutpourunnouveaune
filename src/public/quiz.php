@@ -3,10 +3,10 @@ session_start();
 
 require_once '../../vendor/autoload.php';
 
-$db = (new Database\DatabaseConnection())->connect();
+$db = (new Database\DatabaseTPUNN())->connect();
 
-$quiz = new \Models\Quiz($db);
-$quizController = new \Controllers\QuizController($quiz);
+$quiz = new \Models\QuizTPUNN($db);
+$quizController = new \Controllers\QuizTPUNNController($quiz);
 
 $quiz_id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 $quizData = $quizController->getQuizById($quiz_id);

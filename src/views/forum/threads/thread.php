@@ -10,16 +10,16 @@ if (!isset($_SESSION['user'])) {
 
 require_once '../../../../vendor/autoload.php';
 
-$db = (new Database\DatabaseConnection())->connect();
-$mongoClient = new \Database\MongoDBForum();
+$db = (new Database\DatabaseTPUNN())->connect();
+$mongoClient = new \Database\MongoTPUNNForum();
 
 // Instanciation des modèles
-$forum = new \Models\Forum($db);
-$response = new \Models\Response($db);
+$forum = new \Models\ForumTPUNN($db);
+$response = new \Models\ResponseTPUNN($db);
 
 // Instanciation des controleurs
-$threadController = new \Controllers\ForumController($forum);
-$responseController = new \Controllers\ResponseController($response);
+$threadController = new \Controllers\ForumTPUNNController($forum);
+$responseController = new \Controllers\ResponseTPUNNController($response);
 
 $threadId = $_GET['id'];
 $currentThread = $threadController->getThreadById($threadId);

@@ -9,7 +9,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
 require_once '../../../../vendor/autoload.php';
 
 // Connexion à la base de données MySQL  
-$db = (new Database\DatabaseConnection())->connect(); 
+$db = (new Database\DatabaseTPUNN())->connect(); 
 
 // Vérifier si l'ID de l'utilisateur à supprimer est présent dans la requête
 $userId = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
@@ -26,8 +26,8 @@ if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_tok
 }
 
 // Instance User ici pour utiliser toutes le méthodes en rapport avec les utilisateurs
-$user = new \Models\User($db);
-$userController = new \Controllers\UserController($db, $user);
+$user = new \Models\UserOne($db);
+$userController = new \Controllers\UserOneController($db, $user);
 
 try {
     // Supprimer l'utilisateur de la base de données

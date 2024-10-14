@@ -3,7 +3,7 @@ namespace Models;
 
 use PDO;
 
-class Profile {
+class ProfileTPUNN {
     private $db;
 
     public function __construct($db) {

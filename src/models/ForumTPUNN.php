@@ -3,7 +3,7 @@ namespace Models;
 
 use PDO;
 
-class Forum {
+class ForumTPUNN {
     private $conn;
     private $table = 'threads';
 

@@ -4,7 +4,7 @@ namespace Database;
 use Exception;
 use MongoDB\Client;
 
-class MongoDBConnection {
+class MongoDBConnectionTPUNN {
     private $mongoClient;
     private $mongoCollection;
 
