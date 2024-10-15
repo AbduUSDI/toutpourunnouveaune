@@ -1,13 +1,13 @@
 <?php
 namespace Controllers;
 
-use Models\Forum;
+use Models\ForumTPUNN;
 use MongoDB\Client as MongoClient;
 
-class ForumController {
+class ForumTPUNNController {
     private $forum;
 
-    public function __construct(Forum $forum) {
+    public function __construct(ForumTPUNN $forum) {
         $this->forum = $forum;
     }
 

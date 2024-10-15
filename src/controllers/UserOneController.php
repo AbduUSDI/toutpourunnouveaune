@@ -1,13 +1,13 @@
 <?php
 namespace Controllers;
 
-use Models\User;
+use Models\UserOne;
 
-class UserController {
+class UserOneController {
     private $user;
     private $db;
 
-    public function __construct($db, User $user) {
+    public function __construct($db, UserOne $user) {
         $this->db = $db;
         $this->user = $user;
     }

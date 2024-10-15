@@ -9,10 +9,10 @@ if (!isset($_SESSION['user'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $database = new \Database\DatabaseConnection();
+    $database = new \Database\DatabaseTPUNN();
     $db = $database->connect();
-    $comment = new \Models\Comment($db);
-    $commentManager = new \Controllers\CommentController($comment);
+    $comment = new \Models\CommentTPUNN($db);
+    $commentManager = new \Controllers\CommentTPUNNController($comment);
 
     $guide_id = $_POST['guide_id'];
     $contenu = $_POST['contenu'];

@@ -5,12 +5,12 @@ use PHPMailer\PHPMailer\Exception;
 
 require '../../vendor/autoload.php';
 
-$database = new \Database\DatabaseConnection();
-$user = new \Models\User($db);
+$database = new \Database\DatabaseTPUNN();
+$user = new \Models\UserOne($db);
 $userTwo = new \Models\UserTwo($db);
 
 $db = $database->connect();
-$userController = new \Controllers\UserController($db, $user);
+$userController = new \Controllers\UserOneController($db, $user);
 $userControllerTwo = new \Controllers\UserTwoController($userTwo);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

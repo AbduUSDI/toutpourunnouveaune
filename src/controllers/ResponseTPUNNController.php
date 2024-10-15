@@ -1,12 +1,12 @@
 <?php
 namespace Controllers;
 
-use Models\Response;
+use Models\ResponseTPUNN;
 
-class ResponseController {
+class ResponseTPUNNController {
     private $response;
 
-    public function __construct(Response $response) {
+    public function __construct(ResponseTPUNN $response) {
         $this->response = $response;
     }
 

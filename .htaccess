@@ -1,9 +1,9 @@
 # Activer le module de réécriture
 RewriteEngine On
-RewriteBase /Toutpourunnouveaune/
+RewriteBase /toutpourunnouveaune/
 
 # Redirection de toutes les erreurs vers une page 404 personnalisée
-ErrorDocument 404 /Toutpourunnouveaune/404.php
+ErrorDocument 404 /toutpourunnouveaune/404.php
 
 # Gérer l'accès direct aux fichiers dans les dossiers comme assets, uploads, vendor, etc.
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -84,3 +84,8 @@ RewriteRule ^vendor/(.*)$ vendor/$1 [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ src/public/index.php?page=$1 [L,QSA]
+
+<Directory "/app/toutpourunnouveaune">
+    AllowOverride All
+    Require all granted
+</Directory>

@@ -11,7 +11,7 @@ if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 
 
 $_SESSION['LAST_ACTIVITY'] = time();
 
-require '../../vendor/autoload.php';
+require '../../../vendor/autoload.php';
 
 $page = filter_input(INPUT_GET, 'page', FILTER_SANITIZE_STRING) ?? 'home';
 

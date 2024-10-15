@@ -1,12 +1,12 @@
 <?php
 namespace Controllers;
 
-use Models\Profile;
+use Models\ProfileTPUNN;
 
-class ProfileController {
+class ProfileTPUNNController {
     private $profile;
 
-    public function __construct(Profile $profile) {
+    public function __construct(ProfileTPUNN $profile) {
         $this->profile = $profile;
     }
 

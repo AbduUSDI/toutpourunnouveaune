@@ -3,7 +3,7 @@ namespace Models;
 
 use PDO;
 
-class User {
+class UserOne {
     private $conn;
 
     public function __construct($db) {

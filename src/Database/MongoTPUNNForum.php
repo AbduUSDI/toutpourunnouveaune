@@ -4,7 +4,7 @@ namespace Database;
 use Exception;
 use MongoDB\Client;
 
-class MongoDBForum {
+class MongoTPUNNForum {
     private $mongoClient;
     private $mongoCollection;
 

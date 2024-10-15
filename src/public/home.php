@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once '../../vendor/autoload.php';
-$db = (new Database\DatabaseConnection())->connect();
+require '../../../vendor/autoload.php';
+$db = (new Database\DatabaseTPUNN())->connect();
 
 require_once '../views/templates/header.php';
 require_once '../views/templates/navbar.php';

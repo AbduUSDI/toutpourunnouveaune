@@ -1,12 +1,12 @@
 <?php
 namespace Controllers;
 
-use Models\Comment;
+use Models\CommentTPUNN;
 
-class CommentController {
+class CommentTPUNNController {
     private $comment;
 
-    public function __construct(Comment $comment) {
+    public function __construct(CommentTPUNN $comment) {
         $this->comment = $comment;
     }
 

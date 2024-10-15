@@ -9,12 +9,12 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 3) {
 
 require_once '../../../vendor/autoload.php';
 
-$db = (new Database\DatabaseConnection())->connect();
+$db = (new Database\DatabaseTPUNN())->connect();
 
-$forum = new \Models\Forum($db); 
+$forum = new \Models\ForumTPUNN($db); 
 $tracking = new \Models\Tracking($db);
 
-$forumController = new \Controllers\ForumController($forum);
+$forumController = new \Controllers\ForumTPUNNController($forum);
 $trackingController = new \Controllers\TrackingController($tracking);
 
 $threads = $forumController->getThreads();

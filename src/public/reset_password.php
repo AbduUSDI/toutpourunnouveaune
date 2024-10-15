@@ -1,7 +1,7 @@
 <?php
 require_once '../../vendor/autoload.php';
 
-$db = (new Database\DatabaseConnection())->connect();
+$db = (new Database\DatabaseTPUNN())->connect();
 
 
 $user = new \Models\UserTwo($db);

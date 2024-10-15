@@ -9,19 +9,19 @@ if (!isset($_SESSION['user'])) {
 
 require_once '../../../../vendor/autoload.php';
 
-$db = (new Database\DatabaseConnection())->connect();
+$db = (new Database\DatabaseTPUNN())->connect();
 $mongoClient = new \Database\MongoDBForum();
 
 
 $user = new \Models\UserTwo($db);
-$profile = new \Models\Profile($db);
-$thread = new \Models\Forum($db);
-$response = new \Models\Response($db);
+$profile = new \Models\ProfileTPUNN($db);
+$thread = new \Models\ForumTPUNN($db);
+$response = new \Models\ResponseTPUNN($db);
 
 $userController = new \Controllers\UserTwoController($user);
-$profileController = new \Controllers\ProfileController($profile);
-$threadController = new \Controllers\ForumController($thread);
-$responseController = new \Controllers\ResponseController($response);
+$profileController = new \Controllers\ProfileTPUNNController($profile);
+$threadController = new \Controllers\ForumTPUNNController($thread);
+$responseController = new \Controllers\ResponseTPUNNController($response);
 
 $userId = $_SESSION['user']['id'];
 $currentUser = $userController->getUserById($userId);

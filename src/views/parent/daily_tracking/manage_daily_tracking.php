@@ -8,7 +8,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 3) {
 
 require_once '../../../../vendor/autoload.php';
 
-$db = (new Database\DatabaseConnection())->connect();
+$db = (new Database\DatabaseTPUNN())->connect();
 
 $tracking = new \Models\Tracking($db);
 $dailyTracking = new \Controllers\TrackingController($tracking);

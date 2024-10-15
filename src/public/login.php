@@ -3,14 +3,14 @@ session_start();
 
 require_once '../../vendor/autoload.php';
 
-$db = (new Database\DatabaseConnection())->connect();
+$db = (new Database\DatabaseTPUNN())->connect();
 
 // Génération du token CSRF pour la protection contre les attaques CSRF
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
-$user = new \Models\User($db);
-$userController = new \Controllers\UserController($db, $user);
+$user = new \Models\UserOne($db);
+$userController = new \Controllers\UserOneController($db, $user);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     // Validation du token CSRF

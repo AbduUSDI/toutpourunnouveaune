@@ -3,7 +3,7 @@ session_start();
 
 require_once '../../vendor/autoload.php';
 
-$db = (new Database\DatabaseConnection())->connect();
+$db = (new Database\DatabaseTPUNN())->connect();
 
 $avisMedicaux = new \Models\AvisMedicaux($db);
 $avisMedicauxController = new \Controllers\AvisMedicauxController($avisMedicaux);

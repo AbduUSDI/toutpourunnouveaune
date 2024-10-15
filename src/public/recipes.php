@@ -2,7 +2,7 @@
 session_start();
 require_once '../../vendor/autoload.php';
 
-$db = (new Database\DatabaseConnection())->connect();
+$db = (new Database\DatabaseTPUNN())->connect();
 
 $recipe = new \Models\Recipe($db);
 $recipeController = new \Controllers\RecipeController($recipe);

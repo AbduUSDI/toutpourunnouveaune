@@ -3,7 +3,7 @@ namespace Models;
 
 use PDO;
 
-class Response {
+class ResponseTPUNN {
     private $conn;
     private $table = 'responses';
 

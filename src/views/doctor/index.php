@@ -8,12 +8,12 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 2) {
 require_once '../../../vendor/autoload.php';
 
 // Connexion à la base de données MySQL  
-$db = (new Database\DatabaseConnection())->connect(); 
+$db = (new Database\DatabaseTPUNN())->connect(); 
 
-$forum = new \Models\Forum($db); 
+$forum = new \Models\ForumTPUNN($db); 
 $avisMedicaux = new \Models\AvisMedicaux($db);
 
-$forumController = new \Controllers\ForumController($forum);
+$forumController = new \Controllers\ForumTPUNNController($forum);
 $avisMedicauxController = new \Controllers\AvisMedicauxController($avisMedicaux);
 
 // Récupérer les données  
