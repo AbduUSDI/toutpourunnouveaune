@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['token'])) {
     if ($userData) {
         if ($user->updatePassword($userData['id'], $newPassword)) {
             echo "Votre mot de passe a été réinitialisé avec succès.";
-            header('Location: /Portfolio/toutpourunnouveaune/login');
+            header('Location: https://www.abduusdi.fr/toutpourunnouveaune/login');
             exit;
         } else {
             echo "Une erreur s'est produite lors de la réinitialisation du mot de passe.";

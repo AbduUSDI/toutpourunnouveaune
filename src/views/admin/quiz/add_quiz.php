@@ -2,7 +2,7 @@
 
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
-    header('Location: /Portfolio/toutpourunnouveaune/login');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/login');
     exit;
 }
 require_once '../../../../vendor/autoload.php';
@@ -17,7 +17,7 @@ $quizController = new \Controllers\QuizTPUNNController($quiz);
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         $_SESSION['error_message'] = "Erreur de sécurité : jeton CSRF invalide.";
-        header('Location: /Portfolio/toutpourunnouveaune/admin/quiz/add');
+        header('Location: https://www.abduusdi.fr/toutpourunnouveaune/admin/quiz/add');
         exit;
     }
 
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($titre && $questions) {
         $quizController->addQuiz($titre, $questions);
-        header('Location: /Portfolio/toutpourunnouveaune/admin/quiz');
+        header('Location: https://www.abduusdi.fr/toutpourunnouveaune/admin/quiz');
         exit;
     }
 }
@@ -39,7 +39,7 @@ include_once '../../templates/navbar_admin.php';
 
 <div class="container mt-5">
     <h1>Créer un nouveau Quiz</h1>
-    <form id="quizForm" method="post" action="/Portfolio/toutpourunnouveaune/admin/quiz/add">
+    <form id="quizForm" method="post" action="https://www.abduusdi.fr/toutpourunnouveaune/admin/quiz/add">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="form-group">
             <label for="titre">Titre du Quiz</label>

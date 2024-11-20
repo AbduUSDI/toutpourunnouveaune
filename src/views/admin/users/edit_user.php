@@ -3,7 +3,7 @@
 
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
-    header('Location: /Portfolio/toutpourunnouveaune/login');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/login');
     exit;
 }
 require_once '../../../../vendor/autoload.php';
@@ -15,20 +15,20 @@ $user = new \Models\UserOne($db);
 $userManager = new \Controllers\UserOneController($db, $user);
 
 if (!isset($_GET['id'])) {
-    header('Location: /Portfolio/toutpourunnouveaune/admin/users');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/admin/users');
     exit;
 }
 
 $user_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 if (!$user_id) {
-    header('Location: /Portfolio/toutpourunnouveaune/admin/users');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/admin/users');
     exit;
 }
 
 $user = $userManager->getUtilisateurParId($user_id);
 
 if (!$user) {
-    header('Location: /Portfolio/toutpourunnouveaune/admin/users');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/admin/users');
     exit;
 }
 
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['error_message'] = "Tous les champs sont requis.";
     }
 
-    header('Location: /Portfolio/toutpourunnouveaune/admin/users');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/admin/users');
     exit;
 }
 
@@ -64,7 +64,7 @@ include_once '../../templates/navbar_admin.php';
 
 <div class="container mt-5">
     <h1 class="my-4">Modifier Utilisateur</h1>
-    <form action="/Portfolio/toutpourunnouveaune/admin/users/edit/<?php echo htmlspecialchars($user['id']); ?>" method="POST">
+    <form action="https://www.abduusdi.fr/toutpourunnouveaune/admin/users/edit/<?php echo htmlspecialchars($user['id']); ?>" method="POST">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="form-group">
             <label for="username">Nom d'utilisateur</label>

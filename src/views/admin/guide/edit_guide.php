@@ -2,7 +2,7 @@
 
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
-    header('Location: /Portfolio/toutpourunnouveaune/login');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/login');
     exit;
 }
 require_once '../../../../vendor/autoload.php';
@@ -16,14 +16,14 @@ $guideController = new \Controllers\GuideController($guideModel);
 $guide_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
 if (!$guide_id) {
-    header('Location: /Portfolio/toutpourunnouveaune/admin/guide');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/admin/guide');
     exit;
 }
 
 $guide = $guideController->getGuideById($guide_id);
 
 if (!$guide) {
-    header('Location: /Portfolio/toutpourunnouveaune/admin/guide');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/admin/guide');
     exit;
 }
 
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Protection CSRF
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         $_SESSION['error_message'] = "Erreur de sécurité : jeton CSRF invalide.";
-        header('Location: /Portfolio/toutpourunnouveaune/admin/guide/edit/' . $guide_id);
+        header('Location: https://www.abduusdi.fr/toutpourunnouveaune/admin/guide/edit/' . $guide_id);
         exit;
     }
     
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($titre && $contenu) {
         $guideController->updateGuide($guide_id, $titre, $contenu);
         $_SESSION['success_message'] = "Guide mis à jour avec succès.";
-        header('Location: /Portfolio/toutpourunnouveaune/admin/guide');
+        header('Location: https://www.abduusdi.fr/toutpourunnouveaune/admin/guide');
         exit;
     } else {
         $_SESSION['error_message'] = "Tous les champs sont requis.";
@@ -57,7 +57,7 @@ include '../../templates/navbar_admin.php';
 
 <div class="container mt-5">
     <h1>Modifier le Guide</h1>
-    <form action="/Portfolio/toutpourunnouveaune/admin/guide/edit/<?php echo htmlspecialchars($guide['id']); ?>" method="POST">
+    <form action="https://www.abduusdi.fr/toutpourunnouveaune/admin/guide/edit/<?php echo htmlspecialchars($guide['id']); ?>" method="POST">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="form-group">
             <label for="titre">Titre</label>

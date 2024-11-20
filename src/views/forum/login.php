@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
         $_SESSION['user'] = $userData;
         if (in_array($userData['role_id'], [1, 2, 3])) {
             // Redirige tous les rôles reconnus vers le forum
-            header('Location: /Portfolio/toutpourunnouveaune/forum');
+            header('Location: https://www.abduusdi.fr/toutpourunnouveaune/forum');
         } else {
             // En cas de rôle non reconnu, rediriger vers la page de connexion avec un message d'erreur
             $error = "Rôle utilisateur non reconnu.";
@@ -40,7 +40,7 @@ include_once 'templates/navbar_forum.php';
     <?php if (isset($error)): ?>
         <div class="alert alert-danger"><?php echo $error; ?></div>
     <?php endif; ?>
-    <form action="/Portfolio/toutpourunnouveaune/login" method="POST">
+    <form action="https://www.abduusdi.fr/toutpourunnouveaune/login" method="POST">
         <div class="form-group">
             <label for="email">Email</label>
             <input type="email" class="form-control" id="email" name="email" autocomplete="email" required>
@@ -73,7 +73,7 @@ include_once 'templates/navbar_forum.php';
                 </button>
             </div>
             <div class="modal-body">
-                <form id="forgotPasswordForm" method="post" action="/Portfolio/toutpourunnouveaune/forgot_password">
+                <form id="forgotPasswordForm" method="post" action="https://www.abduusdi.fr/toutpourunnouveaune/forgot_password">
                     <div class="form-group">
                         <label for="forgotEmail">Email</label>
                         <input type="email" class="form-control" id="forgotEmail" name="forgotEmail" required>
@@ -96,7 +96,7 @@ include_once 'templates/navbar_forum.php';
                 </button>
             </div>
             <div class="modal-body">
-                <form id="registerForm" method="post" action="/Portfolio/toutpourunnouveaune/register">
+                <form id="registerForm" method="post" action="https://www.abduusdi.fr/toutpourunnouveaune/register">
                     <div class="form-group">
                         <label for="nom_utilisateur">Nom d'utilisateur</label>
                         <input type="text" class="form-control" id="nom_utilisateur" name="nom_utilisateur" required>

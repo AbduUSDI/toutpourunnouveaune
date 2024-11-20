@@ -3,7 +3,7 @@
 session_start();
 
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 3) {
-    header('Location: /Portfolio/toutpourunnouveaune/login');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/login');
     exit;
 }
 
@@ -38,7 +38,7 @@ include "../templates/navbar_parent.php";
                     <h5 class="list-group-item"><strong>Titre :</strong> <?php echo htmlspecialchars($thread['title']); ?></h5> 
                     <p class="list-group-item"><strong>Créé par :</strong> <?php echo htmlspecialchars($thread['author']); ?> (<?php echo $thread['created_at']; ?>)</p>
                     <p class="list-group-item"><strong>Contenu :</strong> <?php echo htmlspecialchars($thread['body']); ?></p>
-                    <a class="btn btn-outline-info" href="/Portfolio/toutpourunnouveaune/forum/thread/<?php echo $thread['id']; ?>">Voir la discussion</a>
+                    <a class="btn btn-outline-info" href="https://www.abduusdi.fr/toutpourunnouveaune/forum/thread/<?php echo $thread['id']; ?>">Voir la discussion</a>
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>

@@ -2,7 +2,7 @@
 
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
-    header('Location: /Portfolio/toutpourunnouveaune/login');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/login');
     exit;
 }
 require_once '../../../../vendor/autoload.php';
@@ -15,7 +15,7 @@ $quizController = new \Controllers\QuizTPUNNController($quiz);
 
 $quiz_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 if (!$quiz_id) {
-    header('Location: /Portfolio/toutpourunnouveaune/admin/quiz');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/admin/quiz');
     exit;
 }
 
@@ -25,7 +25,7 @@ $quizData = $quizController->getQuizById($quiz_id);
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         $_SESSION['error_message'] = "Erreur de sécurité : jeton CSRF invalide.";
-        header('Location: /Portfolio/toutpourunnouveaune/admin/quiz/update/' . $quiz_id);
+        header('Location: https://www.abduusdi.fr/toutpourunnouveaune/admin/quiz/update/' . $quiz_id);
         exit;
     }
 
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($titre && $questions) {
         $quizController->updateQuiz($quiz_id, $titre, $questions);
-        header('Location: /Portfolio/toutpourunnouveaune/admin/quiz');
+        header('Location: https://www.abduusdi.fr/toutpourunnouveaune/admin/quiz');
         exit;
     }
 }
@@ -47,7 +47,7 @@ include_once '../../templates/navbar_admin.php';
 
 <div class="container mt-5">
     <h1>Modifier le Quiz</h1>
-    <form id="quizForm" method="post" action="/Portfolio/toutpourunnouveaune/admin/quiz/update/<?php echo htmlspecialchars($quiz_id); ?>">
+    <form id="quizForm" method="post" action="https://www.abduusdi.fr/toutpourunnouveaune/admin/quiz/update/<?php echo htmlspecialchars($quiz_id); ?>">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="form-group">
             <label for="titre">Titre du Quiz</label>

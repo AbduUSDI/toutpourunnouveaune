@@ -1,4 +1,4 @@
-# Activer le module de réécriture
+# Activation du module de réécriture
 RewriteEngine On
 RewriteBase /toutpourunnouveaune/
 

@@ -72,5 +72,5 @@ if ($existingUser) {
     die('Erreur lors de la soumission du quiz. Veuillez réessayer.');
 }
 
-header('Location: /Portfolio/toutpourunnouveaune/get_score?score=' . $score);
+header('Location: https://www.abduusdi.fr/toutpourunnouveaune/get_score?score=' . $score);
 exit;

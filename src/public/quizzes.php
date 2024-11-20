@@ -22,7 +22,7 @@ include '../views/templates/navbar.php';
         <?php else: ?>
             <?php foreach ($quizzes as $quiz): ?>
                 <li class="list-group-item">
-                    <a class="btn btn-outline-info" href="/Portfolio/toutpourunnouveaune/quiz/<?php echo $quiz['id']; ?>"><?php echo htmlspecialchars($quiz['titre']); ?></a>
+                    <a class="btn btn-outline-info" href="https://www.abduusdi.fr/toutpourunnouveaune/quiz/<?php echo $quiz['id']; ?>"><?php echo htmlspecialchars($quiz['titre']); ?></a>
                 </li>
             <?php endforeach; ?>
         <?php endif; ?>

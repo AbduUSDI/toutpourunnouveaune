@@ -4,7 +4,7 @@ session_start();
 
 // Vérification si l'utilisateur est connecté
 if (!isset($_SESSION['user'])) {
-    header('Location: /Portfolio/toutpourunnouveaune/login');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/login');
     exit;
 }
 
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Tentative de création de la nouvelle discussion
         if ($threadController->addThread($title, $body, $user_id)) {
             // Redirection vers la page principale du forum si succès
-            header('Location: /Portfolio/toutpourunnouveaune/forum');
+            header('Location: https://www.abduusdi.fr/toutpourunnouveaune/forum');
             exit;
         } else {
             // Message d'erreur si l'insertion échoue
@@ -57,7 +57,7 @@ require_once '../templates/navbar_forum.php';
     <?php endif; ?>
     
     <!-- Formulaire de création de discussion -->
-    <form method="post" action="/Portfolio/toutpourunnouveaune/forum/threads/add">
+    <form method="post" action="https://www.abduusdi.fr/toutpourunnouveaune/forum/threads/add">
         <div class="form-group">
             <label for="title">Titre</label>
             <input type="text" class="form-control" id="title" name="title" value="<?php echo isset($title) ? $title : ''; ?>" required>

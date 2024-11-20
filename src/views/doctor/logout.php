@@ -4,5 +4,5 @@
 
 session_start();
 session_destroy();
-header('Location: /Portfolio/toutpourunnouveaune/login');
+header('Location: https://www.abduusdi.fr/toutpourunnouveaune/login');
 exit;

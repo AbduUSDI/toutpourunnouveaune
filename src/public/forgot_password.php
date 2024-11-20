@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $token = bin2hex(random_bytes(32));
         $userControllerTwo->setResetToken($userData['id'], $token);
 
-        $resetLink = "http://localhost/Portfolio/toutpourunnouveaune/src/public/reset_password.php?token=" . $token;
+        $resetLink = "thttps://www.abduusdi.fr/toutpourunnouveaune/src/public/reset_password.php?token=" . $token;
 
         $mail = new PHPMailer(true);
         try {

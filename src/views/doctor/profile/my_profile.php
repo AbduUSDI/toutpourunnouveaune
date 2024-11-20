@@ -3,7 +3,7 @@ session_start();
 
 // Vérifier si l'utilisateur est connecté
 if (!isset($_SESSION['user'])) {
-    header('Location: /Portfolio/toutpourunnouveaune/login');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/login');
     exit;
 }
 
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Protection CSRF
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         $_SESSION['error_message'] = "Erreur de sécurité : jeton CSRF invalide.";
-        header('Location: /Portfolio/toutpourunnouveaune/doctor/profile');
+        header('Location: https://www.abduusdi.fr/toutpourunnouveaune/doctor/profile');
         exit;
     }
 
@@ -194,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['message'] = $message;
     $_SESSION['message_type'] = $result ? 'success' : 'danger';
     
-    header('Location: /Portfolio/toutpourunnouveaune/doctor/profile');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/doctor/profile');
     exit;
 }
 
@@ -212,7 +212,7 @@ include '../../templates/navbar_doctor.php';
     <div class="card">
         <div class="card-body">
             <?php if (!empty($userProfile['photo_profil'])): ?>
-                <img src="/Portfolio/toutpourunnouveaune/assets/uploads/<?php echo htmlspecialchars($userProfile['photo_profil']); ?>" alt="Photo de profil" class="img-thumbnail mb-3" style="max-width: 200px;">
+                <img src="https://www.abduusdi.fr/toutpourunnouveaune/assets/uploads/<?php echo htmlspecialchars($userProfile['photo_profil']); ?>" alt="Photo de profil" class="img-thumbnail mb-3" style="max-width: 200px;">
                 <?php endif; ?>
             <h5 class="card-title"><?php echo htmlspecialchars($userProfile['prenom'] . ' ' . $userProfile['nom']); ?></h5>
             <p class="card-text"><strong>Date de naissance:</strong> <?php echo htmlspecialchars($userProfile['date_naissance'] ?? 'Non renseignée'); ?></p>
@@ -225,7 +225,7 @@ include '../../templates/navbar_doctor.php';
 </div>
 
 <div class="container mt-5">
-    <form action="/Portfolio/toutpourunnouveaune/doctor/profile" method="POST">
+    <form action="https://www.abduusdi.fr/toutpourunnouveaune/doctor/profile" method="POST">
         <input type="hidden" name="action" value="update_profile">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="form-group">
@@ -254,7 +254,7 @@ include '../../templates/navbar_doctor.php';
             <?php foreach ($friends as $friend): ?>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <?php echo htmlspecialchars($friend['nom_utilisateur']); ?>
-                    <form action="/Portfolio/toutpourunnouveaune/doctor/profile" method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet ami ?');">
+                    <form action="https://www.abduusdi.fr/toutpourunnouveaune/doctor/profile" method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet ami ?');">
                         <input type="hidden" name="action" value="remove_friend">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                         <input type="hidden" name="request_id" value="<?php echo htmlspecialchars($friend['request_id']); ?>">
@@ -268,7 +268,7 @@ include '../../templates/navbar_doctor.php';
 
 <div class="container mt-5">
     <h2>Envoyer une demande d'ami</h2>
-    <form action="/Portfolio/toutpourunnouveaune/doctor/profile" method="POST">
+    <form action="https://www.abduusdi.fr/toutpourunnouveaune/doctor/profile" method="POST">
         <input type="hidden" name="action" value="send_friend_request">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="form-group">
@@ -288,14 +288,14 @@ include '../../templates/navbar_doctor.php';
             <?php foreach ($friendRequests as $request): ?>
                 <li class="list-group-item">
                     <span>Demande d'ami de l'utilisateur ID <?php echo htmlspecialchars($request['sender_id']); ?></span>
-                    <form action="/Portfolio/toutpourunnouveaune/doctor/profile" method="POST" class="d-inline">
+                    <form action="https://www.abduusdi.fr/toutpourunnouveaune/doctor/profile" method="POST" class="d-inline">
                         <input type="hidden" name="action" value="respond_friend_request">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                         <input type="hidden" name="request_id" value="<?php echo htmlspecialchars($request['id']); ?>">
                         <input type="hidden" name="status" value="accepted">
                         <button type="submit" class="btn btn-success">Accepter</button>
                     </form>
-                    <form action="/Portfolio/toutpourunnouveaune/doctor/profile" method="POST" class="d-inline">
+                    <form action="https://www.abduusdi.fr/toutpourunnouveaune/doctor/profile" method="POST" class="d-inline">
                         <input type="hidden" name="action" value="respond_friend_request">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                         <input type="hidden" name="request_id" value="<?php echo htmlspecialchars($request['id']); ?>">
@@ -341,7 +341,7 @@ include '../../templates/navbar_doctor.php';
                 <tr>
                     <td colspan="3">
                         <div class="collapse" id="editThreadForm<?php echo htmlspecialchars($thread['id']); ?>">
-                            <form action="/Portfolio/toutpourunnouveaune/doctor/profile" method="POST">
+                            <form action="https://www.abduusdi.fr/toutpourunnouveaune/doctor/profile" method="POST">
                                 <input type="hidden" name="action" value="update_thread">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                                 <input type="hidden" name="id" value="<?php echo htmlspecialchars($thread['id']); ?>">
@@ -362,7 +362,7 @@ include '../../templates/navbar_doctor.php';
             </tbody>
         </table>
     <?php endif; ?>
-    <a href="/Portfolio/toutpourunnouveaune/forum/threads/add" class="btn btn-info">Créer un nouveau thread</a>
+    <a href="https://www.abduusdi.fr/toutpourunnouveaune/forum/threads/add" class="btn btn-info">Créer un nouveau thread</a>
 </div>
 
 <div class="container mt-5">
@@ -398,7 +398,7 @@ include '../../templates/navbar_doctor.php';
                     <tr>
                         <td colspan="3">
                             <div class="collapse" id="editResponseForm<?php echo htmlspecialchars($response['id']); ?>">
-                                <form action="/Portfolio/toutpourunnouveaune/doctor/profile" method="POST">
+                                <form action="https://www.abduusdi.fr/toutpourunnouveaune/doctor/profile" method="POST">
                                     <input type="hidden" name="action" value="update_response">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($response['id']); ?>">
@@ -425,7 +425,7 @@ include '../../templates/navbar_doctor.php';
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="/Portfolio/toutpourunnouveaune/doctor/profile" method="POST" enctype="multipart/form-data">
+                <form action="https://www.abduusdi.fr/toutpourunnouveaune/doctor/profile" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="action" value="update_profile_info">
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                     <div class="mb-3">

@@ -4,7 +4,7 @@ session_start();
 
 // Vérification si l'utilisateur est connecté
 if (!isset($_SESSION['user'])) {
-    header('Location: /Portfolio/toutpourunnouveaune/login');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/login');
     exit;
 }
 
@@ -38,7 +38,7 @@ include_once '../templates/navbar_forum.php';
                 <?php else: ?>
                     <?php foreach ($threads as $thread): ?>
                         <li class="list-group-item">
-                            <h5><a href="/Portfolio/toutpourunnouveaune/forum/thread/<?php echo htmlspecialchars($thread['id']); ?>"><?php echo htmlspecialchars($thread['title']); ?></a></h5>
+                            <h5><a href="https://www.abduusdi.fr/toutpourunnouveaune/forum/thread/<?php echo htmlspecialchars($thread['id']); ?>"><?php echo htmlspecialchars($thread['title']); ?></a></h5>
                             <p><?php echo nl2br(htmlspecialchars($thread['body'])); ?></p>
                             <small class="text-muted">Par <?php echo htmlspecialchars($thread['author']); ?> le <?php echo htmlspecialchars($thread['created_at']); ?></small>
                         </li>

@@ -2,7 +2,7 @@
 
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
-    header('Location: /Portfolio/toutpourunnouveaune/login');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/login');
     exit;
 }
 require_once '../../../../vendor/autoload.php';
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['error_message'] = "Action non valide.";
             break;
     }
-    header('Location: /Portfolio/toutpourunnouveaune/admin/guide');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/admin/guide');
     exit;
 }
 
@@ -65,7 +65,7 @@ include '../../templates/navbar_admin.php';
 
     <!-- Formulaire pour créer un nouveau guide -->
     <h2 class="mt-4">Ajouter un nouveau guide</h2>
-    <form action="/Portfolio/toutpourunnouveaune/admin/guide" method="POST">
+    <form action="https://www.abduusdi.fr/toutpourunnouveaune/admin/guide" method="POST">
         <input type="hidden" name="action" value="create">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="form-group">
@@ -92,9 +92,9 @@ include '../../templates/navbar_admin.php';
                         <small class="text-muted">Créé le : <?php echo $guide['date_creation']; ?></small>
                         
                         <div class="d-flex justify-content-between align-items-center mt-3">
-                            <a href="/Portfolio/toutpourunnouveaune/admin/guide/edit/<?php echo htmlspecialchars($guide['id']); ?>" class="btn btn-sm btn-warning">Modifier</a>
+                            <a href="https://www.abduusdi.fr/toutpourunnouveaune/admin/guide/edit/<?php echo htmlspecialchars($guide['id']); ?>" class="btn btn-sm btn-warning">Modifier</a>
                             
-                            <form action="/Portfolio/toutpourunnouveaune/admin/guide" method="POST" style="display:inline;">
+                            <form action="https://www.abduusdi.fr/toutpourunnouveaune/admin/guide" method="POST" style="display:inline;">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                                 <input type="hidden" name="id" value="<?php echo htmlspecialchars($guide['id']); ?>">

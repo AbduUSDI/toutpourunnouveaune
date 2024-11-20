@@ -15,18 +15,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mail = new PHPMailer(true);
 
         try {
-            // Configuration du serveur SMTP de Gmail
+            // Configuration SMTP pour IONOS
             $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'abdu.usdi@gmail.com'; // Remplacez par votre adresse email Gmail
-            $mail->Password = 'Abdufufu2525+';    // Remplacez par votre mot de passe Gmail ou par un mot de passe d'application
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = 587;
+            $mail->Host       = 'smtp.ionos.fr';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = getenv('IONOS_EMAIL'); 
+            $mail->Password   = getenv('IONOS_PASSWORD');            
+            $mail->SMTPSecure = 'ssl';
+            $mail->Port       = 465;
 
-            // Configuration des destinataires
+            // Expéditeur et destinataire
             $mail->setFrom($email, $name);
-            $mail->addAddress('abdu.usdi@gmail.com'); // Remplacez par l'adresse email de destination
+            $mail->addAddress('abdu.usdi@gmail.com');
 
             // Contenu de l'email
             $mail->isHTML(true);

@@ -2,7 +2,7 @@
 
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
-    header('Location: /Portfolio/toutpourunnouveaune/login');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/login');
     exit;
 }
 require_once '../../../../vendor/autoload.php';
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Protection CSRF
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         $_SESSION['error_message'] = "Erreur de sécurité : jeton CSRF invalide.";
-        header('Location: /Portfolio/toutpourunnouveaune/admin/comments/edit/' . $comment_id);
+        header('Location: https://www.abduusdi.fr/toutpourunnouveaune/admin/comments/edit/' . $comment_id);
         exit;
     }
     
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($commentController->updateComment($comment_id, $content)) {
         $_SESSION['success_message'] = "Le commentaire a été mis à jour avec succès.";
-        header('Location: /Portfolio/toutpourunnouveaune/admin/comments');
+        header('Location: https://www.abduusdi.fr/toutpourunnouveaune/admin/comments');
         exit;
     } else {
         $_SESSION['error_message'] = "Une erreur est survenue lors de la mise à jour du commentaire.";
@@ -59,18 +59,18 @@ include '../../templates/navbar_admin.php';
     <?php endif; ?>
 
     <?php if ($comment): ?>
-        <form action="/Portfolio/toutpourunnouveaune/admin/comments/edit/<?php echo htmlspecialchars($comment_id); ?>" method="POST">
+        <form action="https://www.abduusdi.fr/toutpourunnouveaune/admin/comments/edit/<?php echo htmlspecialchars($comment_id); ?>" method="POST">
             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
             <div class="form-group">
                 <label for="content">Contenu du commentaire</label>
                 <textarea class="form-control" id="content" name="content" rows="5" required><?php echo htmlspecialchars_decode($comment['contenu']); ?></textarea>
             </div>
             <button type="submit" class="btn btn-info">Mettre à jour</button>
-            <a href="/Portfolio/toutpourunnouveaune/admin/comments" class="btn btn-secondary">Annuler</a>
+            <a href="https://www.abduusdi.fr/toutpourunnouveaune/admin/comments" class="btn btn-secondary">Annuler</a>
         </form>
     <?php else: ?>
         <p>Le commentaire demandé n'existe pas.</p>
-        <a href="/Portfolio/toutpourunnouveaune/admin/comments" class="btn btn-secondary">Retour à la liste des commentaires</a>
+        <a href="https://www.abduusdi.fr/toutpourunnouveaune/admin/comments" class="btn btn-secondary">Retour à la liste des commentaires</a>
     <?php endif; ?>
 </div>
 

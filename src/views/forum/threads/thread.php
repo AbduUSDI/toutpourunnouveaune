@@ -4,7 +4,7 @@ session_start();
 
 // Vérification si l'utilisateur est connecté
 if (!isset($_SESSION['user'])) {
-    header('Location: /Portfolio/toutpourunnouveaune/login');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/login');
     exit;
 }
 
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $body = $_POST['body'];
     $userId = $_SESSION['user']['id'];
     if ($responseController->createResponse($threadId, $userId, $body)) {
-        header("Location: /Portfolio/toutpourunnouveaune/forum/thread/$threadId");
+        header("Location: https://www.abduusdi.fr/toutpourunnouveaune/forum/thread/$threadId");
         exit;
     } else {
         $error = "Erreur lors de l'ajout de la réponse. Veuillez réessayer.";
@@ -67,7 +67,7 @@ include_once '../templates/navbar_forum.php';
     </ul>
 
     <h2 class="my-4">Ajouter une réponse</h2>
-    <form action="/Portfolio/toutpourunnouveaune/forum/thread/<?php echo $threadId; ?>" method="post">
+    <form action="https://www.abduusdi.fr/toutpourunnouveaune/forum/thread/<?php echo $threadId; ?>" method="post">
         <div class="form-group">
             <label for="body">Votre réponse</label>
             <textarea class="form-control" id="body" name="body" rows="3" required></textarea>

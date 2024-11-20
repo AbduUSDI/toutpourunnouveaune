@@ -3,7 +3,7 @@
 
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
-    header('Location: /Portfolio/toutpourunnouveaune/login');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/login');
     exit;
 }
 require_once '../../../../vendor/autoload.php';
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userController->addUser($email, $password, $role_id, $username);
 
     // Redirection vers la page de gestion des utilisateurs
-    header('Location: /Portfolio/toutpourunnouveaune/admin/users');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/admin/users');
     exit;
 }
 
@@ -34,7 +34,7 @@ include_once '../../templates/navbar_admin.php';
 <!-- Formulaire d'ajout utilisateur, utilisation de la méthode POST -->
 <div class="container mt-5">
     <h1 class="my-4">Ajouter un Utilisateur</h1>
-    <form action="/Portfolio/toutpourunnouveaune/admin/users/add" method="POST">
+    <form action="https://www.abduusdi.fr/toutpourunnouveaune/admin/users/add" method="POST">
         <div class="form-group">
             <label for="email">Email</label>
             <input type="email" class="form-control" id="email" name="email" required>

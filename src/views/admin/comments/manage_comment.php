@@ -2,7 +2,7 @@
 
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1) {
-    header('Location: /Portfolio/toutpourunnouveaune/login');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/login');
     exit;
 }
 require_once '../../../../vendor/autoload.php';
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Protection CSRF
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         $_SESSION['error_message'] = "Erreur de sécurité : jeton CSRF invalide.";
-        header('Location: /Portfolio/toutpourunnouveaune/admin/comments');
+        header('Location: https://www.abduusdi.fr/toutpourunnouveaune/admin/comments');
         exit;
     }
 
@@ -79,7 +79,7 @@ include '../../templates/navbar_admin.php';
                 <div class="card-body">
                     <p><?php echo nl2br(htmlspecialchars($comment['contenu'])); ?></p>
                     <p class="text-muted">Par <?php echo htmlspecialchars($comment['nom_utilisateur']); ?> le <?php echo $comment['date_creation']; ?></p>
-                    <form action="/Portfolio/toutpourunnouveaune/admin/comments" method="POST" class="d-inline">
+                    <form action="https://www.abduusdi.fr/toutpourunnouveaune/admin/comments" method="POST" class="d-inline">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                         <input type="hidden" name="comment_id" value="<?php echo htmlspecialchars($comment['id']); ?>">
                         <button type="submit" name="approve" class="btn btn-success">Approuver</button>
@@ -99,10 +99,10 @@ include '../../templates/navbar_admin.php';
                 <div class="card-body">
                     <p class="card-text"><?php echo nl2br(htmlspecialchars_decode($comment['contenu'])); ?></p>
                     <p class="text-muted">Commenté par <?php echo htmlspecialchars_decode($comment['nom_utilisateur']); ?> le <?php echo $comment['date_creation']; ?></p>
-                    <form action="/Portfolio/toutpourunnouveaune/admin/comments" method="POST" class="d-inline">
+                    <form action="https://www.abduusdi.fr/toutpourunnouveaune/admin/comments" method="POST" class="d-inline">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                         <input type="hidden" name="comment_id" value="<?php echo htmlspecialchars($comment['id']); ?>">
-                        <a href="/Portfolio/toutpourunnouveaune/admin/comments/edit/<?php echo htmlspecialchars($comment['id']); ?>" class="btn btn-info">Modifier</a>
+                        <a href="https://www.abduusdi.fr/toutpourunnouveaune/admin/comments/edit/<?php echo htmlspecialchars($comment['id']); ?>" class="btn btn-info">Modifier</a>
                         <button type="submit" name="delete" class="btn btn-danger">Supprimer</button>
                     </form>
                 </div>

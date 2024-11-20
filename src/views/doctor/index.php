@@ -1,7 +1,7 @@
 <?php
 session_start(); 
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 2) {     
-    header('Location: /Portfolio/toutpourunnouveaune/login');     
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/login');     
     exit; 
 }
 
@@ -40,7 +40,7 @@ include_once '../templates/navbar_doctor.php';
                     <p><strong>Auteur:</strong> <?php echo htmlspecialchars($thread['author']); ?></p>
                     <p><?php echo htmlspecialchars($thread['body']); ?></p>
                     <p><small class="text-muted"><?php echo $thread['created_at']; ?></small></p>
-                    <a class="btn btn-outline-info" href="/Portfolio/toutpourunnouveaune/forum/thread/<?php echo $thread['id']; ?>">Voir la discussion</a>
+                    <a class="btn btn-outline-info" href="https://www.abduusdi.fr/toutpourunnouveaune/forum/thread/<?php echo $thread['id']; ?>">Voir la discussion</a>
                 </div>
             </div>
         <?php endforeach; ?>     

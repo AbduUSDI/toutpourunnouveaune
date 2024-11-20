@@ -4,7 +4,7 @@ session_start();
 require '../../vendor/autoload.php';
 
 if (!isset($_SESSION['user'])) {
-    header('Location: /Portfolio/toutpourunnouveaune/login');
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/login');
     exit;
 }
 
@@ -20,6 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $commentManager->addComment($guide_id, $user_id, $contenu);
 
-    header('Location: /Portfolio/toutpourunnouveaune/guides?id=' . $guide_id);
+    header('Location: https://www.abduusdi.fr/toutpourunnouveaune/guides?id=' . $guide_id);
     exit;
 }

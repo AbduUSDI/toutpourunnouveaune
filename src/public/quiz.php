@@ -19,7 +19,7 @@ include '../views/templates/navbar.php';
 
 <div class="container mt-5">
     <h1 class="text-center"><?php echo htmlspecialchars($quizData['titre']); ?></h1>
-    <form id="quizForm" action="/Portfolio/toutpourunnouveaune/submit_quiz" method="post">
+    <form id="quizForm" action="https://www.abduusdi.fr/toutpourunnouveaune/submit_quiz" method="post">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <input type="hidden" name="quiz_id" value="<?php echo $quiz_id; ?>">
         <div id="questionsContainer">

@@ -15,6 +15,6 @@
     <!-- Inclusion de AXIOS -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-    <script src="/Portfolio/toutpourunnouveaune/assets/js/scripts.js"></script>
+    <script src="https://www.abduusdi.fr/toutpourunnouveaune/assets/js/scripts.js"></script>
 </body>
 </html>
